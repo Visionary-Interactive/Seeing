@@ -29,8 +29,94 @@
 #define SERVER_PORT 12345
 #define PROTOCOL_NAME "UDP"
 #define CLIENT_CONNECT_TIMEOUT_MS 5000
-#define TICK_MS 20
-#define INPUT_BUF_SIZE 1024
+#define TICK_MS 1000
+
+static void server_wait_for_incoming(int max_ms)
+{
+	int waited = 0;
+	while (waited < max_ms)
+	{
+		int ev;
+		while ((ev = NBN_GameServer_Poll()) != NBN_NO_EVENT)
+		{
+			if (ev == NBN_CLIENT_MESSAGE_RECEIVED)
+			{
+				NBN_MessageInfo info = NBN_GameServer_GetMessageInfo();
+				if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
+				{
+					NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
+					char* tmp = (char*)malloc(b->length + 1);
+					if (tmp)
+					{
+						memcpy(tmp, b->bytes, b->length);
+						tmp[b->length] = '\0';
+						printf("<< SERVER RECEIVED from client %u: \"%s\"\n", info.sender, tmp);
+						free(tmp);
+					}
+				}
+				else
+				{
+					printf("<< SERVER RECEIVED message type=%u\n", info.type);
+				}
+			}
+			else if (ev == NBN_CLIENT_DISCONNECTED)
+			{
+				printf("<< SERVER EVENT: CLIENT_DISCONNECTED\n");
+			}
+			else if (ev == NBN_NEW_CONNECTION)
+			{
+				printf("<< SERVER EVENT: NEW_CONNECTION\n");
+				// consume as before
+				NBN_ConnectionHandle h = NBN_GameServer_GetIncomingConnection();
+				NBN_GameServer_ReadIncomingConnectionData(NULL);
+				NBN_GameServer_AcceptIncomingConnection();
+			}
+		}
+		// Ensure we flush any outgoing packets (not necessary for receive but harmless)
+		NBN_GameServer_SendPackets();
+		sleep_ms(20);
+		waited += 20;
+	}
+}
+
+static void client_wait_for_incoming(int max_ms)
+{
+	int waited = 0;
+	while (waited < max_ms)
+	{
+		int ev;
+		while ((ev = NBN_GameClient_Poll()) != NBN_NO_EVENT)
+		{
+			if (ev == NBN_MESSAGE_RECEIVED)
+			{
+				NBN_MessageInfo info = NBN_GameClient_GetMessageInfo();
+				if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
+				{
+					NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
+					char* tmp = (char*)malloc(b->length + 1);
+					if (tmp)
+					{
+						memcpy(tmp, b->bytes, b->length);
+						tmp[b->length] = '\0';
+						printf("<< CLIENT RECEIVED from server: \"%s\"\n", tmp);
+						free(tmp);
+					}
+				}
+				else
+				{
+					printf("<< CLIENT RECEIVED message type=%u\n", info.type);
+				}
+			}
+			else if (ev == NBN_DISCONNECTED)
+			{
+				printf("<< CLIENT EVENT: DISCONNECTED\n");
+			}
+		}
+		NBN_GameClient_SendPackets();
+		sleep_ms(20);
+		waited += 20;
+	}
+}
 
 int main(int argc, char** argv)
 {
@@ -82,6 +168,7 @@ int main(int argc, char** argv)
 						const char* server_msg = "Server: Hi client!";
 						int rc = NBN_GameServer_SendUnreliableByteArrayTo(new_conn, (uint8_t*)server_msg, (unsigned int)strlen(server_msg));
 						printf("NBN_GameServer_SendUnreliableByteArrayTo returned %d\n", rc);
+						server_wait_for_incoming(2000);
 
 						int sents = NBN_GameServer_SendPackets();
 						printf("NBN_GameServer_SendPackets returned %d\n", sents);
@@ -169,10 +256,10 @@ int main(int argc, char** argv)
 					printf("Connected to server\n");
 					connected = true;
 
-					// --- PREDEFINED CLIENT->SERVER MESSAGE (instrumented) ---
 					const char* client_msg = "Client: Hi server!";
-					int rc = NBN_GameClient_SendUnreliableByteArray((uint8_t*)client_msg, (unsigned int)strlen(client_msg));
+					int rc = NBN_GameClient_SendReliableByteArray((uint8_t*)client_msg, (unsigned int)strlen(client_msg));
 					printf("NBN_GameClient_SendUnreliableByteArray returned %d\n", rc);
+					client_wait_for_incoming(2000);
 
 					int sents = NBN_GameClient_SendPackets();
 					printf("NBN_GameClient_SendPackets returned %d\n", sents);
@@ -221,7 +308,7 @@ int main(int argc, char** argv)
 
 		// Send a test message
 		const char* payload = "Hello from client";
-		if (NBN_GameClient_SendUnreliableByteArray((uint8_t*)payload, (unsigned int)strlen(payload)) < 0)
+		if (NBN_GameClient_SendReliableByteArray((uint8_t*)payload, (unsigned int)strlen(payload)) < 0)
 			printf("Client: failed to queue message\n");
 
 		// Send packets
