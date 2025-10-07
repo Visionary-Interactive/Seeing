@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #ifndef DEBUG_LOGGING
-#define DEBUG_LOGGING 1
+#define DEBUG_LOGGING 0
 #endif
 
 #if DEBUG_LOGGING
@@ -29,7 +29,8 @@
 #define SERVER_PORT 12345
 #define PROTOCOL_NAME "UDP"
 #define CLIENT_CONNECT_TIMEOUT_MS 5000
-#define TICK_MS 1000
+#define TICK_MS 20
+#define INPUT_BUF_SIZE 1024
 
 int main(int argc, char** argv)
 {
@@ -78,11 +79,17 @@ int main(int argc, char** argv)
 						printf("Warning: failed to accept incoming connection\n");
 					else
 					{
-						// send a welcome message
-						const char* welcome = "Welcome to nbnet server";
-						// can also send a ClientAccepted message data when accepting
-						NBN_GameServer_SendUnreliableByteArrayTo(new_conn, (uint8_t*)welcome, (unsigned int)strlen(welcome));
-						NBN_GameServer_SendPackets();
+						const char* server_msg = "Server: Hi client!";
+						int rc = NBN_GameServer_SendUnreliableByteArrayTo(new_conn, (uint8_t*)server_msg, (unsigned int)strlen(server_msg));
+						printf("NBN_GameServer_SendUnreliableByteArrayTo returned %d\n", rc);
+
+						int sents = NBN_GameServer_SendPackets();
+						printf("NBN_GameServer_SendPackets returned %d\n", sents);
+
+						if (rc >= 0)
+							printf("Server: queued message to client %u: \"%s\"\n", new_conn, server_msg);
+						else
+							printf("Server: failed to queue message for client %u\n", new_conn);
 					}
 					break;
 				}
@@ -161,6 +168,19 @@ int main(int argc, char** argv)
 				{
 					printf("Connected to server\n");
 					connected = true;
+
+					// --- PREDEFINED CLIENT->SERVER MESSAGE (instrumented) ---
+					const char* client_msg = "Client: Hi server!";
+					int rc = NBN_GameClient_SendUnreliableByteArray((uint8_t*)client_msg, (unsigned int)strlen(client_msg));
+					printf("NBN_GameClient_SendUnreliableByteArray returned %d\n", rc);
+
+					int sents = NBN_GameClient_SendPackets();
+					printf("NBN_GameClient_SendPackets returned %d\n", sents);
+
+					if (rc >= 0)
+						printf("Client: queued initial message: \"%s\"\n", client_msg);
+					else
+						printf("Client: failed to queue initial message\n");
 				}
 				else if (ev == NBN_DISCONNECTED)
 				{
@@ -218,13 +238,14 @@ int main(int argc, char** argv)
 					NBN_MessageInfo info = NBN_GameClient_GetMessageInfo();
 					if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 					{
-						NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
-						char* tmp = malloc(b->length + 1);
+						NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
+						unsigned int l = bmsg->length;
+						char* tmp = (char*)malloc(l + 1);
 						if (tmp)
 						{
-							memcpy(tmp, b->bytes, b->length);
-							tmp[b->length] = '\0';
-							printf("Client: received: \"%s\"\n", tmp);
+							memcpy(tmp, bmsg->bytes, l);
+							tmp[l] = '\0';
+							printf("<< RECEIVED (type %u, len %u) : \"%s\"\n", info.type, l, tmp);
 							free(tmp);
 						}
 					}
@@ -240,7 +261,6 @@ int main(int argc, char** argv)
 				}
 			}
 
-			// keep sending (if you want periodic messages, do it here)
 			NBN_GameClient_SendPackets();
 
 			sleep_ms(TICK_MS);
@@ -251,7 +271,6 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		printf("Unknown mode '%s'\n", mode);
 		return 1;
 	}
 
