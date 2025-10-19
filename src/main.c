@@ -27,7 +27,7 @@ int main(void)
     DisableCursor();   // Hide cursor for mouselook
     SetTargetFPS(60);
 
-    // --- Player setup ---
+    //Sets up the player sturct
     Player player = { 0 };
     player.position = (Vector3){ 0.0f, 1.8f, 0.0f };
     player.speed = 8.0f;
@@ -35,7 +35,7 @@ int main(void)
     player.pitch = 0.0f;
 	player.isGrounded = true;
 
-    // --- Camera setup ---
+    //Sets up camera
     Camera camera = { 0 };
     camera.position = player.position;
     camera.target = (Vector3){ 0.0f, 1.8f, 1.0f };
@@ -43,16 +43,15 @@ int main(void)
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    BoundingBox towers[4];
-    const float gravity = -16.0f;
-    const float jumpStrength = 10.0f;
+    const float gravity = -16.0f; //gravity force
+	const float jumpStrength = 10.0f; // Initial jump velocity
     const float groundHeight = 1.8f; // Player’s standing height from floor
 
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
-        // --- Mouse look --- getting the direction the mosue is moving for the purposes of the camera
+        //getting the direction the mosue is moving for the purposes of the camera
         Vector2 mouseDelta = GetMouseDelta();
         const float mouseSensitivity = 0.003f;
         player.yaw -= mouseDelta.x * mouseSensitivity;
@@ -62,7 +61,7 @@ int main(void)
         if (player.pitch > PI / 2.0f) player.pitch = PI / 2.0f;
         if (player.pitch < -PI / 2.0f) player.pitch = -PI / 2.0f;
 
-        // --- Direction vectors ---
+		// Direction vectors to help with movement
         Vector3 forward = {
             sinf(player.yaw),
             0.0f,
@@ -75,7 +74,7 @@ int main(void)
             -sinf(player.yaw)
         };
 
-
+		// if the shift key is held down, increase speed
         if (IsKeyDown(KEY_LEFT_SHIFT))
         {
             player.speed = 16.0f; // Sprint
@@ -91,7 +90,7 @@ int main(void)
             player.isGrounded = false;
         }
 
-        // --- Apply gravity ---
+        // Apply the gravity if the player isn't detected on the gorund
         if (!player.isGrounded)
         {
             player.velocity.y += gravity * dt;
@@ -100,7 +99,7 @@ int main(void)
 
 
         
-        // --- Movement --- Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
+        // Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
 		//subtract move backwards/right and add to move forwards/left
         //
         Vector3 move = { 0 };
@@ -110,7 +109,6 @@ int main(void)
         if (IsKeyDown(KEY_D)) move = Vector3Subtract(move, right);
 
 		//checks if there is any movement input
-        //started using 
         if (Vector3Length(move) > 0.0f)
         {
             move = Vector3Normalize(move);
@@ -121,9 +119,9 @@ int main(void)
             player.position = newPos;
         }
 
+		// Apply vertical velocity
         player.position.y += player.velocity.y * dt;
 
-        // --- Ground collision ---
 		//simple ground collision detection
         if (player.position.y <= groundHeight)
         {
@@ -133,13 +131,13 @@ int main(void)
         }
 
 
-        // --- Camera follows player head --- rotation
+        //allows the camera to follow the player's head based on rotation
         camera.position = player.position;
         camera.target.x = player.position.x + sinf(player.yaw) * cosf(player.pitch);
         camera.target.y = player.position.y + sinf(player.pitch);
         camera.target.z = player.position.z + cosf(player.yaw) * cosf(player.pitch);
 
-        // --- Draw ---
+		// starts to Draw the 3D world
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -148,7 +146,7 @@ int main(void)
         DrawLevel();
 
         EndMode3D();
-
+		//creates the text on the screen
         DrawText("WASD to move, Mouse to look, ,ESC to quit", 10, 10, 15, DARKGRAY);
 		DrawText("Shift to sprint, Space to jump", 10, 25, 15, DARKGRAY);
 
@@ -159,7 +157,7 @@ int main(void)
     return 0;
 }
 
-
+//a Drawlevel code to implement level creation in its own function
 static void DrawLevel(void)
 {
     //creates a basic floor grid that we can multiply
@@ -167,7 +165,7 @@ static void DrawLevel(void)
     const float tileSize = 5.0f;
     const Color tileColor1 = (Color){ 150, 200, 200, 255 };
 
-    // Floor tiles
+	// Floor tiles to create a checkerboard pattern
     for (int y = -floorExtent; y < floorExtent; y++)
     {
         for (int x = -floorExtent; x < floorExtent; x++)
@@ -183,6 +181,7 @@ static void DrawLevel(void)
         }
     }
 
+	// Towers at corners
     const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
     const Color towerColor = (Color){ 150, 200, 200, 255 };
 
