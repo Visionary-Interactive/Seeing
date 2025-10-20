@@ -98,6 +98,16 @@ int SessionManager_Server_HandleEvents()
 	return ev;
 }
 
+bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length)
+{
+	if (NBN_GameServer_SendReliableByteArrayTo(conn, (uint8_t*)data, length) < 0)
+	{
+		printf("Failed to send Reliable Byte Array to client %u\n", conn);
+		return false;
+	}
+	return true;
+}
+
 // Send queued packets
 int SessionManager_Server_SendPackets()
 {

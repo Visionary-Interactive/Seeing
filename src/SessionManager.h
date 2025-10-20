@@ -32,6 +32,7 @@ void SessionManager_Init();
 bool SessionManager_CreateServer(const char* protocol, uint16_t port);
 void SessionManager_StopServer();
 int SessionManager_Server_HandleEvents();
+bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length);
 int SessionManager_Server_SendPackets();
 
 // Client functions
