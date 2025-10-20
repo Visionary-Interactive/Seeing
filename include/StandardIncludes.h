@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef STANDARDINCLUDES_H
+#define STANDARDINCLUDES_H
 #if defined(_WIN32) || defined(_WIN64)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -24,9 +26,8 @@ static void sleep_ms(int ms) { usleep(ms * 1000); }
 #endif
 #endif // _WIN32
 
-#define NBNET_IMPL
-
 #include "nbnet.h"
 #include "net_drivers/udp.h"
 
 #include <stdio.h>
+#endif // STANDARDINCLUDES_H
