@@ -1,5 +1,6 @@
 ﻿#include "includes.h"
 #include "player.h"
+#include "shader.h"
 
 static void DrawLevel(void);
 //creates a bounding box around the player for collision detection
@@ -9,12 +10,14 @@ int main(void)
     const int screenWidth = 1600;
     const int screenHeight = 900;
 
-    InitWindow(screenWidth, screenHeight, "A Game about Seeing");
+    InitWindow(screenWidth, screenHeight, "A Game About Seeing");
     DisableCursor();   // Hide cursor for mouselook
     SetTargetFPS(60);
 
     InitPlayer();
     Player* player = GetPlayer();
+
+    InitVisionShader(screenWidth, screenHeight);
 
     //Sets up camera
     Camera camera = { 0 };
@@ -26,9 +29,9 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-
         //getting the direction the mosue is moving for the purposes of the camera
         UpdatePlayer();
+        UpdateVisionShader(GetFrameTime());
 
         //allows the camera to follow the player's head based on rotation
         camera.position = player->position;
@@ -37,22 +40,29 @@ int main(void)
         camera.target.z = player->position.z + cosf(player->yaw) * cosf(player->pitch);
 
 		// starts to Draw the 3D world
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        BeginVisionRender();
+
         BeginMode3D(camera);
-
         DrawLevel();
-
         EndMode3D();
-		//creates the text on the screen
-        DrawText("WASD to move, Mouse to look, ESC to quit", 10, 10, 20, DARKGRAY);
-		DrawText("Shift to sprint, Space to jump", 10, 40, 20, DARKGRAY);
-        DrawText(TextFormat("Player Relative Position: (%06.3f, %06.3f, %06.3f)", player->position.x, player->position.y, player->position.z), 100, 50, 20, BLACK);
 
+        EndVisionRender();
+        DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+        DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
+        DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+        DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
+        DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
+            player->position.x, player->position.y, player->position.z),
+            10, 130, 20, DARKGRAY);
         EndDrawing();
     }
 
+    //UnloadRenderTexture(target);
+    DestroyVisionShader();
     DestroyPlayer();
 
     CloseWindow();
