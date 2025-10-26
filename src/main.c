@@ -15,7 +15,6 @@ typedef struct Player {
 
 
 static void DrawLevel(void);
-//creates a bounding box around the player for collision detection
 
 
 int main(void)
