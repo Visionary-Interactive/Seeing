@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define NBNET_IMPL
+
 #ifndef DEBUG_LOGGING
 #define DEBUG_LOGGING 0
 #endif
@@ -24,7 +26,8 @@
 #define NBN_LogWarning(...) ((void)0)
 #endif
 
-#include "StandardIncludes.h"
+#include "nbnet.h"
+#include "net_drivers/udp.h"
 
 void SessionManager_Init();
 
