@@ -2,7 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs
-/bin/Debug
-/build
 /Seeing.sln
+/build
+/bin/Debug
+/.vs
