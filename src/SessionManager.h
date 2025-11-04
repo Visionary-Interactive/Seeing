@@ -4,30 +4,17 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 
-#define NBNET_IMPL
+typedef uint32_t NBN_ConnectionHandle;
 
-#ifndef DEBUG_LOGGING
-#define DEBUG_LOGGING 0
-#endif
+struct Snapshot {
+	uint16_t sequence;
+	float posX, posY, posZ;
+};
 
-#if DEBUG_LOGGING
-// Basic logging to console
-#define NBN_LogInfo(...)   printf(__VA_ARGS__); printf("\n")
-#define NBN_LogError(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogDebug(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogTrace(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogWarning(...) printf(__VA_ARGS__); printf("\n")
-#else
-#define NBN_LogInfo(...)    ((void)0)
-#define NBN_LogError(...)   ((void)0)
-#define NBN_LogDebug(...)   ((void)0)
-#define NBN_LogTrace(...)   ((void)0)
-#define NBN_LogWarning(...) ((void)0)
-#endif
-
-#include "nbnet.h"
-#include "net_drivers/udp.h"
+NBN_ConnectionHandle connectedClientHandle;
 
 void SessionManager_Init();
 
@@ -36,6 +23,8 @@ bool SessionManager_CreateServer(const char* protocol, uint16_t port);
 void SessionManager_StopServer();
 int SessionManager_Server_HandleEvents();
 bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length);
+bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length);
+void SessionManager_Server_Tick(struct Snapshot player);
 int SessionManager_Server_SendPackets();
 
 // Client functions
@@ -43,6 +32,7 @@ bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_
 void SessionManager_StopClient();
 int SessionManager_Client_HandleEvents();
 bool SessionManager_Client_SendReliableByteArray(const uint8_t* data, unsigned int length);
+bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned int length);
 int SessionManager_Client_SendPackets();
 
 #endif

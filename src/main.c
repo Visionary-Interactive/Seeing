@@ -1,11 +1,14 @@
 ﻿#include "includes.h"
 #include "player.h"
 #include "shader.h"
+#include "SessionManager.h"
+
+#define SERVER_PORT 12345
 
 static void DrawLevel(void);
 //creates a bounding box around the player for collision detection
 
-int main(void)
+int main(int argc, char** argv)
 {
     const int screenWidth = 1600;
     const int screenHeight = 900;
@@ -27,8 +30,47 @@ int main(void)
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
+    // Set up Server
+	int ev; // event variable
+    if (argc < 2)
+    {
+        printf("Usage: %s <server|client> [host-for-client]\n", argv[0]);
+        return 1;
+    }
+
+    SessionManager_Init();
+    if (strcmp(argv[1], "server") == 0)
+    {
+        SessionManager_CreateServer("UDP", SERVER_PORT);
+    }
+    else if (strcmp(argv[1], "client") == 0)
+    {
+        const char* host = (argc >= 3) ? argv[2] : "127.0.0.1"; // set default host to localhost
+        SessionManager_CreateClient("UDP", host, SERVER_PORT);
+    }
+
     while (!WindowShouldClose())
     {
+		// Handle networking events
+        if (strcmp(argv[1], "server") == 0)
+        {
+            ev = SessionManager_Server_HandleEvents();
+            
+			struct Snapshot playerPosition;
+            playerPosition.sequence = 0;
+            playerPosition.posX = player->position.x;
+            playerPosition.posY = player->position.y;
+            playerPosition.posZ = player->position.z;
+
+            SessionManager_Server_Tick(playerPosition);
+            SessionManager_Server_SendPackets();
+        }
+        else if (strcmp(argv[1], "client") == 0)
+        {
+            ev = SessionManager_Client_HandleEvents();
+            SessionManager_Client_SendPackets();
+        }
+
         //getting the direction the mosue is moving for the purposes of the camera
         UpdatePlayer();
         UpdateVisionShader(GetFrameTime());
@@ -64,6 +106,12 @@ int main(void)
     //UnloadRenderTexture(target);
     DestroyVisionShader();
     DestroyPlayer();
+
+	// Stop Server/Client
+    if (strcmp(argv[1], "server") == 0)
+        SessionManager_StopServer();
+    else if (strcmp(argv[1], "client") == 0)
+        SessionManager_StopClient();
 
     CloseWindow();
     return 0;

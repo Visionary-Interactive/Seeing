@@ -1,9 +1,34 @@
 #include "SessionManager.h"
 
+#define NBNET_IMPL
+
+#ifndef DEBUG_LOGGING
+#define DEBUG_LOGGING 0
+#endif
+
+#if DEBUG_LOGGING
+// Basic logging to console
+#define NBN_LogInfo(...)   printf(__VA_ARGS__); printf("\n")
+#define NBN_LogError(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogDebug(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogTrace(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogWarning(...) printf(__VA_ARGS__); printf("\n")
+#else
+#define NBN_LogInfo(...)    ((void)0)
+#define NBN_LogError(...)   ((void)0)
+#define NBN_LogDebug(...)   ((void)0)
+#define NBN_LogTrace(...)   ((void)0)
+#define NBN_LogWarning(...) ((void)0)
+#endif
+
+#include "nbnet.h"
+#include "net_drivers/udp.h"
+
 void SessionManager_Init()
 {
 	// Initialize Protocol
 	NBN_UDP_Register();
+	connectedClientHandle = NULL;
 }
 
 // Create a server session
@@ -33,6 +58,7 @@ int SessionManager_Server_HandleEvents()
 	case NBN_NEW_CONNECTION:
 	{
 		NBN_ConnectionHandle new_conn = NBN_GameServer_GetIncomingConnection();
+		connectedClientHandle = new_conn;
 		unsigned int len = NBN_GameServer_ReadIncomingConnectionData(NULL); // can pass buffer to read data
 		printf("New connection: handle=%u, initial_data_len=%u\n", new_conn, len);
 
@@ -100,12 +126,33 @@ int SessionManager_Server_HandleEvents()
 
 bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length)
 {
-	if (NBN_GameServer_SendReliableByteArrayTo(conn, (uint8_t*)data, length) < 0)
+	if (NBN_GameServer_SendReliableByteArrayTo(conn, data, length) < 0)
 	{
 		printf("Failed to send Reliable Byte Array to client %u\n", conn);
 		return false;
 	}
 	return true;
+}
+
+bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length)
+{
+	if (NBN_GameServer_SendUnreliableByteArrayTo(conn, data, length) < 0)
+	{
+		printf("Failed to send Unreliable Byte Array to client %u\n", conn);
+		return false;
+	}
+	return true;
+}
+
+// Server tick function - Send information to connected client
+void SessionManager_Server_Tick(struct Snapshot player)
+{
+    if (connectedClientHandle != NULL)
+    {
+		uint8_t buffer[sizeof(player)];
+		memcpy(buffer, &player, sizeof(player));
+		SessionManager_Server_SendUnreliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
+    }
 }
 
 // Send queued packets
@@ -165,7 +212,7 @@ int SessionManager_Client_HandleEvents()
 		NBN_MessageInfo info = NBN_GameClient_GetMessageInfo();
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
-			NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
+			/*NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
 			char* tmp = malloc(b->length + 1);
 			if (tmp)
 			{
@@ -173,7 +220,15 @@ int SessionManager_Client_HandleEvents()
 				tmp[b->length] = '\0';
 				printf("Got message \"%s\"\n", tmp);
 				free(tmp);
-			}
+			}*/
+
+			struct Snapshot recv_snap;
+			memcpy(&recv_snap, info.data, sizeof(recv_snap));
+			printf("Received Snapshot: sequence=%u, pos=(%.3f, %.3f, %.3f)\n",
+				recv_snap.sequence,
+				recv_snap.posX,
+				recv_snap.posY,
+				recv_snap.posZ);
 		}
 		break;
 	}
@@ -190,6 +245,16 @@ bool SessionManager_Client_SendReliableByteArray(const uint8_t* data, unsigned i
 	if (NBN_GameClient_SendReliableByteArray((uint8_t*)data, length) < 0)
 	{
 		printf("Failed to send Reliable Byte Array\n");
+		return false;
+	}
+	return true;
+}
+
+bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned int length)
+{
+	if (NBN_GameClient_SendUnreliableByteArray(data, length) < 0)
+	{
+		printf("Failed to send Unreliable Byte Array\n");
 		return false;
 	}
 	return true;
