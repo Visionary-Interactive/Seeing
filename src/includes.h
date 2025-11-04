@@ -2,8 +2,12 @@
 #ifndef STANDARDINCLUDES_H
 #define STANDARDINCLUDES_H
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h> 
+#endif
+
 #include <stdlib.h>
-//#include <unistd.h> 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
