@@ -11,6 +11,7 @@ void InitPlayer()
     player = (Player*)malloc(sizeof(Player));
     player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
     player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
+	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f)); // Simple cube as player model
     player->speed = 8.0f;
     player->yaw = 0.0f;
     player->pitch = 0.0f;
@@ -101,7 +102,18 @@ void UpdatePlayer()
         player->isGrounded = true;
     }
 }
+
  
+BoundingBox checkPlayerCollision(Model model, Vector3 position)
+{
+	BoundingBox playerbounding_box = GetMeshBoundingBox(model.meshes[0]);
+	Vector3 min_boundary = Vector3Add(position, playerbounding_box.min);
+	Vector3 max_boundary = Vector3Add(position, playerbounding_box.max);
+    playerbounding_box.max = max_boundary;
+	playerbounding_box.min = min_boundary;
+    return playerbounding_box;
+}
+
 void DestroyPlayer()
 {
     RL_FREE(player);

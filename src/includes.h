@@ -3,7 +3,6 @@
 #define STANDARDINCLUDES_H
 
 #include <stdlib.h>
-#include <unistd.h> 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -16,6 +15,9 @@
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
 
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#include <unistd.h>
+#endif
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION 330
 #else   //android or web...

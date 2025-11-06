@@ -8,6 +8,7 @@ typedef struct Player {
     Vector3 position;
     Vector3 velocity;
 	Vector3 lookDirection;
+	Model model; // Player's 3D model
     float speed;
     float yaw;   // left/right rotation
     float pitch; // up/down rotation
@@ -21,6 +22,8 @@ extern const float groundHeight; // Player’s standing height from floor
 void InitPlayer();
 Player* GetPlayer();
 void UpdatePlayer();
+
+BoundingBox checkPlayerCollision(Model model, Vector3 position);
 void DestroyPlayer();
 
 #endif
