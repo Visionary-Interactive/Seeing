@@ -11,7 +11,6 @@ uniform float angle; //this is in radians
 uniform float radiusMajor; //major axis radius in px
 uniform float radiusMinor; //minor axis radius in px (obviously less than radiusMajor)
 uniform int samples; //it's not that important but this should always be an odd number, e.g. 15 so that the center sample doesn't shift the image
-uniform float chromaDispersion; //0-1 extra blur for blue channel
 
 //gaussian helper (sigma derived from radius)
 float gaussian(float x, float sigma) {
@@ -53,7 +52,7 @@ void main()
         if (i < -N || i > N) continue;
 
         float t = float(i);
-        float u = (N == 0) ? 0.0 : t / float(max(1, N));
+        float  u = (N == 0) ? 0.0 : t / float(max(1, N));
 
         //position along major axis (texture coords)
         vec2 majorOffset = majorStep * t;
@@ -69,14 +68,7 @@ void main()
         float weightMinor = gaussian(ellipseScale * radiusMinor, sigmaMinor);
         float weight = weightMajor * weightMinor;
 
-        ///this is completely optional but it looks nice. do not crank dispersion too high
         vec3 col = texture(screenTex, sampleCoord).rgb;
-        
-        if (chromaDispersion > 0.001) {
-            vec2 blueShift = minorStep * 0.1 * chromaDispersion;
-            float blue = texture(screenTex, sampleCoord + blueShift).b;
-            col.b = blue;
-        }
 
         accum += col * weight;
         weightSum += weight;
@@ -84,14 +76,8 @@ void main()
         //also sample symmetric negative minor offset to keep kernel symmetric..
         vec2 sampleCoord2 = fragTexCoord + majorOffset - minorOffset;
         vec3 col2 = texture(screenTex, sampleCoord2).rgb;
-        if (chromaDispersion > 0.001) {
-            vec2 blueShift2 = -minorStep * 0.1 * chromaDispersion;
-            float blue2 = texture(screenTex, sampleCoord2 + blueShift2).b;
-            col2.b = blue2;
-        }
-        float weight2 = weightMajor * weightMinor; // same
-        accum += col2 * weight2;
-        weightSum += weight2;
+        accum += col2 * weight;
+        weightSum += weight;
     }
 
     //normalize

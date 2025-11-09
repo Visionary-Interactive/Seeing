@@ -12,7 +12,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "A Game About Seeing");
     DisableCursor();   // Hide cursor for mouselook
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 
     InitPlayer();
     Player* player = GetPlayer();
@@ -24,7 +24,7 @@ int main(void)
     camera.position = player->position;
     camera.target = (Vector3){ 0.0f, 1.8f, 1.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.fovy = 60.0f;
+    camera.fovy = 90.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
     while (!WindowShouldClose())
@@ -110,3 +110,4 @@ static void DrawLevel(void)
 
 }
 
+// cd build && ./premake5 gmake && cd .. && make && ./bin/Debug/Seeing

@@ -15,8 +15,8 @@ typedef struct Player {
 } Player;
 
 extern const float gravity; //gravity force
-extern const float jumpStrength; // Initial jump velocity
-extern const float groundHeight; // Player’s standing height from floor
+extern const float jumpStrength; //initial jump velocity
+extern const float groundHeight; //player’s standing height from floor
 
 void InitPlayer();
 Player* GetPlayer();
