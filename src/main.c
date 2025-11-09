@@ -3,7 +3,6 @@
 #include "shader.h"
 
 static void DrawLevel(void);
-//creates a bounding box around the player for collision detection
 
 int main(void)
 {
@@ -39,6 +38,10 @@ int main(void)
         camera.target.y = player->position.y + sinf(player->pitch);
         camera.target.z = player->position.z + cosf(player->yaw) * cosf(player->pitch);
 
+
+        //Check Collision
+		
+   
 		// starts to Draw the 3D world
 
         BeginDrawing();
