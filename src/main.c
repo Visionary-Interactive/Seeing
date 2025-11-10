@@ -1,7 +1,7 @@
 ﻿#include "includes.h"
 #include "player.h"
 #include "camera.h"
-#include "shader.h"
+#include "impairment.h"
 #include "map.h"
 
 static void DrawLevel(void);
@@ -12,8 +12,11 @@ int main(void)
     const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+
+    //all this stuff should be toggleable
     DisableCursor(); //hide cursor for mouselook
     SetTargetFPS(120);
+    SetConfigFlags(FLAG_MSAA_4X_HINT); 
 
     InitPlayer();
     Player* player = GetPlayer();
@@ -23,25 +26,25 @@ int main(void)
 
     Map gameMap;
 
-    InitVisionShader(screenWidth, screenHeight);
+    Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 
     while (!WindowShouldClose())
     {
         UpdatePlayer();
-        UpdateVisionShader(GetFrameTime());
+        UpdateImpairment(astig);
 
         RefreshCamera(player);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        BeginVisionRender();
+        BeginImpairment(astig);
 
         BeginMode3D(*camera);
         DrawMap(&gameMap);
         EndMode3D();
 
-        EndVisionRender();
+        EndImpairment(astig);
         DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
         DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
         DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
@@ -55,7 +58,8 @@ int main(void)
         EndDrawing();
     }
 
-    DestroyVisionShader();
+    DestroyImpairment(astig);
+    DestroyCamera();
     DestroyPlayer();
 
     CloseWindow();
