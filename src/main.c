@@ -1,6 +1,8 @@
 ﻿#include "includes.h"
 #include "player.h"
+#include "camera.h"
 #include "shader.h"
+#include "map.h"
 
 static void DrawLevel(void);
 
@@ -10,47 +12,33 @@ int main(void)
     const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "A Game About Seeing");
-    DisableCursor();   // Hide cursor for mouselook
+    DisableCursor(); //hide cursor for mouselook
     SetTargetFPS(120);
 
     InitPlayer();
     Player* player = GetPlayer();
 
-    InitVisionShader(screenWidth, screenHeight);
+    InitCamera();
+	Camera* camera = GetCamera();
 
-    //Sets up camera
-    Camera camera = { 0 };
-    camera.position = player->position;
-    camera.target = (Vector3){ 0.0f, 1.8f, 1.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.fovy = 90.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    Map gameMap;
+
+    InitVisionShader(screenWidth, screenHeight);
 
     while (!WindowShouldClose())
     {
-        //getting the direction the mosue is moving for the purposes of the camera
         UpdatePlayer();
         UpdateVisionShader(GetFrameTime());
 
-        //allows the camera to follow the player's head based on rotation
-        camera.position = player->position;
-        camera.target.x = player->position.x + sinf(player->yaw) * cosf(player->pitch);
-        camera.target.y = player->position.y + sinf(player->pitch);
-        camera.target.z = player->position.z + cosf(player->yaw) * cosf(player->pitch);
-
-
-        //Check Collision
-		
-   
-		// starts to Draw the 3D world
+        RefreshCamera(player);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
         BeginVisionRender();
 
-        BeginMode3D(camera);
-        DrawLevel();
+        BeginMode3D(*camera);
+        DrawMap(&gameMap);
         EndMode3D();
 
         EndVisionRender();
@@ -61,10 +49,12 @@ int main(void)
         DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
             player->position.x, player->position.y, player->position.z),
             10, 130, 20, DARKGRAY);
+        DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
+            camera->target.x, camera->target.y, camera->target.z),
+            10, 160, 20, DARKGRAY);
         EndDrawing();
     }
 
-    //UnloadRenderTexture(target);
     DestroyVisionShader();
     DestroyPlayer();
 
@@ -72,45 +62,6 @@ int main(void)
     return 0;
 }
 
-//a Drawlevel code to implement level creation in its own function
-static void DrawLevel(void)
-{
-    //creates a basic floor grid that we can multiply
-    const int floorExtent = 25;
-    const float tileSize = 5.0f;
-    const Color tileColor1 = (Color){ 150, 200, 200, 255 };
 
-	// Floor tiles to create a checkerboard pattern
-    for (int y = -floorExtent; y < floorExtent; y++)
-    {
-        for (int x = -floorExtent; x < floorExtent; x++)
-        {
-            if ((y & 1) && (x & 1)) DrawPlane((Vector3) { x* tileSize, 0.0f, y* tileSize }, (Vector2) { tileSize, tileSize }, tileColor1);
-            else if (!(y & 1) && !(x & 1)) DrawPlane((Vector3) { x* tileSize, 0.0f, y* tileSize }, (Vector2) { tileSize, tileSize }, PURPLE);
-        }
-    }
-
-	// Towers at corners
-    const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = (Color){ 150, 200, 200, 255 };
-
-	//premade draws within the raylib library to draw cubes
-    Vector3 towerPos = (Vector3){ 16.0f, 16.0f, 16.0f };
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.z *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-}
-
+// CMD build and start debugging
 // cd build && ./premake5 gmake && cd .. && make && ./bin/Debug/Seeing
