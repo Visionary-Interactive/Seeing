@@ -15,6 +15,12 @@ void InitPlayer()
     player->yaw = 0.0f;
     player->pitch = 0.0f;
     player->isGrounded = true;
+
+	// Remote movement initialization
+    player->ex_W = false;
+    player->ex_A = false;
+    player->ex_S = false;
+    player->ex_D = false;
 }
 
 Player* GetPlayer()
@@ -74,10 +80,10 @@ void UpdatePlayer()
     //subtract move backwards/right and add to move forwards/left
     //
     Vector3 move = { 0 };
-    if (IsKeyDown(KEY_W)) move = Vector3Add(move, forward);
-    if (IsKeyDown(KEY_S)) move = Vector3Subtract(move, forward);
-    if (IsKeyDown(KEY_A)) move = Vector3Add(move, right);
-    if (IsKeyDown(KEY_D)) move = Vector3Subtract(move, right);
+    if (IsKeyDown(KEY_W) || player->ex_W) move = Vector3Add(move, forward);
+    if (IsKeyDown(KEY_S) || player->ex_S) move = Vector3Subtract(move, forward);
+    if (IsKeyDown(KEY_A) || player->ex_A) move = Vector3Add(move, right);
+    if (IsKeyDown(KEY_D) || player->ex_D) move = Vector3Subtract(move, right);
 
     //checks if there is any movement input
     if (Vector3Length(move) > 0.0f)

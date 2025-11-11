@@ -29,6 +29,7 @@ void SessionManager_Init()
 	// Initialize Protocol
 	NBN_UDP_Register();
 	connectedClientHandle = NULL;
+	lastSnapshot = (struct Snapshot){ 0 };
 }
 
 // Create a server session
@@ -151,7 +152,7 @@ void SessionManager_Server_Tick(struct Snapshot player)
     {
 		uint8_t buffer[sizeof(player)];
 		memcpy(buffer, &player, sizeof(player));
-		SessionManager_Server_SendUnreliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
+		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
     }
 }
 
@@ -224,11 +225,14 @@ int SessionManager_Client_HandleEvents()
 
 			struct Snapshot recv_snap;
 			memcpy(&recv_snap, info.data, sizeof(recv_snap));
-			printf("Received Snapshot: sequence=%u, pos=(%.3f, %.3f, %.3f)\n",
-				recv_snap.sequence,
-				recv_snap.posX,
-				recv_snap.posY,
-				recv_snap.posZ);
+			printf("Received Snapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f\n",
+				recv_snap.forward,
+				recv_snap.backward,
+				recv_snap.left,
+				recv_snap.right,
+				recv_snap.y);
+
+			lastSnapshot = recv_snap;
 		}
 		break;
 	}

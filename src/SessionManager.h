@@ -10,11 +10,15 @@
 typedef uint32_t NBN_ConnectionHandle;
 
 struct Snapshot {
-	uint16_t sequence;
-	float posX, posY, posZ;
+	bool forward;
+	bool backward;
+	bool left;
+	bool right;
+	float y;
 };
 
 NBN_ConnectionHandle connectedClientHandle;
+struct Snapshot lastSnapshot;
 
 void SessionManager_Init();
 

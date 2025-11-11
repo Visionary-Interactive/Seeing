@@ -12,6 +12,12 @@ typedef struct Player {
     float yaw;   // left/right rotation
     float pitch; // up/down rotation
 	bool isGrounded; //checks if the player is on the ground
+
+    // Remote movement for player
+    bool ex_W;
+    bool ex_A;
+    bool ex_S;
+    bool ex_D;
 } Player;
 
 extern const float gravity; //gravity force

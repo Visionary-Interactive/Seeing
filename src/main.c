@@ -2,8 +2,10 @@
 #include "player.h"
 #include "shader.h"
 #include "SessionManager.h"
+#include <time.h>
 
 #define SERVER_PORT 12345
+#define TICK_RATE_MS 20
 
 static void DrawLevel(void);
 //creates a bounding box around the player for collision detection
@@ -49,26 +51,43 @@ int main(int argc, char** argv)
         SessionManager_CreateClient("UDP", host, SERVER_PORT);
     }
 
+    clock_t last_network_tick = clock();
+
     while (!WindowShouldClose())
     {
-		// Handle networking events
-        if (strcmp(argv[1], "server") == 0)
-        {
-            ev = SessionManager_Server_HandleEvents();
-            
-			struct Snapshot playerPosition;
-            playerPosition.sequence = 0;
-            playerPosition.posX = player->position.x;
-            playerPosition.posY = player->position.y;
-            playerPosition.posZ = player->position.z;
+		// Handle networking events at fixed tick rate
+		clock_t now = clock();
+        int elapsed_ms = (int)(now - last_network_tick);
 
-            SessionManager_Server_Tick(playerPosition);
-            SessionManager_Server_SendPackets();
-        }
-        else if (strcmp(argv[1], "client") == 0)
+        if (elapsed_ms >= TICK_RATE_MS)
         {
-            ev = SessionManager_Client_HandleEvents();
-            SessionManager_Client_SendPackets();
+            last_network_tick = now;
+
+            if (strcmp(argv[1], "server") == 0)
+            {
+                ev = SessionManager_Server_HandleEvents();
+
+                struct Snapshot playerPosition;
+                playerPosition.forward = IsKeyDown(KEY_W);
+                playerPosition.backward = IsKeyDown(KEY_S);
+                playerPosition.left = IsKeyDown(KEY_A);
+                playerPosition.right = IsKeyDown(KEY_D);
+                playerPosition.y = player->position.y;
+
+                SessionManager_Server_Tick(playerPosition);
+                SessionManager_Server_SendPackets();
+            }
+            else if (strcmp(argv[1], "client") == 0)
+            {
+                ev = SessionManager_Client_HandleEvents();
+
+                player->ex_W = lastSnapshot.forward;
+                player->ex_S = lastSnapshot.backward;
+                player->ex_A = lastSnapshot.left;
+                player->ex_D = lastSnapshot.right;
+
+                SessionManager_Client_SendPackets();
+            }
         }
 
         //getting the direction the mosue is moving for the purposes of the camera
