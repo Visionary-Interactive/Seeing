@@ -3,7 +3,6 @@
 #define STANDARDINCLUDES_H
 
 #include <stdlib.h>
-#include <unistd.h> 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -12,6 +11,10 @@
 #include "raymath.h"
 #include "rcamera.h"
 #include "rlgl.h"
+
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    #include <unistd.h>
+#endif
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0

@@ -11,6 +11,8 @@ void InitPlayer()
     player = (Player*)malloc(sizeof(Player));
     player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
     player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
+    //morgan - we should save this for the networking logic. the client does not need to load a model it will never see for itself
+	//player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f)); // Simple cube as player model
     player->speed = 8.0f;
     player->yaw = 0.0f;
     player->pitch = 0.0f;
@@ -49,14 +51,8 @@ void UpdatePlayer()
     };
 
     // if the shift key is held down, increase speed
-    if (IsKeyDown(KEY_LEFT_SHIFT))
-    {
-        player->speed = 16.0f; // Sprint
-    }
-    else
-    {
-        player->speed = 8.0f; // Normal speed
-    }
+    if (IsKeyDown(KEY_LEFT_SHIFT)) player->speed = 16.0f; // Sprint
+    else player->speed = 8.0f; // Normal speed
 
     if (IsKeyPressed(KEY_SPACE) && player->isGrounded)
     {
@@ -65,10 +61,7 @@ void UpdatePlayer()
     }
 
     // Apply the gravity if the player isn't detected on the gorund
-    if (!player->isGrounded)
-    {
-        player->velocity.y += gravity * dt;
-    }
+    if (!player->isGrounded) player->velocity.y += gravity * dt;
     
     // Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
     //subtract move backwards/right and add to move forwards/left
@@ -102,6 +95,16 @@ void UpdatePlayer()
     }
 }
  
+BoundingBox checkPlayerCollision(Model model, Vector3 position)
+{
+	BoundingBox playerbounding_box = GetMeshBoundingBox(model.meshes[0]);
+	Vector3 min_boundary = Vector3Add(position, playerbounding_box.min);
+	Vector3 max_boundary = Vector3Add(position, playerbounding_box.max);
+    playerbounding_box.max = max_boundary;
+	playerbounding_box.min = min_boundary;
+    return playerbounding_box;
+}
+
 void DestroyPlayer()
 {
     RL_FREE(player);
