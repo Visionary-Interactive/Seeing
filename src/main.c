@@ -1,8 +1,16 @@
 ﻿#include "includes.h"
 #include "player.h"
+#include "object.h"
 #include "shader.h"
 
+
 static void DrawLevel(void);
+void Endgame(void)
+{
+    DestroyVisionShader();
+    DestroyPlayer();
+    CloseWindow();
+}
 
 int main(void)
 {
@@ -16,6 +24,35 @@ int main(void)
     InitPlayer();
     Player* player = GetPlayer();
 
+
+	//level dimensions
+    Model wallModel = LoadModelFromMesh(GenMeshCube(20.0, 5.0, 1.0));
+	Model wallModel2 = LoadModelFromMesh(GenMeshCube(1.0, 5.0, 20.0));
+	Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+
+	//GameObject array to hold all objects in the scene
+	GameObject* gameObjects = (GameObject*)malloc(sizeof(GameObject));
+	memset(gameObjects, 0, sizeof(GameObject));
+
+    //Create a Wall to test collision
+    CreateObject(gameObjects,
+        (Vector3) {0, 4.0, -7},
+        (Vector3) {1.0, 1.0, 1.0},
+        wallModel, RED,OBJECT_VISIBILE | OBJECT_COLLIDER);
+
+    
+    //Create the door object to interact with
+    int doorID = CreateObject(gameObjects,
+        (Vector3) {0, 2.0f, -10.0f},
+     (Vector3) {3.0f, 4.0f, 0.5f },doorModel, GREEN, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_DOOR);
+	gameObjects->interactType[doorID] = INTERACTABLE_DOOR;
+
+    int pickupID = CreateObject(gameObjects,
+        (Vector3) {-10, 4.0, 0},
+        (Vector3) {1.0, 1.0, 1.0},
+		LoadModelFromMesh(GenMeshCube(1.0,1.0,1.0)), BLUE, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_PICKUP);
+	gameObjects->interactType[pickupID] = INTERACTABLE_PICKUP;
+
     InitVisionShader(screenWidth, screenHeight);
 
     //Sets up camera
@@ -28,8 +65,10 @@ int main(void)
 
     while (!WindowShouldClose())
     {
+
+
         //getting the direction the mosue is moving for the purposes of the camera
-        UpdatePlayer();
+        UpdatePlayer(gameObjects);
         UpdateVisionShader(GetFrameTime());
 
         //allows the camera to follow the player's head based on rotation
@@ -38,9 +77,6 @@ int main(void)
         camera.target.y = player->position.y + sinf(player->pitch);
         camera.target.z = player->position.z + cosf(player->yaw) * cosf(player->pitch);
 
-
-        //Check Collision
-		
    
 		// starts to Draw the 3D world
 
@@ -50,10 +86,13 @@ int main(void)
         BeginVisionRender();
 
         BeginMode3D(camera);
+        DrawCubeV(player->position, player->size, RED);
+		RenderProps(gameObjects);
         DrawLevel();
         EndMode3D();
 
         EndVisionRender();
+        UpdateInteractions(gameObjects);
         DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
         DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
         DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
@@ -65,15 +104,14 @@ int main(void)
     }
 
     //UnloadRenderTexture(target);
-    DestroyVisionShader();
-    DestroyPlayer();
 
-    CloseWindow();
+	free(gameObjects);
+    Endgame();
     return 0;
 }
 
 //a Drawlevel code to implement level creation in its own function
-static void DrawLevel(void)
+static void DrawLevel()
 {
     //creates a basic floor grid that we can multiply
     const int floorExtent = 25;
@@ -89,27 +127,5 @@ static void DrawLevel(void)
             else if (!(y & 1) && !(x & 1)) DrawPlane((Vector3) { x* tileSize, 0.0f, y* tileSize }, (Vector2) { tileSize, tileSize }, PURPLE);
         }
     }
-
-	// Towers at corners
-    const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = (Color){ 150, 200, 200, 255 };
-
-	//premade draws within the raylib library to draw cubes
-    Vector3 towerPos = (Vector3){ 16.0f, 16.0f, 16.0f };
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.z *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
 }
 
