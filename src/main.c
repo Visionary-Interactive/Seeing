@@ -6,12 +6,6 @@
 
 
 static void DrawLevel(void);
-void Endgame(void)
-{
-    DestroyVisionShader();
-    DestroyPlayer();
-    CloseWindow();
-}
 
 int main(void)
 {
@@ -29,9 +23,6 @@ int main(void)
     Player* player = GetPlayer();
 
 
-	//level dimensions
-    Model wallModel = LoadModelFromMesh(GenMeshCube(20.0, 5.0, 1.0));
-	Model wallModel2 = LoadModelFromMesh(GenMeshCube(1.0, 5.0, 20.0));
 	Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
 
 	//GameObject array to hold all objects in the scene
@@ -42,7 +33,7 @@ int main(void)
     CreateObject(gameObjects,
         (Vector3) {0, 4.0, -7},
         (Vector3) {1.0, 1.0, 1.0},
-        wallModel, RED,OBJECT_VISIBILE | OBJECT_COLLIDER);
+        LoadModelFromMesh(GenMeshCube(1.0,1.0,1.0)), RED, OBJECT_VISIBILE | OBJECT_COLLIDER);
 
     
     //Create the door object to interact with
@@ -57,7 +48,6 @@ int main(void)
 		LoadModelFromMesh(GenMeshCube(1.0,1.0,1.0)), BLUE, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_PICKUP);
 	gameObjects->interactType[pickupID] = INTERACTABLE_PICKUP;
 
-    InitVisionShader(screenWidth, screenHeight);
     InitCamera();
 	Camera* camera = GetCamera();
 
@@ -67,7 +57,7 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        UpdatePlayer();
+        UpdatePlayer(gameObjects);
         UpdateImpairment(astig);
 
         RefreshCamera(player);
@@ -79,8 +69,9 @@ int main(void)
 
         BeginMode3D(*camera);
         DrawMap(&gameMap);
+		RenderProps(gameObjects);
         EndMode3D();
-
+        UpdateInteractions(gameObjects);
         EndImpairment(astig);
         DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
         DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
@@ -98,9 +89,8 @@ int main(void)
     DestroyImpairment(astig);
     DestroyCamera();
     DestroyPlayer();
-
+    CloseWindow();
 	free(gameObjects);
-    Endgame();
     return 0;
 }
 

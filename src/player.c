@@ -15,7 +15,7 @@ void InitPlayer()
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
     player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
     //morgan - we should save this for the networking logic. the client does not need to load a model it will never see for itself
-	//player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f)); // Simple cube as player model
+	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f)); // Simple cube as player model
     player->speed = 8.0f;
     player->yaw = 0.0f;
     player->pitch = 0.0f;
@@ -99,6 +99,7 @@ void UpdatePlayer(GameObject* obj)
         {
 			player->position = newPos;
         }
+        
     }
 
     // Apply vertical velocity
