@@ -4,6 +4,7 @@
 #include "impairment.h"
 #include "map.h"
 
+
 static void DrawLevel(void);
 
 int main(void)
@@ -21,6 +22,32 @@ int main(void)
     InitPlayer();
     Player* player = GetPlayer();
 
+
+	Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+
+	//GameObject array to hold all objects in the scene
+	GameObject* gameObjects = (GameObject*)malloc(sizeof(GameObject));
+	memset(gameObjects, 0, sizeof(GameObject));
+
+    //Create a Wall to test collision
+    CreateObject(gameObjects,
+        (Vector3) {0, 4.0, -7},
+        (Vector3) {1.0, 1.0, 1.0},
+        LoadModelFromMesh(GenMeshCube(1.0,1.0,1.0)), RED, OBJECT_VISIBILE | OBJECT_COLLIDER);
+
+    
+    //Create the door object to interact with
+    int doorID = CreateObject(gameObjects,
+        (Vector3) {0, 2.0f, -10.0f},
+     (Vector3) {3.0f, 4.0f, 0.5f },doorModel, GREEN, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_DOOR);
+	gameObjects->interactType[doorID] = INTERACTABLE_DOOR;
+
+    int pickupID = CreateObject(gameObjects,
+        (Vector3) {-10, 4.0, 0},
+        (Vector3) {1.0, 1.0, 1.0},
+		LoadModelFromMesh(GenMeshCube(1.0,1.0,1.0)), BLUE, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_PICKUP);
+	gameObjects->interactType[pickupID] = INTERACTABLE_PICKUP;
+
     InitCamera();
 	Camera* camera = GetCamera();
 
@@ -30,7 +57,7 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        UpdatePlayer();
+        UpdatePlayer(gameObjects);
         UpdateImpairment(astig);
 
         RefreshCamera(player);
@@ -42,8 +69,9 @@ int main(void)
 
         BeginMode3D(*camera);
         DrawMap(&gameMap);
+		RenderProps(gameObjects);
         EndMode3D();
-
+        UpdateInteractions(gameObjects);
         EndImpairment(astig);
         DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
         DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
@@ -61,8 +89,8 @@ int main(void)
     DestroyImpairment(astig);
     DestroyCamera();
     DestroyPlayer();
-
     CloseWindow();
+	free(gameObjects);
     return 0;
 }
 
