@@ -12,12 +12,13 @@
 #include "rcamera.h"
 #include "rlgl.h"
 
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    #include <unistd.h>
+#endif
+
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
 
-#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
-#include <unistd.h>
-#endif
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION 330
 #else   //android or web...
