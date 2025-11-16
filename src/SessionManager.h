@@ -59,7 +59,7 @@ int SessionManager_Client_SendPackets();
 void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer);
 void SessionManager_Tick(struct Snapshot player, bool isServer);
 
-(*CreatePlayer)();
-(*InitalizeRemotePlayer)();
+void (*CreatePlayer)();
+void (*InitalizeRemotePlayer)();
 
 #endif
