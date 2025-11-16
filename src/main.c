@@ -269,8 +269,8 @@ int main(int argc, char** argv)
 
 	DestroyImpairment(astig);
 	DestroyCamera();
-	RL_FREE(playerList[0]);
-	RL_FREE(playerList[1]);
+	for (int i = 0; i < clientPlayerCount + 1; i++)
+		RL_FREE(playerList[i]);
 
 	// Stop Server/Client
 	if (strcmp(argv[1], "server") == 0)
