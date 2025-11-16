@@ -2,11 +2,6 @@
 #ifndef STANDARDINCLUDES_H
 #define STANDARDINCLUDES_H
 
-#if defined(_WIN32) || defined(_WIN64)
-#else
-#include <unistd.h> 
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -16,6 +11,10 @@
 #include "raymath.h"
 #include "rcamera.h"
 #include "rlgl.h"
+
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    #include <unistd.h>
+#endif
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
