@@ -22,6 +22,7 @@ void InitPlayer()
     player->isGrounded = true;
 
 	// Remote movement initialization
+	player->remotePlayer = false;
     player->ex_W = false;
     player->ex_A = false;
     player->ex_S = false;
@@ -31,6 +32,11 @@ void InitPlayer()
 Player* GetPlayer()
 {
     return player;
+}
+
+void SetPlayer(Player* p)
+{
+	player = p;
 }
 
 void UpdatePlayer(GameObject* obj)
@@ -76,10 +82,20 @@ void UpdatePlayer(GameObject* obj)
     //subtract move backwards/right and add to move forwards/left
     //
     Vector3 move = { 0 };
-    if (IsKeyDown(KEY_W) || player->ex_W) move = Vector3Add(move, forward);
-    if (IsKeyDown(KEY_S) || player->ex_S) move = Vector3Subtract(move, forward);
-    if (IsKeyDown(KEY_A) || player->ex_A) move = Vector3Add(move, right);
-    if (IsKeyDown(KEY_D) || player->ex_D) move = Vector3Subtract(move, right);
+    if (!player->remotePlayer) // Local player input
+    {
+        if (IsKeyDown(KEY_W)) move = Vector3Add(move, forward);
+        if (IsKeyDown(KEY_S)) move = Vector3Subtract(move, forward);
+        if (IsKeyDown(KEY_A)) move = Vector3Add(move, right);
+        if (IsKeyDown(KEY_D)) move = Vector3Subtract(move, right);
+    }
+    else // Remote player input
+    {
+        if (player->ex_W) move = Vector3Add(move, forward);
+        if (player->ex_S) move = Vector3Subtract(move, forward);
+        if (player->ex_A) move = Vector3Add(move, right);
+        if (player->ex_D) move = Vector3Subtract(move, right);
+    }
 
     //checks if there is any movement input
     if (Vector3Length(move) > 0.0f)

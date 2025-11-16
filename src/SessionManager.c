@@ -63,25 +63,12 @@ int SessionManager_Server_HandleEvents()
 		unsigned int len = NBN_GameServer_ReadIncomingConnectionData(NULL); // can pass buffer to read data
 		printf("New connection: handle=%u, initial_data_len=%u\n", new_conn, len);
 
-		// Can also use NBN_GameServer_ReadIncomingConnectionData to read initial data sent by client
-		// or NBN_GameServer_AcceptIncomingConnectionWithData to accept with data
 		if (NBN_GameServer_AcceptIncomingConnection() < 0)
 			printf("Warning: failed to accept incoming connection\n");
-		else
-		{
-			const char* server_msg = "Server: Hi client!";
-			int rc = NBN_GameServer_SendReliableByteArrayTo(new_conn, (uint8_t*)server_msg, (unsigned int)strlen(server_msg));
-			printf("NBN_GameServer_SendUnreliableByteArrayTo returned %d\n", rc);
-			//server_wait_for_incoming(2000);
 
-			int sents = NBN_GameServer_SendPackets();
-			printf("NBN_GameServer_SendPackets returned %d\n", sents);
+		// Create player
+		CreatePlayer();
 
-			if (rc >= 0)
-				printf("Server: queued message to client %u: \"%s\"\n", new_conn, server_msg);
-			else
-				printf("Server: failed to queue message for client %u\n", new_conn);
-		}
 		break;
 	}
 	case NBN_CLIENT_MESSAGE_RECEIVED:
@@ -91,23 +78,50 @@ int SessionManager_Server_HandleEvents()
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
+			if (bmsg->length < 1) return; // Invalid
 
-			unsigned int l = bmsg->length;
-			char* tmp = (char*)malloc(l + 1);
-			if (tmp)
+			uint8_t msg_type = bmsg->bytes[0];
+			switch (msg_type)
 			{
-				memcpy(tmp, bmsg->bytes, l);
-				tmp[l] = '\0'; // add null terminator
-				printf("Received from client %u: \"%s\" (len=%u)\n", info.sender, tmp, l);
-				free(tmp);
+			case MSG_TYPE_SNAPSHOT:
+				if (bmsg->length >= 1 + sizeof(struct Snapshot)) {
+					struct Snapshot recv_snap;
+					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct Snapshot));
+
+					lastSnapshot = recv_snap;
+				}
+				break;
+			case MSG_TYPE_INCOMINGPLAYER:
+				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
+					struct IncomingPlayer recv_player;
+					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
+					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
+						recv_player.posX,
+						recv_player.posY,
+						recv_player.posZ,
+						recv_player.scaleX,
+						recv_player.scaleY,
+						recv_player.scaleZ,
+						recv_player.r,
+						recv_player.g,
+						recv_player.b,
+						recv_player.velX,
+						recv_player.velY,
+						recv_player.velZ,
+						recv_player.speed,
+						recv_player.yaw,
+						recv_player.pitch,
+						recv_player.isGrounded);
+
+					incomingPlayerData = recv_player;
+					// Initialize remote player with received data
+					InitalizeRemotePlayer();
+				}
+				break;
+			default:
+				// Unknown type
+				break;
 			}
-			// echo back
-			NBN_GameServer_SendUnreliableByteArrayTo(info.sender, bmsg->bytes, bmsg->length);
-			NBN_GameServer_SendPackets();
-		}
-		else
-		{
-			printf("Server: received non-byte-array message type=%d\n", info.type);
 		}
 		break;
 	}
@@ -115,6 +129,7 @@ int SessionManager_Server_HandleEvents()
 	{
 		NBN_ConnectionHandle disc = NBN_GameServer_GetDisconnectedClient();
 		printf("Client disconnected: handle=%u\n", disc);
+		connectedClientHandle = NULL;
 		break;
 	}
 	case NBN_NO_EVENT:
@@ -143,17 +158,6 @@ bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, co
 		return false;
 	}
 	return true;
-}
-
-// Server tick function - Send information to connected client
-void SessionManager_Server_Tick(struct Snapshot player)
-{
-    if (connectedClientHandle != NULL)
-    {
-		uint8_t buffer[sizeof(player)];
-		memcpy(buffer, &player, sizeof(player));
-		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
-    }
 }
 
 // Send queued packets
@@ -190,22 +194,15 @@ int SessionManager_Client_HandleEvents()
 	{
 		printf("Connected to server\n");
 
-		const char* client_msg = "Client: Hi server!";
-		int rc = NBN_GameClient_SendReliableByteArray((uint8_t*)client_msg, (unsigned int)strlen(client_msg));
-		printf("NBN_GameClient_SendUnreliableByteArray returned %d\n", rc);
+		// Create player
+		CreatePlayer();
 
-		int sents = NBN_GameClient_SendPackets();
-		printf("NBN_GameClient_SendPackets returned %d\n", sents);
-
-		if (rc >= 0)
-			printf("Client: queued initial message: \"%s\"\n", client_msg);
-		else
-			printf("Client: failed to queue initial message\n");
 		break;
 	}
 	case NBN_DISCONNECTED:
 	{
-		printf("Disconnected while connecting\n");
+		printf("Disconnected from server\n");
+		SessionManager_StopClient();
 		break;
 	}
 	case NBN_MESSAGE_RECEIVED:
@@ -213,26 +210,59 @@ int SessionManager_Client_HandleEvents()
 		NBN_MessageInfo info = NBN_GameClient_GetMessageInfo();
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
-			/*NBN_ByteArrayMessage* b = (NBN_ByteArrayMessage*)info.data;
-			char* tmp = malloc(b->length + 1);
-			if (tmp)
+			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
+			if (bmsg->length < 1) return; // Invalid
+
+			uint8_t msg_type = bmsg->bytes[0];
+			switch (msg_type)
 			{
-				memcpy(tmp, b->bytes, b->length);
-				tmp[b->length] = '\0';
-				printf("Got message \"%s\"\n", tmp);
-				free(tmp);
-			}*/
+			case MSG_TYPE_SNAPSHOT:
+				if (bmsg->length >= 1 + sizeof(struct Snapshot)) {
+					struct Snapshot recv_snap;
+					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct Snapshot));
+					//printf("Received Snapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f \tpitch=%.3f \tyaw=%.3f\n",
+					//	recv_snap.forward,
+					//	recv_snap.backward,
+					//	recv_snap.left,
+					//	recv_snap.right,
+					//	recv_snap.y,
+					//	recv_snap.pitch,
+					//	recv_snap.yaw);
 
-			struct Snapshot recv_snap;
-			memcpy(&recv_snap, info.data, sizeof(recv_snap));
-			printf("Received Snapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f\n",
-				recv_snap.forward,
-				recv_snap.backward,
-				recv_snap.left,
-				recv_snap.right,
-				recv_snap.y);
+					lastSnapshot = recv_snap;
+				}
+				break;
+			case MSG_TYPE_INCOMINGPLAYER:
+				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
+					struct IncomingPlayer recv_player;
+					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
+					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
+						recv_player.posX,
+						recv_player.posY,
+						recv_player.posZ,
+						recv_player.scaleX,
+						recv_player.scaleY,
+						recv_player.scaleZ,
+						recv_player.r,
+						recv_player.g,
+						recv_player.b,
+						recv_player.velX,
+						recv_player.velY,
+						recv_player.velZ,
+						recv_player.speed,
+						recv_player.yaw,
+						recv_player.pitch,
+						recv_player.isGrounded);
 
-			lastSnapshot = recv_snap;
+					incomingPlayerData = recv_player;
+					// Initialize remote player with received data
+					InitalizeRemotePlayer();
+				}
+				break;
+			default:
+				// Unknown type
+				break;
+			}
 		}
 		break;
 	}
@@ -268,4 +298,28 @@ bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned
 int SessionManager_Client_SendPackets()
 {
 	return NBN_GameClient_SendPackets();;
+}
+
+// Send initial player data
+void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer)
+{
+	uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
+	buffer[0] = MSG_TYPE_INCOMINGPLAYER;
+	memcpy(buffer + 1, incomingPlayer, sizeof(struct IncomingPlayer));
+	if (isServer)
+		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, sizeof(buffer));
+	else
+		SessionManager_Client_SendReliableByteArray(buffer, sizeof(buffer));
+}
+
+// Server/Client tick function
+void SessionManager_Tick(struct Snapshot player, bool isServer)
+{
+	uint8_t buffer[1 + sizeof(player)];
+	buffer[0] = MSG_TYPE_SNAPSHOT;
+	memcpy(buffer + 1, &player, sizeof(player));
+	if (isServer && connectedClientHandle != NULL)
+		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
+	else if (!isServer)
+		SessionManager_Client_SendReliableByteArray(buffer, (unsigned int)sizeof(buffer));
 }

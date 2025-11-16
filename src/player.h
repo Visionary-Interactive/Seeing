@@ -17,6 +17,7 @@ typedef struct Player {
 	bool isGrounded; //checks if the player is on the ground
 
     // Remote movement for player
+    bool remotePlayer;
     bool ex_W;
     bool ex_A;
     bool ex_S;
@@ -29,6 +30,7 @@ extern const float groundHeight; //player’s standing height from floor
 
 void InitPlayer();
 Player* GetPlayer();
+void SetPlayer(Player* p);
 void UpdatePlayer(GameObject* obj);
 void UpdateInteractions(GameObject* obj);
 BoundingBox getPlayerCollision(Model model, Vector3 position);
