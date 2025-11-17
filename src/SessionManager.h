@@ -11,7 +11,6 @@
 #define MSG_TYPE_INCOMINGPLAYER 2
 
 typedef uint32_t NBN_ConnectionHandle;
-typedef struct Player Player;
 
 struct Snapshot {
 	uint8_t forward;
@@ -34,9 +33,9 @@ struct IncomingPlayer {
 	uint8_t isGrounded;
 };
 
-NBN_ConnectionHandle connectedClientHandle;
-struct Snapshot lastSnapshot;
-struct IncomingPlayer incomingPlayerData;
+extern NBN_ConnectionHandle connectedClientHandle;
+extern struct Snapshot lastSnapshot;
+extern struct IncomingPlayer incomingPlayerData;
 
 void SessionManager_Init();
 
@@ -59,7 +58,7 @@ int SessionManager_Client_SendPackets();
 void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer);
 void SessionManager_Tick(struct Snapshot player, bool isServer);
 
-void (*CreatePlayer)();
-void (*InitalizeRemotePlayer)();
+extern void (*CreatePlayer)();
+extern void (*InitalizeRemotePlayer)();
 
 #endif

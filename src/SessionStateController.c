@@ -1,5 +1,11 @@
 #include "SessionStateController.h"
 
+Player* playerList[MAX_PLAYERS];
+int clientPlayerCount = 0;
+Color playerColor;
+Color remoteColor;
+clock_t last_network_tick = 0;
+
 void SessionStateController_Init()
 {
 	clientPlayerCount = 0;

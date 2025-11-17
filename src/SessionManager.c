@@ -24,6 +24,13 @@
 #include "nbnet.h"
 #include "net_drivers/udp.h"
 
+NBN_ConnectionHandle connectedClientHandle = 0;
+struct Snapshot lastSnapshot = { 0 };
+struct IncomingPlayer incomingPlayerData = { 0 };
+
+void (*CreatePlayer)() = NULL;
+void (*InitalizeRemotePlayer)() = NULL;
+
 void SessionManager_Init()
 {
 	// Initialize Protocol
