@@ -14,10 +14,10 @@ typedef uint32_t NBN_ConnectionHandle;
 typedef struct Player Player;
 
 struct Snapshot {
-	bool forward;
-	bool backward;
-	bool left;
-	bool right;
+	uint8_t forward;
+	uint8_t backward;
+	uint8_t left;
+	uint8_t right;
 	float y;
 	float pitch;
 	float yaw;
@@ -31,7 +31,7 @@ struct IncomingPlayer {
 	float speed;
 	float yaw;
 	float pitch;
-	bool isGrounded;
+	uint8_t isGrounded;
 };
 
 NBN_ConnectionHandle connectedClientHandle;
@@ -44,22 +44,22 @@ void SessionManager_Init();
 bool SessionManager_CreateServer(const char* protocol, uint16_t port);
 void SessionManager_StopServer();
 int SessionManager_Server_HandleEvents();
-bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length);
-bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length);
+bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length);
+bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length);
 int SessionManager_Server_SendPackets();
 
 // Client functions
 bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_t port);
 void SessionManager_StopClient();
 int SessionManager_Client_HandleEvents();
-bool SessionManager_Client_SendReliableByteArray(const uint8_t* data, unsigned int length);
-bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned int length);
+bool SessionManager_Client_SendReliableByteArray(uint8_t* data, unsigned int length);
+bool SessionManager_Client_SendUnreliableByteArray(uint8_t* data, unsigned int length);
 int SessionManager_Client_SendPackets();
 
 void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer);
 void SessionManager_Tick(struct Snapshot player, bool isServer);
 
-(*CreatePlayer)();
-(*InitalizeRemotePlayer)();
+void (*CreatePlayer)();
+void (*InitalizeRemotePlayer)();
 
 #endif

@@ -28,7 +28,7 @@ void SessionManager_Init()
 {
 	// Initialize Protocol
 	NBN_UDP_Register();
-	connectedClientHandle = NULL;
+	connectedClientHandle = 0;
 	lastSnapshot = (struct Snapshot){ 0 };
 }
 
@@ -78,7 +78,7 @@ int SessionManager_Server_HandleEvents()
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
-			if (bmsg->length < 1) return; // Invalid
+			if (bmsg->length < 1) return -1; // Invalid
 
 			uint8_t msg_type = bmsg->bytes[0];
 			switch (msg_type)
@@ -129,7 +129,7 @@ int SessionManager_Server_HandleEvents()
 	{
 		NBN_ConnectionHandle disc = NBN_GameServer_GetDisconnectedClient();
 		printf("Client disconnected: handle=%u\n", disc);
-		connectedClientHandle = NULL;
+		connectedClientHandle = 0;
 		break;
 	}
 	case NBN_NO_EVENT:
@@ -140,7 +140,7 @@ int SessionManager_Server_HandleEvents()
 	return ev;
 }
 
-bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length)
+bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length)
 {
 	if (NBN_GameServer_SendReliableByteArrayTo(conn, data, length) < 0)
 	{
@@ -150,7 +150,7 @@ bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, cons
 	return true;
 }
 
-bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, const uint8_t* data, unsigned int length)
+bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length)
 {
 	if (NBN_GameServer_SendUnreliableByteArrayTo(conn, data, length) < 0)
 	{
@@ -211,7 +211,7 @@ int SessionManager_Client_HandleEvents()
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
-			if (bmsg->length < 1) return; // Invalid
+			if (bmsg->length < 1) return -1; // Invalid
 
 			uint8_t msg_type = bmsg->bytes[0];
 			switch (msg_type)
@@ -274,7 +274,7 @@ int SessionManager_Client_HandleEvents()
 	return ev;
 }
 
-bool SessionManager_Client_SendReliableByteArray(const uint8_t* data, unsigned int length)
+bool SessionManager_Client_SendReliableByteArray(uint8_t* data, unsigned int length)
 {
 	if (NBN_GameClient_SendReliableByteArray((uint8_t*)data, length) < 0)
 	{
@@ -284,7 +284,7 @@ bool SessionManager_Client_SendReliableByteArray(const uint8_t* data, unsigned i
 	return true;
 }
 
-bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned int length)
+bool SessionManager_Client_SendUnreliableByteArray(uint8_t* data, unsigned int length)
 {
 	if (NBN_GameClient_SendUnreliableByteArray(data, length) < 0)
 	{
@@ -297,7 +297,7 @@ bool SessionManager_Client_SendUnreliableByteArray(const uint8_t* data, unsigned
 // Send queued packets
 int SessionManager_Client_SendPackets()
 {
-	return NBN_GameClient_SendPackets();;
+	return NBN_GameClient_SendPackets();
 }
 
 // Send initial player data
@@ -318,7 +318,7 @@ void SessionManager_Tick(struct Snapshot player, bool isServer)
 	uint8_t buffer[1 + sizeof(player)];
 	buffer[0] = MSG_TYPE_SNAPSHOT;
 	memcpy(buffer + 1, &player, sizeof(player));
-	if (isServer && connectedClientHandle != NULL)
+	if (isServer && connectedClientHandle != 0)
 		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
 	else if (!isServer)
 		SessionManager_Client_SendReliableByteArray(buffer, (unsigned int)sizeof(buffer));
