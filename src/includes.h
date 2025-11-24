@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "raylib.h"
 #include "raymath.h"
@@ -18,6 +19,8 @@
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
+
+#define SERVER_PORT 12345
 
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION 330

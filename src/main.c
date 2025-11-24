@@ -1,105 +1,80 @@
 ﻿#include "includes.h"
 #include "player.h"
-#include "object.h"
+#include "prop.h"
 #include "camera.h"
 #include "impairment.h"
 #include "map.h"
-#include "SessionManager.h"
-#include "SessionStateController.h"
+#include "sessionManager.h"
+#include "sessionStateController.h"
 
-#define SERVER_PORT 12345
-
-static void DrawLevel(void);
 
 int main(int argc, char** argv)
 {
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
-
-	//all this stuff should be toggleable
-	DisableCursor(); //hide cursor for mouselook
-	SetTargetFPS(120);
-	SetConfigFlags(FLAG_MSAA_4X_HINT);
-
-	InitPlayer();
-	playerList[0] = GetPlayer();
 	playerColor = RED;
 	remoteColor = BLACK;
 
-	Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+	//all this stuff should be toggleable
+	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
-	//GameObject array to hold all objects in the scene
-	GameObject* gameObjects = (GameObject*)malloc(sizeof(GameObject));
-	memset(gameObjects, 0, sizeof(GameObject));
+	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+	SetTargetFPS(120);
+	DisableCursor();
 
-	//Create a Wall to test collision
-	CreateObject(gameObjects,
-		(Vector3) {
-		0, 4.0, -7
-	},
-		(Vector3) {
-		1.0, 1.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, OBJECT_VISIBILE | OBJECT_COLLIDER);
-
-
-	//Create the door object to interact with
-	int doorID = CreateObject(gameObjects,
-		(Vector3) {
-		0, 2.0f, -10.0f
-	},
-		(Vector3) {
-		3.0f, 4.0f, 0.5f
-	}, doorModel, GREEN, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_DOOR);
-	gameObjects->interactType[doorID] = INTERACTABLE_DOOR;
-
-	int pickupID = CreateObject(gameObjects,
-		(Vector3) {
-		-10, 4.0, 0
-	},
-		(Vector3) {
-		1.0, 1.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, OBJECT_VISIBILE | OBJECT_COLLIDER | OBJECT_INTERACTABLE | OBJECT_PICKUP);
-	gameObjects->interactType[pickupID] = INTERACTABLE_PICKUP;
+	InitPlayer();
+	playerList[0] = GetPlayer();
 
 	InitCamera();
 	Camera* camera = GetCamera();
 
-	Map gameMap;
+	CreatePropStructure();
+	Props* props = GetPropStructure();
+
+	LoadMap(props);
+	//Map gameMap;
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
+
+	SessionManager_Init();
+	SessionStateController_Init();
 
 	// Set up Server/Client
 	bool isServer = false;
 	if (argc < 2)
 	{
-		printf("Usage: %s <server|client> [host-for-client]\n", argv[0]);
-		return 1;
-	}
-
-	SessionManager_Init();
-	SessionStateController_Init();
-	if (strcmp(argv[1], "server") == 0)
-	{
+		printf("No CLI argument provided for <server|client>, defaulting to server\n");
 		isServer = true;
 		SessionManager_CreateServer("UDP", SERVER_PORT);
 	}
-	else if (strcmp(argv[1], "client") == 0)
+	else
 	{
-		playerColor = BLUE;
-		const char* host = (argc >= 3) ? argv[2] : "127.0.0.1"; // set default host to localhost
-		SessionManager_CreateClient("UDP", host, SERVER_PORT);
+		if (strcmp(argv[1], "server") == 0)
+		{
+			isServer = true;
+			SessionManager_CreateServer("UDP", SERVER_PORT);
+		}
+		else if (strcmp(argv[1], "client") == 0)
+		{
+			playerColor = BLUE;
+			const char* host = (argc >= 3) ? argv[2] : "127.0.0.1"; // set default host to localhost
+			SessionManager_CreateClient("UDP", host, SERVER_PORT);
+		}
+		else
+		{
+			printf("Invalid CLI argument! It's hosed. Aborting...\n");
+			return 1;
+		}
 	}
 
 	while (!WindowShouldClose())
 	{
 		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 		{
+			//if (playerList[i] == NULL) continue;
 			SetPlayer(playerList[i]);
-			UpdatePlayer(gameObjects);
+			UpdatePlayer(props);
 		}
 		UpdateImpairment(astig);
 		SessionStateController_Tick(isServer);
@@ -109,19 +84,19 @@ int main(int argc, char** argv)
 		BeginImpairment(astig);
 
 		BeginMode3D(*camera);
-		DrawMap(&gameMap);
+		DrawMap();//&gameMap);
 		// Draw Player
 		DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
 		// Draw remote player
-		if (clientPlayerCount == 1)
-			DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
-		RenderProps(gameObjects);
+		if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
+		RenderProps(props);
 		EndMode3D();
 
 		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 		{
+			//if (playerList[i] == NULL) continue;
 			SetPlayer(playerList[i]);
-			UpdateInteractions(gameObjects);
+			UpdateInteractions(props);
 		}
 
 		EndImpairment(astig);
@@ -140,17 +115,20 @@ int main(int argc, char** argv)
 
 	DestroyImpairment(astig);
 	DestroyCamera();
-	for (int i = 0; i < clientPlayerCount + 1; i++)
+	for (int i = 0; i < clientPlayerCount + 1; i++) {
+		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
+	}
 
 	// Stop Server/Client
-	if (strcmp(argv[1], "server") == 0)
-		SessionManager_StopServer();
-	else if (strcmp(argv[1], "client") == 0)
-		SessionManager_StopClient();
+	if (argc >= 2)
+	{
+		if (strcmp(argv[1], "server") == 0) SessionManager_StopServer();
+		else if (strcmp(argv[1], "client") == 0) SessionManager_StopClient();
+	}
 
 	CloseWindow();
-	free(gameObjects);
+	free(props);
 	return 0;
 }
 

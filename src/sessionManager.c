@@ -1,4 +1,4 @@
-#include "SessionManager.h"
+#include "sessionManager.h"
 
 #define NBNET_IMPL
 
@@ -85,7 +85,7 @@ int SessionManager_Server_HandleEvents()
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
-			if (bmsg->length < 1) return -1; // Invalid
+			if (bmsg->length < 1) return 1; // Invalid
 
 			uint8_t msg_type = bmsg->bytes[0];
 			switch (msg_type)

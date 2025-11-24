@@ -1,13 +1,11 @@
+#pragma once
+
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include "includes.h"
 
-#define MSG_TYPE_SNAPSHOT      1
+#define MSG_TYPE_SNAPSHOT 1
 #define MSG_TYPE_INCOMINGPLAYER 2
 
 typedef uint32_t NBN_ConnectionHandle;

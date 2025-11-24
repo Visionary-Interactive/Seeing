@@ -1,8 +1,10 @@
+#pragma once
+
 #ifndef SESSIONSTATECONTROLLER_H
 #define SESSIONSTATECONTROLLER_H
 
 #include <time.h>
-#include "SessionManager.h"
+#include "sessionManager.h"
 #include "player.h"
 
 #define MAX_PLAYERS 2
