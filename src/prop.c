@@ -1,6 +1,19 @@
-#include "object.h"
+#include "prop.h"
 
-int CreateObject(GameObject* obj, Vector3 position, Vector3 size, Model model, Color color ,uint32_t components) {
+static Props* props;
+
+void CreatePropStructure()
+{
+	props = (Props*)malloc(sizeof(Props));
+	memset(props, 0, sizeof(Props));
+}
+
+Props* GetPropStructure()
+{
+	return props;
+}
+
+int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color color ,uint32_t components) {
 	if (obj->count >= MAX_PROPS) {
 		return -1; // Max props reached
 	}
@@ -13,21 +26,21 @@ int CreateObject(GameObject* obj, Vector3 position, Vector3 size, Model model, C
 
 	//set up collider code based on model
 	ColliderSetup(obj, id);
-	obj->components[id] = OBJECT_VISIBILE | OBJECT_COLLIDER; // Default components
+	obj->components[id] = PROP_VISIBILE | PROP_COLLIDER; // Default components
 	return (int)id;
 }
 
-void CreateLight(GameObject* obj, int id, Color color, float intensity) {
+void CreateLight(Props* obj, int id, Color color, float intensity) {
 	if (id < 0 || id >= obj->count) {
 		return; // Invalid ID
 	}
 	obj->lightColor[id] = color;
 	obj->lightIntensity[id] = intensity;
-	obj->components[id] |= OBJECT_LIGHT; // Add light component
+	obj->components[id] |= PROP_LIGHT; // Add light component
 }
 
 
-void ColliderSetup(GameObject* obj, int id) {
+void ColliderSetup(Props* obj, int id) {
 	if (id < 0 || id >= obj->count) {
 		return; // Invalid ID
 	}
@@ -45,9 +58,9 @@ void ColliderSetup(GameObject* obj, int id) {
 }
 
 
-void RenderProps(const GameObject* obj) {
+void RenderProps(const Props* obj) {
 	for (size_t i = 0; i < obj->count; i++) {
-		if (obj->components[i] & OBJECT_VISIBILE) {
+		if (obj->components[i] & PROP_VISIBILE) {
 			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
 		}
 	}
