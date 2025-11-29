@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
-	LoadMap(props);
+	LoadPropTest(props);
 	//Map gameMap;
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 		BeginImpairment(astig);
 
 		BeginMode3D(*camera);
-		DrawMap();//&gameMap);
+		DrawFloor();//&gameMap);
 		// Draw Player
 		DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
 		// Draw remote player

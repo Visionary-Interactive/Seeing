@@ -198,13 +198,13 @@ void UpdateInteractions(Props* obj)
 {
     for (size_t i = 0; i < obj->count; i++)
     {
-        if (obj->components[i] & !PROP_INTERACTABLE) continue;
+        if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
 
         Vector3 p = player->position;
         Vector3 o = obj->position[i];
 
         float dist = Vector3Distance(p, o);
-        float range = obj->InteractRange[i].x; // use X as range radius
+        float range = obj->interactRange[i].x; // use X as range radius
 
         if (dist < range)
         {
