@@ -16,11 +16,6 @@ typedef struct Player {
     float pitch; // up/down rotation
 	bool isGrounded; //checks if the player is on the ground
 } Player;
-
-extern const float gravity; //gravity force
-extern const float jumpStrength; //initial jump velocity
-extern const float groundHeight; //player’s standing height from floor
-
 void InitPlayer();
 Player* GetPlayer();
 void UpdatePlayer(GameObject* obj);
