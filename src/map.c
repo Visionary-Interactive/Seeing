@@ -1,7 +1,43 @@
 #include "map.h"
 
+void LoadPropTest(Props* props)
+{
+    Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+
+    //Create a Wall to test collision
+	CreateProp(props,
+		(Vector3) {
+		0.0f, 4.0, -7.0f
+	},
+		(Vector3) {
+		1.0, 1.0, 1.0
+	},
+		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+
+
+	//Create the door PROP to interact with
+	int doorID = CreateProp(props,
+		(Vector3) {
+		0, 2.0f, -10.0f
+	},
+		(Vector3) {
+		3.0f, 1.0f, 0.5f
+	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
+	props->interactType[doorID] = INTERACTABLE_DOOR;
+
+	int pickupID = CreateProp(props,
+		(Vector3) {
+		-10, 4.0, 0
+	},
+		(Vector3) {
+		1.0, 1.0, 1.0
+	},
+		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+	props->interactType[pickupID] = INTERACTABLE_PICKUP;
+}
+
 //a Drawlevel code to implement level creation in its own function
-void DrawMap(const Map *map)
+void DrawFloor()//const Map *map)
 {
     //creates a basic floor grid that we can multiply
     const int floorExtent = 25;
@@ -38,5 +74,93 @@ void DrawMap(const Map *map)
     towerPos.x *= -1;
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+}
 
+void SaveMap(Map *map, const char *mapPath)
+{
+    FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
+    if (!f) {
+        TraceLog(LOG_ERROR, "Failed to open map file for writing!");
+        return;
+    }
+
+    //write game version
+    uint8_t version[2] = { MAJOR_VERSION, MINOR_VERSION };
+    fwrite(version, sizeof(uint8_t), 2, f);
+
+    Props *props = GetPropStructure();
+
+    //write the prop count
+    uint32_t count = (uint32_t)props->count;
+    fwrite(&count, sizeof(uint32_t), 1, f);
+
+    for (size_t i = 0; i < props->count; i++) {
+        fwrite(&props->position[i], sizeof(Vector3), 1, f);
+        fwrite(&props->size[i], sizeof(Vector3), 1, f);
+        fwrite(&props->color[i], sizeof(Color), 1, f);
+        fwrite(&props->interactRange[i], sizeof(Vector3), 1, f);
+        fwrite(&props->lightColor[i], sizeof(Color), 1, f);
+        fwrite(&props->lightIntensity[i], sizeof(float), 1, f);
+        fwrite(&props->components[i], sizeof(uint32_t), 1, f);
+        fwrite(&props->interactType[i], sizeof(int32_t), 1, f);
+        fwrite(&props->scriptID[i], sizeof(int32_t), 1, f);
+
+        //model path todo
+        /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
+        fwrite(&len, sizeof(uint16_t), 1, f);
+        fwrite(props->modelPath[i], sizeof(char), len, f);*/
+    }
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map saved successfully.");
+}
+
+void LoadMapFile(const char *mapPath)
+{
+    FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "rb");
+    if (!f) {
+        TraceLog(LOG_ERROR, "Failed to open map file for loading!");
+        return;
+    }
+
+    uint8_t version[2];
+    fread(version, sizeof(uint8_t), 2, f);
+
+	if (version[0] <= MAJOR_VERSION && version[1] < MINOR_VERSION) {
+        TraceLog(LOG_WARNING, "This map was designed in an older version (%u,%u), some elements may not work correctly",
+                 version[0], version[1]);
+    }
+
+    Props *props = GetPropStructure();
+    memset(props, 0, sizeof(Props));
+
+    uint32_t count = 0;
+    fread(&count, sizeof(uint32_t), 1, f);
+
+    props->count = count;
+
+    for (size_t i = 0; i < count; i++) {
+        fread(&props->position[i], sizeof(Vector3), 1, f);
+        fread(&props->size[i], sizeof(Vector3), 1, f);
+        fread(&props->color[i], sizeof(Color), 1, f);
+        fread(&props->interactRange[i], sizeof(Vector3), 1, f);
+        fread(&props->lightColor[i], sizeof(Color), 1, f);
+        fread(&props->lightIntensity[i], sizeof(float), 1, f);
+        fread(&props->components[i], sizeof(uint32_t), 1, f);
+        fread(&props->interactType[i], sizeof(int32_t), 1, f);
+        fread(&props->scriptID[i], sizeof(int32_t), 1, f);
+
+        //model path todo
+        /*uint16_t len;
+        fread(&len, sizeof(uint16_t), 1, f);
+        fread(props->modelPath[i], sizeof(char), len, f);
+        props->modelPath[i][len] = '\0';
+
+        props->model[i] = LoadModel(props->modelPath[i]);*/
+
+        ColliderSetup(props, i);
+    }
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map loaded successfully.");
 }

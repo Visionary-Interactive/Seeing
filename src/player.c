@@ -1,5 +1,5 @@
 #include "player.h"
-#include "object.h"
+#include "prop.h"
 
 Player* player;
 
@@ -14,8 +14,7 @@ void InitPlayer()
     player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
     player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
-    //morgan - we should save this for the networking logic. the client does not need to load a model it will never see for itself
-	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f)); // Simple cube as player model
+	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f));
     player->speed = 8.0f;
     player->yaw = 0.0f;
     player->pitch = 0.0f;
@@ -39,7 +38,7 @@ void SetPlayer(Player* p)
 	player = p;
 }
 
-void UpdatePlayer(GameObject* obj)
+void UpdatePlayer(Props* obj)
 {
     float dt = GetFrameTime();
 
@@ -105,14 +104,14 @@ void UpdatePlayer(GameObject* obj)
         move = Vector3Scale(move, player->speed * dt);
 
         Vector3 newPos = Vector3Add(player->position, (Vector3) { move.x, 0, move.z }); // only horizontal
-		getPlayerCollision(player->model, newPos); //update player bounding box
+		GetPlayerCollision(player->model, newPos); //update player bounding box
         bool blocked = false;
 
         for (size_t i = 0; i < obj->count; i++) {
-            // Assuming gameObjects is a globally accessible variable
-            if (i < obj->count && (obj->components[i] & OBJECT_COLLIDER)) {
+            // Assuming PROPs is a globally accessible variable
+            if (i < obj->count && (obj->components[i] & PROP_COLLIDER)) {
                 BoundingBox objBox = obj->collider[i];
-                BoundingBox playerBox = getPlayerCollision(player->model, newPos);
+                BoundingBox playerBox = GetPlayerCollision(player->model, newPos);
                 if (CheckCollisionBoxes(playerBox, objBox)) {
                     blocked = true;
                     break;
@@ -139,7 +138,7 @@ void UpdatePlayer(GameObject* obj)
 }
 
 //Grabs the player's bounding box for collision detection & makes sure it up to date on where the player is.
-BoundingBox getPlayerCollision(Model model, Vector3 position)
+BoundingBox GetPlayerCollision(Model model, Vector3 position)
 {
 	BoundingBox playerbounding_box = GetMeshBoundingBox(model.meshes[0]);
 	Vector3 min_boundary = Vector3Add(position, playerbounding_box.min);
@@ -149,44 +148,44 @@ BoundingBox getPlayerCollision(Model model, Vector3 position)
     return playerbounding_box;
 }
 
-void checkCollision(char axis, BoundingBox _player, BoundingBox _obj)
+void CheckCollision(char axis, BoundingBox playerBox, BoundingBox propBox)
 {
-    if (CheckCollisionBoxes(_player, _obj))
+    if (CheckCollisionBoxes(playerBox, propBox))
     {
         if (axis == 'x')
         {
-            if (player->position.x < _obj.min.x)
+            if (player->position.x < propBox.min.x)
             {
-                player->position.x = _obj.min.x - player->size.x / 2.0f;
+                player->position.x = propBox.min.x - player->size.x / 2.0f;
             }
-            else if (player->position.x > _obj.max.x)
+            else if (player->position.x > propBox.max.x)
             {
-                player->position.x = _obj.max.x + player->size.x / 2.0f;
+                player->position.x = propBox.max.x + player->size.x / 2.0f;
             }
         }
         else if (axis == 'z')
         {
-            if (player->position.z < _obj.min.z)
+            if (player->position.z < propBox.min.z)
             {
-                player->position.z = _obj.min.z - player->size.z / 2.0f;
+                player->position.z = propBox.min.z - player->size.z / 2.0f;
             }
-            else if (player->position.z > _obj.max.z)
+            else if (player->position.z > propBox.max.z)
             {
-                player->position.z = _obj.max.z + player->size.z / 2.0f;
+                player->position.z = propBox.max.z + player->size.z / 2.0f;
             }
         }
         else if (axis == 'y')
         {
-            if (player->position.y < _obj.min.y)
+            if (player->position.y < propBox.min.y)
             {
                 // Player is hitting underside of the object (ceiling)
-                player->position.y = _obj.min.y - player->size.y / 2.0f;
+                player->position.y = propBox.min.y - player->size.y / 2.0f;
                 player->velocity.y = 0;        // stop upwards velocity
             }
-            else if (player->position.y > _obj.max.y)
+            else if (player->position.y > propBox.max.y)
             {
                 // Player lands on top of the object
-                player->position.y = _obj.max.y + player->size.y / 2.0f;
+                player->position.y = propBox.max.y + player->size.y / 2.0f;
                 player->velocity.y = 0;        // stop falling
                 player->isGrounded = true;     // allow jumping again
             }
@@ -195,29 +194,29 @@ void checkCollision(char axis, BoundingBox _player, BoundingBox _obj)
 
 }
 
-void UpdateInteractions(GameObject* obj)
+void UpdateInteractions(Props* obj)
 {
     for (size_t i = 0; i < obj->count; i++)
     {
-        if (obj->components[i] & OBJECT_INTERACTABLE) continue;
+        if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
 
         Vector3 p = player->position;
         Vector3 o = obj->position[i];
 
         float dist = Vector3Distance(p, o);
-        float range = obj->InteractRange[i].x; // use X as range radius
+        float range = obj->interactRange[i].x; // use X as range radius
 
         if (dist < range)
         {
             // Show prompt
-            DrawText("Press E to interact:", 10, 90, 24, YELLOW);
+            DrawText("Press E to interact:", 10, 200, 24, YELLOW);
 
             if (IsKeyPressed(KEY_E))
             {
                 switch (obj->interactType[i])
                 {
                     case INTERACTABLE_DOOR:
-                        DrawText("You interacted with a door!", 10, 120, 24, GREEN);
+                        DrawText("You interacted with a door!", 10, 200, 24, GREEN);
                         CloseWindow();
                         break;
                     case INTERACTABLE_PICKUP:
@@ -226,14 +225,14 @@ void UpdateInteractions(GameObject* obj)
                             heldObject = i;
 
                             // Hide object in world
-                            obj->components[i] &= ~OBJECT_VISIBILE;
-                            obj->components[i] &= ~OBJECT_COLLIDER;
+                            obj->components[i] &= ~PROP_VISIBILE;
+                            obj->components[i] &= ~PROP_COLLIDER;
 
                             printf("Picked up object %zu\n", i);
                         }
                         break;
                     default:
-                        DrawText("You interacted with something!", 10, 120, 24, GREEN);
+                        DrawText("You interacted with something!", 10, 200, 24, GREEN);
                         break;
 				}
             }
@@ -252,11 +251,11 @@ void UpdateInteractions(GameObject* obj)
                 obj->position[heldObject] = placePos;
 
                 // Show object again
-                obj->components[heldObject] |= OBJECT_VISIBILE;
-                obj->components[heldObject] |= OBJECT_COLLIDER;
+                obj->components[heldObject] |= PROP_VISIBILE;
+                obj->components[heldObject] |= PROP_COLLIDER;
 
                 printf("Placed object %d\n", heldObject);
-                DrawText("Palced object", 10, 120, 24, GREEN);
+                DrawText("Placed object", 10, 120, 24, GREEN);
 
                 heldObject = -1;
             }

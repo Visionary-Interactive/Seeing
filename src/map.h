@@ -3,6 +3,7 @@
 #define MAP_H
 
 #include "includes.h"
+#include "prop.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40
@@ -28,9 +29,11 @@ static const int diffz[] = {  0, 0, 0, 0,-1, 1 };
 
 //something like this...
 bool InitMap(Map *map, const char *mapPath);
-void DrawMap(const Map *map);
+void DrawMap();//const Map *map);
+void DrawFloor();
 void SaveMap(Map *map, const char *mapPath);
-bool LoadMap(Map *map, const char *mapPath);
+void LoadPropTest(Props* props);
+void LoadMap(Props* props);//(Map *map, const char *mapPath); // really this should return bool/int
 void UnloadMap(Map *map);
 void BuildTransforms(Map *map);
 

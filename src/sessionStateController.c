@@ -1,4 +1,4 @@
-#include "SessionStateController.h"
+#include "sessionStateController.h"
 
 Player* playerList[MAX_PLAYERS];
 int clientPlayerCount = 0;
@@ -9,6 +9,7 @@ clock_t last_network_tick = 0;
 void SessionStateController_Init()
 {
 	clientPlayerCount = 0;
+	//memset(playerList, 0, sizeof(playerList));
 	last_network_tick = clock();
 	CreatePlayer = CreateNewPlayer;
 	InitalizeRemotePlayer = InitRemotePlayer;
@@ -99,6 +100,7 @@ void NetworkTick(bool isServer)
 		if (clientPlayerCount > 0)
 		{
 			RL_FREE(playerList[clientPlayerCount]);
+			playerList[clientPlayerCount] = NULL;
 			clientPlayerCount--;
 		}
 		break;

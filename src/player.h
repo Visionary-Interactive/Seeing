@@ -3,7 +3,7 @@
 #define PLAYER_H
 
 #include "includes.h"
-#include "object.h"
+#include "prop.h"
 
 typedef struct Player {
     Vector3 position;
@@ -31,11 +31,11 @@ extern const float groundHeight; //player’s standing height from floor
 void InitPlayer();
 Player* GetPlayer();
 void SetPlayer(Player* p);
-void UpdatePlayer(GameObject* obj);
-void UpdateInteractions(GameObject* obj);
-BoundingBox getPlayerCollision(Model model, Vector3 position);
+void UpdatePlayer(Props* obj);
+void UpdateInteractions(Props* obj);
+BoundingBox GetPlayerCollision(Model model, Vector3 position);
 
-void checkCollision(char axis, BoundingBox _player, BoundingBox _obj);
+void CheckCollision(char axis, BoundingBox playerBox, BoundingBox propBox);
 void DestroyPlayer();
 
 #endif
