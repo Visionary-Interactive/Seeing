@@ -11,14 +11,18 @@
 #define TICK_RATE_MS 20
 
 extern Player* playerList[MAX_PLAYERS];
-extern int clientPlayerCount;
+extern uint8_t clientPlayerCount;
 extern Color playerColor, remoteColor;
-extern clock_t last_network_tick;
+extern clock_t lastNetworkTick;
+extern uint16_t localSequence;
+extern uint16_t lastPositionSequence;
 
 void SessionStateController_Init();
 void SessionStateController_Tick(bool isServer);
 void CreateNewPlayer();
 void InitRemotePlayer();
+void UpdatePlayerPosition();
 void NetworkTick(bool isServer);
+void NetworkCorrectionTick(bool isServer);
 
 #endif// SESSIONSTATECONTROLLER_H

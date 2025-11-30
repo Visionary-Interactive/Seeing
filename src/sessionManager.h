@@ -3,28 +3,50 @@
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
-#include "includes.h"
-
-#define MSG_TYPE_SNAPSHOT 1
-#define MSG_TYPE_INCOMINGPLAYER 2
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 typedef uint32_t NBN_ConnectionHandle;
 
-struct Snapshot {
+typedef enum {
+	MovementSnapshot,
+	PositionSnapshot,
+	IncomingPlayer
+} MsgType;
+
+struct SessionVec3 {
+	float x;
+	float y;
+	float z;
+};
+
+struct MovementSnapshot { // Sent every tick
+	uint16_t sequence;
 	uint8_t forward;
 	uint8_t backward;
 	uint8_t left;
 	uint8_t right;
+	uint8_t sprint;
 	float y;
 	float pitch;
 	float yaw;
 };
 
-struct IncomingPlayer {
-	float posX, posY, posZ;
-	float scaleX, scaleY, scaleZ;
+struct PositionSnapshot { // Sent occasionally to correct position
+	uint16_t sequence;
+	struct SessionVec3 position;
+	float yaw;
+	float pitch;
+};
+
+struct IncomingPlayer { // Sent once upon connection
+	struct SessionVec3 position;
+	struct SessionVec3 scale;
 	unsigned char r, g, b;
-	float velX, velY, velZ;
+	struct SessionVec3 velocity;
 	float speed;
 	float yaw;
 	float pitch;
@@ -32,10 +54,9 @@ struct IncomingPlayer {
 };
 
 extern NBN_ConnectionHandle connectedClientHandle;
-extern struct Snapshot lastSnapshot;
+extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
-
-extern Rectangle test;
+extern struct PositionSnapshot lastPositionSnapshot;
 
 void SessionManager_Init();
 
@@ -55,10 +76,11 @@ bool SessionManager_Client_SendReliableByteArray(uint8_t* data, unsigned int len
 bool SessionManager_Client_SendUnreliableByteArray(uint8_t* data, unsigned int length);
 int SessionManager_Client_SendPackets();
 
-void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer);
-void SessionManager_Tick(struct Snapshot player, bool isServer);
+void SendPlayerData(uint8_t* buffer, unsigned int len, bool isServer);
+void SendUnreliablePlayerData(uint8_t* buffer, unsigned int len, bool isServer);
 
 extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
+extern void (*PlayerDesyncCorrection)();
 
 #endif

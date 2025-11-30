@@ -25,18 +25,20 @@
 #include "net_drivers/udp.h"
 
 NBN_ConnectionHandle connectedClientHandle = 0;
-struct Snapshot lastSnapshot = { 0 };
+struct MovementSnapshot lastMovementSnapshot = { 0 };
 struct IncomingPlayer incomingPlayerData = { 0 };
+struct PositionSnapshot lastPositionSnapshot = { 0 };
 
 void (*CreatePlayer)() = NULL;
 void (*InitalizeRemotePlayer)() = NULL;
+void (*PlayerDesyncCorrection)() = NULL;
 
 void SessionManager_Init()
 {
 	// Initialize Protocol
 	NBN_UDP_Register();
 	connectedClientHandle = 0;
-	lastSnapshot = (struct Snapshot){ 0 };
+	lastMovementSnapshot = (struct MovementSnapshot){ 0 };
 }
 
 // Create a server session
@@ -87,34 +89,34 @@ int SessionManager_Server_HandleEvents()
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
 			if (bmsg->length < 1) return 1; // Invalid
 
-			uint8_t msg_type = bmsg->bytes[0];
+			MsgType msg_type = bmsg->bytes[0];
 			switch (msg_type)
 			{
-			case MSG_TYPE_SNAPSHOT:
-				if (bmsg->length >= 1 + sizeof(struct Snapshot)) {
-					struct Snapshot recv_snap;
-					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct Snapshot));
+			case MovementSnapshot:
+				if (bmsg->length >= 1 + sizeof(struct MovementSnapshot)) {
+					struct MovementSnapshot recv_snap;
+					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct MovementSnapshot));
 
-					lastSnapshot = recv_snap;
+					lastMovementSnapshot = recv_snap;
 				}
 				break;
-			case MSG_TYPE_INCOMINGPLAYER:
+			case IncomingPlayer:
 				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
 					struct IncomingPlayer recv_player;
 					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
 					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
-						recv_player.posX,
-						recv_player.posY,
-						recv_player.posZ,
-						recv_player.scaleX,
-						recv_player.scaleY,
-						recv_player.scaleZ,
+						recv_player.position.x,
+						recv_player.position.y,
+						recv_player.position.z,
+						recv_player.scale.x,
+						recv_player.scale.y,
+						recv_player.scale.z,
 						recv_player.r,
 						recv_player.g,
 						recv_player.b,
-						recv_player.velX,
-						recv_player.velY,
-						recv_player.velZ,
+						recv_player.velocity.x,
+						recv_player.velocity.y,
+						recv_player.velocity.z,
 						recv_player.speed,
 						recv_player.yaw,
 						recv_player.pitch,
@@ -123,6 +125,23 @@ int SessionManager_Server_HandleEvents()
 					incomingPlayerData = recv_player;
 					// Initialize remote player with received data
 					InitalizeRemotePlayer();
+				}
+				break;
+			case PositionSnapshot:
+				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
+					struct PositionSnapshot recv_pos;
+					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
+					printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
+						recv_pos.sequence,
+						recv_pos.position.x,
+						recv_pos.position.y,
+						recv_pos.position.z,
+						recv_pos.yaw,
+						recv_pos.pitch);
+
+					lastPositionSnapshot = recv_pos;
+					// Update player position with received data
+					PlayerDesyncCorrection();
 				}
 				break;
 			default:
@@ -218,16 +237,16 @@ int SessionManager_Client_HandleEvents()
 		if (info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE)
 		{
 			NBN_ByteArrayMessage* bmsg = (NBN_ByteArrayMessage*)info.data;
-			if (bmsg->length < 1) return -1; // Invalid
+			if (bmsg->length < 1) return 1; // Invalid
 
-			uint8_t msg_type = bmsg->bytes[0];
+			MsgType msg_type = bmsg->bytes[0];
 			switch (msg_type)
 			{
-			case MSG_TYPE_SNAPSHOT:
-				if (bmsg->length >= 1 + sizeof(struct Snapshot)) {
-					struct Snapshot recv_snap;
-					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct Snapshot));
-					//printf("Received Snapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f \tpitch=%.3f \tyaw=%.3f\n",
+			case MovementSnapshot:
+				if (bmsg->length >= 1 + sizeof(struct MovementSnapshot)) {
+					struct MovementSnapshot recv_snap;
+					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct MovementSnapshot));
+					//printf("Received MovementSnapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f \tpitch=%.3f \tyaw=%.3f\n",
 					//	recv_snap.forward,
 					//	recv_snap.backward,
 					//	recv_snap.left,
@@ -236,26 +255,26 @@ int SessionManager_Client_HandleEvents()
 					//	recv_snap.pitch,
 					//	recv_snap.yaw);
 
-					lastSnapshot = recv_snap;
+					lastMovementSnapshot = recv_snap;
 				}
 				break;
-			case MSG_TYPE_INCOMINGPLAYER:
+			case IncomingPlayer:
 				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
 					struct IncomingPlayer recv_player;
 					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
 					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
-						recv_player.posX,
-						recv_player.posY,
-						recv_player.posZ,
-						recv_player.scaleX,
-						recv_player.scaleY,
-						recv_player.scaleZ,
+						recv_player.position.x,
+						recv_player.position.y,
+						recv_player.position.z,
+						recv_player.scale.x,
+						recv_player.scale.y,
+						recv_player.scale.z,
 						recv_player.r,
 						recv_player.g,
 						recv_player.b,
-						recv_player.velX,
-						recv_player.velY,
-						recv_player.velZ,
+						recv_player.velocity.x,
+						recv_player.velocity.y,
+						recv_player.velocity.z,
 						recv_player.speed,
 						recv_player.yaw,
 						recv_player.pitch,
@@ -264,6 +283,24 @@ int SessionManager_Client_HandleEvents()
 					incomingPlayerData = recv_player;
 					// Initialize remote player with received data
 					InitalizeRemotePlayer();
+				}
+				break;
+			case PositionSnapshot:
+				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
+					struct PositionSnapshot recv_pos;
+					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
+					printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
+						recv_pos.sequence,
+						recv_pos.position.x,
+						recv_pos.position.y,
+						recv_pos.position.z,
+						recv_pos.yaw,
+						recv_pos.pitch);
+
+					lastPositionSnapshot = recv_pos;
+					// Update player position with received data
+					PlayerDesyncCorrection();
+
 				}
 				break;
 			default:
@@ -307,26 +344,20 @@ int SessionManager_Client_SendPackets()
 	return NBN_GameClient_SendPackets();
 }
 
-// Send initial player data
-void SendIncomingPlayer(NBN_ConnectionHandle conn, const struct IncomingPlayer* incomingPlayer, bool isServer)
+// Send player data to the server or client
+void SendPlayerData(uint8_t* buffer, unsigned int len, bool isServer)
 {
-	uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
-	buffer[0] = MSG_TYPE_INCOMINGPLAYER;
-	memcpy(buffer + 1, incomingPlayer, sizeof(struct IncomingPlayer));
-	if (isServer)
-		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, sizeof(buffer));
-	else
-		SessionManager_Client_SendReliableByteArray(buffer, sizeof(buffer));
+	if (isServer && connectedClientHandle != 0)
+		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, len);
+	else if (!isServer)
+		SessionManager_Client_SendReliableByteArray(buffer, len);
 }
 
-// Server/Client tick function
-void SessionManager_Tick(struct Snapshot player, bool isServer)
+// Send player data to the server or client unreliably
+void SendUnreliablePlayerData(uint8_t* buffer, unsigned int len, bool isServer)
 {
-	uint8_t buffer[1 + sizeof(player)];
-	buffer[0] = MSG_TYPE_SNAPSHOT;
-	memcpy(buffer + 1, &player, sizeof(player));
 	if (isServer && connectedClientHandle != 0)
-		SessionManager_Server_SendReliableByteArray(connectedClientHandle, buffer, (unsigned int)sizeof(buffer));
+		SessionManager_Server_SendUnreliableByteArray(connectedClientHandle, buffer, len);
 	else if (!isServer)
-		SessionManager_Client_SendReliableByteArray(buffer, (unsigned int)sizeof(buffer));
+		SessionManager_Client_SendUnreliableByteArray(buffer, len);
 }
