@@ -30,7 +30,9 @@ static const int diffz[] = {  0, 0, 0, 0,-1, 1 };
 //something like this...
 bool InitMap(Map *map, const char *mapPath);
 void DrawMap();//const Map *map);
+void DrawFloor();
 void SaveMap(Map *map, const char *mapPath);
+void LoadPropTest(Props* props);
 void LoadMap(Props* props);//(Map *map, const char *mapPath); // really this should return bool/int
 void UnloadMap(Map *map);
 void BuildTransforms(Map *map);

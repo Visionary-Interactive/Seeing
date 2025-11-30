@@ -22,11 +22,11 @@ int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color co
 	obj->size[id] = size;
 	obj->model[id] = model;
 	obj->color[id] = color;
-	obj->InteractRange[id] = (Vector3){ 2.0f,2.0f,2.0f }; // Default interaction range
+	obj->interactRange[id] = (Vector3){ 2.0f,2.0f,2.0f }; // Default interaction range
 
 	//set up collider code based on model
 	ColliderSetup(obj, id);
-	obj->components[id] = PROP_VISIBILE | PROP_COLLIDER; // Default components
+	obj->components[id] = components; // Default components
 	return (int)id;
 }
 
@@ -60,7 +60,7 @@ void ColliderSetup(Props* obj, int id) {
 
 void RenderProps(const Props* obj) {
 	for (size_t i = 0; i < obj->count; i++) {
-		if (obj->components[i] & PROP_VISIBILE) {
+		if (obj->components[i] & PROP_VISIBILE ) {
 			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
 		}
 	}

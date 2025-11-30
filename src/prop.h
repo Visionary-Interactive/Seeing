@@ -21,7 +21,7 @@ typedef struct Props {
 	Vector3 size[MAX_PROPS];
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
-	Vector3 InteractRange[MAX_PROPS];
+	Vector3 interactRange[MAX_PROPS];
 
 	//light data
 	Color lightColor[MAX_PROPS];
