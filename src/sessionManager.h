@@ -35,6 +35,8 @@ extern NBN_ConnectionHandle connectedClientHandle;
 extern struct Snapshot lastSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 
+extern Rectangle test;
+
 void SessionManager_Init();
 
 // Server functions
