@@ -23,14 +23,13 @@ void SessionStateController_Tick(bool isServer)
 	clock_t now = clock();
 	int elapsed_ms = (int)(now - lastNetworkTick);
 
-	if ((localSequence % 100) == 0) // Every 100 ticks
+	if ((localSequence % 500) == 0) // Every 500 ticks
 	{
 		NetworkCorrectionTick(isServer);
 		localSequence++;
 	}
 	else if (elapsed_ms >= TICK_RATE_MS)
 	{
-		printf("localSequence: %d\n", localSequence);
 		lastNetworkTick = now;
 		NetworkTick(isServer);
 	}
@@ -82,12 +81,24 @@ void UpdatePlayerPosition()
 	{
 		lastPositionSequence = lastPositionSnapshot.sequence;
 		playerList[1]->position = (Vector3){
-			lastPositionSnapshot.position.x,
-			lastPositionSnapshot.position.y,
-			lastPositionSnapshot.position.z
+			lastPositionSnapshot.posX / 1000.0f,
+			lastPositionSnapshot.posY / 1000.0f,
+			lastPositionSnapshot.posZ / 1000.0f
 		};
-		playerList[1]->yaw = lastPositionSnapshot.yaw;
-		playerList[1]->pitch = lastPositionSnapshot.pitch;
+		playerList[1]->yaw = lastPositionSnapshot.yaw / 1000.0f;
+		playerList[1]->pitch = lastPositionSnapshot.pitch / 1000.0f;
+		printf("lastPositionSnapshot: %d, %d, %d\tyaw: %d, pitch: %d\n",
+			lastPositionSnapshot.posX,
+			lastPositionSnapshot.posY,
+			lastPositionSnapshot.posZ,
+			lastPositionSnapshot.yaw,
+			lastPositionSnapshot.pitch);
+		printf("Updated remote player position to: %.3f, %.3f, %.3f\tyaw: %.3f, pitch: %.3f\n",
+			playerList[1]->position.x,
+			playerList[1]->position.y,
+			playerList[1]->position.z,
+			playerList[1]->yaw,
+			playerList[1]->pitch);
 	}
 }
 
@@ -158,24 +169,29 @@ void NetworkTick(bool isServer)
 	movementSnapshot.backward = IsKeyDown(KEY_S);
 	movementSnapshot.left = IsKeyDown(KEY_A);
 	movementSnapshot.right = IsKeyDown(KEY_D);
+	movementSnapshot.interact = IsKeyDown(KEY_E);
+	movementSnapshot.place = IsKeyDown(KEY_R);
 	movementSnapshot.sprint = IsKeyDown(KEY_LEFT_SHIFT);
-	movementSnapshot.y = playerList[0]->position.y;
-	movementSnapshot.pitch = playerList[0]->pitch;
-	movementSnapshot.yaw = playerList[0]->yaw;
+	movementSnapshot.y = (int16_t)(playerList[0]->position.y * 1000);
+	movementSnapshot.pitch = (int16_t)(playerList[0]->pitch * 1000);
+	movementSnapshot.yaw = (int16_t)(playerList[0]->yaw * 1000);
 
+	// Waits for a new position snapshot every 500 ticks before updating remote player input
 	if (clientPlayerCount > 0 && playerList[1] != NULL 
-		&& (lastMovementSnapshot.sequence - lastPositionSequence) < 100) // Only apply if new data
+		&& (lastMovementSnapshot.sequence - lastPositionSequence) < 500)
 	{
 		localSequence++;
 		playerList[1]->input.W = lastMovementSnapshot.forward;
 		playerList[1]->input.S = lastMovementSnapshot.backward;
 		playerList[1]->input.A = lastMovementSnapshot.left;
 		playerList[1]->input.D = lastMovementSnapshot.right;
+		playerList[1]->input.E = lastMovementSnapshot.interact;
+		playerList[1]->input.R = lastMovementSnapshot.place;
 		playerList[1]->input.SHIFT = lastMovementSnapshot.sprint;
 
-		playerList[1]->position.y = lastMovementSnapshot.y;
-		playerList[1]->pitch = lastMovementSnapshot.pitch;
-		playerList[1]->yaw = lastMovementSnapshot.yaw;
+		playerList[1]->position.y = (lastMovementSnapshot.y / 1000.0f);
+		playerList[1]->pitch = (lastMovementSnapshot.pitch / 1000.0f);
+		playerList[1]->yaw = (lastMovementSnapshot.yaw / 1000.0f);
 	}
 
 	// Send Movement data packet
@@ -195,13 +211,11 @@ void NetworkCorrectionTick(bool isServer)
 {
 	struct PositionSnapshot positionSnapshot;
 	positionSnapshot.sequence = localSequence;
-	positionSnapshot.position = (struct SessionVec3){ // Player Position
-		playerList[0]->position.x,
-		playerList[0]->position.y,
-		playerList[0]->position.z
-	};
-	positionSnapshot.yaw = playerList[0]->yaw;
-	positionSnapshot.pitch = playerList[0]->pitch;
+	positionSnapshot.posX = (int16_t)(playerList[0]->position.x * 1000);
+	positionSnapshot.posY = (int16_t)(playerList[0]->position.y * 1000);
+	positionSnapshot.posZ = (int16_t)(playerList[0]->position.z * 1000);
+	positionSnapshot.yaw = (int16_t)(playerList[0]->yaw * 1000);
+	positionSnapshot.pitch = (int16_t)(playerList[0]->pitch * 1000);
 
 	// Send position correction packet
 	uint8_t buffer[1 + sizeof(struct PositionSnapshot)];

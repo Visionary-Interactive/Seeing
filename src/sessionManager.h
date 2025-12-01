@@ -30,16 +30,18 @@ struct MovementSnapshot { // Sent every tick
 	uint8_t left;
 	uint8_t right;
 	uint8_t sprint;
-	float y;
-	float pitch;
-	float yaw;
+	uint8_t interact;
+	uint8_t place;
+	int16_t y;
+	int16_t pitch;
+	int16_t yaw;
 };
 
 struct PositionSnapshot { // Sent occasionally to correct position
 	uint16_t sequence;
-	struct SessionVec3 position;
-	float yaw;
-	float pitch;
+	int16_t posX, posY, posZ;
+	int16_t yaw;
+	int16_t pitch;
 };
 
 struct IncomingPlayer { // Sent once upon connection

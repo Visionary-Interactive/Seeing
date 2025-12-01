@@ -8,7 +8,7 @@
 #include "player.h"
 
 #define MAX_PLAYERS 2
-#define TICK_RATE_MS 20
+#define TICK_RATE_MS 50
 
 extern Player* playerList[MAX_PLAYERS];
 extern uint8_t clientPlayerCount;

@@ -10,6 +10,8 @@ struct InputState {
     bool A;
     bool S;
     bool D;
+    bool E;
+    bool R;
     bool SHIFT;
     bool SPACE;
 };

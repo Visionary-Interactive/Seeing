@@ -131,13 +131,13 @@ int SessionManager_Server_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
 					struct PositionSnapshot recv_pos;
 					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
-					printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
-						recv_pos.sequence,
-						recv_pos.position.x,
-						recv_pos.position.y,
-						recv_pos.position.z,
-						recv_pos.yaw,
-						recv_pos.pitch);
+					//printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
+					//	recv_pos.sequence,
+					//	recv_pos.position.x,
+					//	recv_pos.position.y,
+					//	recv_pos.position.z,
+					//	recv_pos.yaw,
+					//	recv_pos.pitch);
 
 					lastPositionSnapshot = recv_pos;
 					// Update player position with received data
@@ -289,13 +289,13 @@ int SessionManager_Client_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
 					struct PositionSnapshot recv_pos;
 					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
-					printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
-						recv_pos.sequence,
-						recv_pos.position.x,
-						recv_pos.position.y,
-						recv_pos.position.z,
-						recv_pos.yaw,
-						recv_pos.pitch);
+					//printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
+					//	recv_pos.sequence,
+					//	recv_pos.position.x,
+					//	recv_pos.position.y,
+					//	recv_pos.position.z,
+					//	recv_pos.yaw,
+					//	recv_pos.pitch);
 
 					lastPositionSnapshot = recv_pos;
 					// Update player position with received data

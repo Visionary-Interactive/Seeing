@@ -20,7 +20,7 @@ void InitPlayer()
 	player->pitch = 0.0f;
 	player->isGrounded = true;
 	player->remotePlayer = false;
-	player->input = (struct InputState){ false, false, false, false, false, false };
+	player->input = (struct InputState){ 0 };
 }
 
 Player* GetPlayer()
@@ -34,6 +34,8 @@ void LocalInputUpdate(struct InputState* input)
 	player->input.A = IsKeyDown(KEY_A);
 	player->input.S = IsKeyDown(KEY_S);
 	player->input.D = IsKeyDown(KEY_D);
+	player->input.E = IsKeyDown(KEY_E);
+	player->input.R = IsKeyDown(KEY_R);
 	player->input.SHIFT = IsKeyDown(KEY_LEFT_SHIFT);
 	player->input.SPACE = IsKeyPressed(KEY_SPACE);
 }
@@ -197,6 +199,12 @@ void CheckCollision(char axis, BoundingBox playerBox, BoundingBox propBox)
 
 void UpdateInteractions(Props* obj)
 {
+	// Set input if local player
+	if (!player->remotePlayer) // Local player input
+	{
+		LocalInputUpdate(&player->input);
+	}
+
 	for (size_t i = 0; i < obj->count; i++)
 	{
 		if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
@@ -210,15 +218,19 @@ void UpdateInteractions(Props* obj)
 		if (dist < range)
 		{
 			// Show prompt
-			DrawText("Press E to interact:", 10, 200, 24, YELLOW);
+			if (!player->remotePlayer)
+				DrawText("Press E to interact:", 10, 200, 24, YELLOW);
 
-			if (IsKeyPressed(KEY_E))
+			if (player->input.E)
 			{
 				switch (obj->interactType[i])
 				{
 				case INTERACTABLE_DOOR:
-					DrawText("You interacted with a door!", 10, 200, 24, GREEN);
-					CloseWindow();
+					if (!player->remotePlayer)
+					{
+						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
+						CloseWindow();
+					}
 					break;
 				case INTERACTABLE_PICKUP:
 					if (heldObject == -1)
@@ -237,7 +249,7 @@ void UpdateInteractions(Props* obj)
 					break;
 				}
 			}
-			if (IsKeyPressed(KEY_R))
+			if (player->input.R)
 			{
 				//get the direction the player is facing
 				Vector3 dir = {
