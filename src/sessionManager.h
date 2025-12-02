@@ -25,13 +25,13 @@ struct SessionVec3 {
 
 struct MovementSnapshot { // Sent every tick
 	uint16_t sequence;
-	uint8_t forward;
-	uint8_t backward;
-	uint8_t left;
-	uint8_t right;
-	uint8_t sprint;
-	uint8_t interact;
-	uint8_t place;
+	uint8_t forward : 1;
+	uint8_t backward : 1;
+	uint8_t left : 1;
+	uint8_t right : 1;
+	uint8_t sprint : 1;
+	uint8_t interact : 1;
+	uint8_t place : 1;
 	int16_t y;
 	int16_t pitch;
 	int16_t yaw;
