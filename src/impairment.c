@@ -114,7 +114,7 @@ void UpdateImpairment(Impairment *im)
 
 void DestroyImpairment(Impairment *im)
 {
-    M_ASSERT(im, "Tried to free non-existant impairment memory...")
+    M_ASSERT(im, "Tried to free non-existant impairment memory...");
     UnloadRenderTexture(im->target);
     UnloadShader(im->shader);
     free(im);
