@@ -23,6 +23,12 @@ void SessionStateController_Tick(bool isServer)
 	clock_t now = clock();
 	int elapsed_ms = (int)(now - lastNetworkTick);
 
+	if (localSequence == UINT16_MAX) // Wrap around if we reach max value
+	{
+		localSequence = 1;
+		lastPositionSequence = 0;
+	}
+
 	if ((localSequence % 500) == 0) // Every 500 ticks
 	{
 		NetworkCorrectionTick(isServer);
