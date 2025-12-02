@@ -72,6 +72,7 @@ void InitRemotePlayer()
 	playerList[clientPlayerCount]->isGrounded = incomingPlayerData.isGrounded;
 }
 
+// Called to update remote player position based on received snapshot
 void UpdatePlayerPosition()
 {
 	printf("last position seq: %d, last remote position seq: %d\n", 
@@ -81,12 +82,12 @@ void UpdatePlayerPosition()
 	{
 		lastPositionSequence = lastPositionSnapshot.sequence;
 		playerList[1]->position = (Vector3){
-			lastPositionSnapshot.posX / 1000.0f,
-			lastPositionSnapshot.posY / 1000.0f,
-			lastPositionSnapshot.posZ / 1000.0f
+			DequantizeFloat(lastPositionSnapshot.posX, MAX_BOUNDS),
+			DequantizeFloat(lastPositionSnapshot.posY, MAX_BOUNDS),
+			DequantizeFloat(lastPositionSnapshot.posZ, MAX_BOUNDS)
 		};
-		playerList[1]->yaw = lastPositionSnapshot.yaw / 1000.0f;
-		playerList[1]->pitch = lastPositionSnapshot.pitch / 1000.0f;
+		playerList[1]->yaw = DequantizeFloat(lastPositionSnapshot.yaw, MAX_BOUNDS);
+		playerList[1]->pitch = DequantizeFloat(lastPositionSnapshot.pitch, MAX_BOUNDS);
 		printf("lastPositionSnapshot: %d, %d, %d\tyaw: %d, pitch: %d\n",
 			lastPositionSnapshot.posX,
 			lastPositionSnapshot.posY,
@@ -172,9 +173,9 @@ void NetworkTick(bool isServer)
 	movementSnapshot.interact = IsKeyDown(KEY_E);
 	movementSnapshot.place = IsKeyDown(KEY_R);
 	movementSnapshot.sprint = IsKeyDown(KEY_LEFT_SHIFT);
-	movementSnapshot.y = (int16_t)(playerList[0]->position.y * 1000);
-	movementSnapshot.pitch = (int16_t)(playerList[0]->pitch * 1000);
-	movementSnapshot.yaw = (int16_t)(playerList[0]->yaw * 1000);
+	movementSnapshot.y = QuantizeFloat(playerList[0]->position.y, MAX_BOUNDS);
+	movementSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
+	movementSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
 
 	// Waits for a new position snapshot every 500 ticks before updating remote player input
 	if (clientPlayerCount > 0 && playerList[1] != NULL 
@@ -189,9 +190,9 @@ void NetworkTick(bool isServer)
 		playerList[1]->input.R = lastMovementSnapshot.place;
 		playerList[1]->input.SHIFT = lastMovementSnapshot.sprint;
 
-		playerList[1]->position.y = (lastMovementSnapshot.y / 1000.0f);
-		playerList[1]->pitch = (lastMovementSnapshot.pitch / 1000.0f);
-		playerList[1]->yaw = (lastMovementSnapshot.yaw / 1000.0f);
+		playerList[1]->position.y = DequantizeFloat(lastMovementSnapshot.y, MAX_BOUNDS);
+		playerList[1]->pitch = DequantizeFloat(lastMovementSnapshot.pitch, MAX_BOUNDS);
+		playerList[1]->yaw = DequantizeFloat(lastMovementSnapshot.yaw, MAX_BOUNDS);
 	}
 
 	// Send Movement data packet
@@ -211,11 +212,11 @@ void NetworkCorrectionTick(bool isServer)
 {
 	struct PositionSnapshot positionSnapshot;
 	positionSnapshot.sequence = localSequence;
-	positionSnapshot.posX = (int16_t)(playerList[0]->position.x * 1000);
-	positionSnapshot.posY = (int16_t)(playerList[0]->position.y * 1000);
-	positionSnapshot.posZ = (int16_t)(playerList[0]->position.z * 1000);
-	positionSnapshot.yaw = (int16_t)(playerList[0]->yaw * 1000);
-	positionSnapshot.pitch = (int16_t)(playerList[0]->pitch * 1000);
+	positionSnapshot.posX = QuantizeFloat(playerList[0]->position.x, MAX_BOUNDS);
+	positionSnapshot.posY = QuantizeFloat(playerList[0]->position.y, MAX_BOUNDS);
+	positionSnapshot.posZ = QuantizeFloat(playerList[0]->position.z, MAX_BOUNDS);
+	positionSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
+	positionSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
 
 	// Send position correction packet
 	uint8_t buffer[1 + sizeof(struct PositionSnapshot)];
@@ -227,4 +228,23 @@ void NetworkCorrectionTick(bool isServer)
 		SessionManager_Server_SendPackets();
 	else
 		SessionManager_Client_SendPackets();
+}
+
+// Stores float into a quantized int16_t based on max absolute value
+int16_t QuantizeFloat(float value, float max_abs) 
+{
+	float scaled = (value / max_abs) * 32767.0f;
+
+	if (scaled > 32767.0f) 
+		scaled = 32767.0f;
+	else if (scaled < -32767.0f) 
+		scaled = -32767.0f;
+
+	return (int16_t)lroundf(scaled);
+}
+
+// Retrieves float from quantized int16_t based on max absolute value
+float DequantizeFloat(int16_t scaledValue, float max_abs) 
+{
+	return (scaledValue / 32767.0f) * max_abs;
 }

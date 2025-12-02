@@ -9,6 +9,7 @@
 
 #define MAX_PLAYERS 2
 #define TICK_RATE_MS 50
+#define MAX_BOUNDS 1000
 
 extern Player* playerList[MAX_PLAYERS];
 extern uint8_t clientPlayerCount;
@@ -24,5 +25,8 @@ void InitRemotePlayer();
 void UpdatePlayerPosition();
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);
+
+int16_t QuantizeFloat(float value, float max_abs);
+float DequantizeFloat(int16_t scaled, float max_abs);
 
 #endif// SESSIONSTATECONTROLLER_H
