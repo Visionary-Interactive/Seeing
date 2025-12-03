@@ -15,6 +15,9 @@ Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
 Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
 
+Rectangle ipAddressText = { 400, 200, 200, 50 };
+char ipAddress[32] = "127.0.0.1";
+bool ipBoxFocused = false;
 
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
@@ -53,6 +56,7 @@ void DrawMenu()
         DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
         DrawButton(multiHostButton, DARKGRAY);
         DrawButton(multiJoinButton, DARKGRAY);
+        DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
         DrawButton(menuButton, DARKGRAY);
 		break;
 
@@ -100,7 +104,7 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Join Game") == 0)
             {
                 playerColor = BLUE;
-                const char* host = "127.0.0.1"; // set default host to localhost
+                const char* host = ipAddress;
                 SessionManager_CreateClient("UDP", host, SERVER_PORT);
                 multiplayerSession = true;
                 SetCurrentScreen(menu_game);
@@ -109,6 +113,36 @@ void DrawButton(Button button, Color color)
     }
 }
 
+void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused)
+{
+    DrawRectangleRec(bounds, LIGHTGRAY);
+    DrawRectangleLines(bounds.x, bounds.y, bounds.width, bounds.height, (*focused) ? BLUE : DARKGRAY);
+    DrawText(buffer, bounds.x + 5, bounds.y + 10, 20, BLACK);
+
+    if (CheckCollisionPointRec(GetMousePosition(), bounds) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        *focused = true;
+    else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(GetMousePosition(), bounds))
+        *focused = false;
+
+    // Handle keyboard input if focused
+    if (*focused)
+    {
+        int key = GetCharPressed();
+        while (key > 0)
+        {
+            if ((key >= 32) && (key <= 125) && (currentSize < maxSize - 1))
+            {
+                buffer[currentSize] = (char)key;
+                buffer[currentSize + 1] = '\0';
+            }
+            key = GetCharPressed();
+        }
+        if ((IsKeyPressed(KEY_BACKSPACE) || IsKeyDown(KEY_BACKSPACE)) && currentSize > 0)
+        {
+            buffer[currentSize - 1] = '\0';
+        }
+    }
+}
 
 MenuScreen GetCurrentScreen() {
     return currentScreen;

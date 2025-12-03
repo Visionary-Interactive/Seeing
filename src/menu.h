@@ -2,9 +2,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-
 #include "includes.h"
-
 
 typedef enum MenuScreen {
 	menu_main,
@@ -16,7 +14,6 @@ typedef enum MenuScreen {
 
 } MenuScreen;
 
-
 typedef struct Button
 {
 	Rectangle bounds;
@@ -24,21 +21,12 @@ typedef struct Button
 
 } Button;
 
-
-
 void DrawMenu();
-
 void DrawButton(struct Button button, Color color);
+void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 
 MenuScreen GetCurrentScreen();
 void SetCurrentScreen(MenuScreen newScreen);
-
-
-
-
-
-
-
 
 #endif // !MENU_H
 

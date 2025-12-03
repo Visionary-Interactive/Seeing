@@ -88,4 +88,4 @@ extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 extern void (*PlayerDesyncCorrection)();
 
-#endif SESSIONMANAGER_H
+#endif // SESSIONMANAGER_H
