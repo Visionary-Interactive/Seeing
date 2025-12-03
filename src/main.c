@@ -4,12 +4,14 @@
 #include "camera.h"
 #include "impairment.h"
 #include "map.h"
+#include "menu.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
 
 
 int main(int argc, char** argv)
 {
+
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
@@ -18,10 +20,10 @@ int main(int argc, char** argv)
 
 	//all this stuff should be toggleable
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
-
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
-	DisableCursor();
+	//DisableCursor();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -70,46 +72,68 @@ int main(int argc, char** argv)
 
 	while (!WindowShouldClose())
 	{
-		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+		MenuScreen currentScreen = GetCurrentScreen();
+
+		if (currentScreen == menu_game)
 		{
-			//if (playerList[i] == NULL) continue;
-			SetPlayer(playerList[i]);
-			UpdatePlayer(props);
+			if (IsKeyPressed(KEY_ESCAPE))
+			{
+				SetCurrentScreen(menu_main);
+			}
+			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+			{
+				//if (playerList[i] == NULL) continue;
+				SetPlayer(playerList[i]);
+				UpdatePlayer(props);
+			}
+			UpdateImpairment(astig);
+			SessionStateController_Tick(isServer);
+			RefreshCamera(playerList[0]);
+	
 		}
-		UpdateImpairment(astig);
-		SessionStateController_Tick(isServer);
-		RefreshCamera(playerList[0]);
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		BeginImpairment(astig);
 
-		BeginMode3D(*camera);
-		DrawFloor();//&gameMap);
-		// Draw Player
-		DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-		// Draw remote player
-		if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
-		RenderProps(props);
-		EndMode3D();
-
-		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+		if (currentScreen != menu_game)
 		{
-			//if (playerList[i] == NULL) continue;
-			SetPlayer(playerList[i]);
-			UpdateInteractions(props);
+			DrawMenu();
 		}
 
-		EndImpairment(astig);
-		DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
-		DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
-		DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
-		DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
-		DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
-			playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
-			10, 130, 20, DARKGRAY);
-		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
-			camera->target.x, camera->target.y, camera->target.z),
-			10, 160, 20, DARKGRAY);
+
+		if (currentScreen == menu_game)
+		{
+		
+			BeginImpairment(astig);
+			BeginMode3D(*camera);
+			DrawFloor();//&gameMap);
+			// Draw Player
+			DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+			// Draw remote player
+			if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
+			RenderProps(props);
+			EndMode3D();
+
+			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+			{
+				//if (playerList[i] == NULL) continue;
+				SetPlayer(playerList[i]);
+				UpdateInteractions(props);
+			}
+
+			EndImpairment(astig);
+			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
+			DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+			DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
+			DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
+				playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
+				10, 130, 20, DARKGRAY);
+			DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
+				camera->target.x, camera->target.y, camera->target.z),
+				10, 160, 20, DARKGRAY);
+			
+		}
+		
 		EndDrawing();
 	}
 

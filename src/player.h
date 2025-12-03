@@ -29,11 +29,6 @@ typedef struct Player {
 	bool remotePlayer; // Is this a remote player?
 	struct InputState input; // Current input state
 } Player;
-
-extern const float gravity; //gravity force
-extern const float jumpStrength; //initial jump velocity
-extern const float groundHeight; //player’s standing height from floor
-
 void InitPlayer();
 Player* GetPlayer();
 void LocalInputUpdate(struct InputState *input);
