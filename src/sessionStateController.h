@@ -11,6 +11,7 @@
 #define TICK_RATE_MS 50
 #define MAX_BOUNDS 1000
 
+extern bool multiplayerSession;
 extern Player* playerList[MAX_PLAYERS];
 extern uint8_t clientPlayerCount;
 extern Color playerColor, remoteColor;

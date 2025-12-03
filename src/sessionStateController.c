@@ -1,5 +1,6 @@
 #include "sessionStateController.h"
 
+bool multiplayerSession = false;
 Player* playerList[MAX_PLAYERS];
 uint8_t clientPlayerCount = 0;
 Color playerColor;
@@ -15,6 +16,9 @@ void SessionStateController_Init()
 	CreatePlayer = CreateNewPlayer; // To be called when a new player connects
 	InitalizeRemotePlayer = InitRemotePlayer; // To be called to initialize remote player data
 	PlayerDesyncCorrection = UpdatePlayerPosition; // To be called to update player position
+
+	playerColor = RED;
+	remoteColor = BLACK;
 }
 
 void SessionStateController_Tick(bool isServer)

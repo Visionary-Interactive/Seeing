@@ -24,6 +24,7 @@
 #include "nbnet.h"
 #include "net_drivers/udp.h"
 
+bool isServer = false;
 NBN_ConnectionHandle connectedClientHandle = 0;
 struct MovementSnapshot lastMovementSnapshot = { 0 };
 struct IncomingPlayer incomingPlayerData = { 0 };
@@ -39,6 +40,8 @@ void SessionManager_Init()
 	NBN_UDP_Register();
 	connectedClientHandle = 0;
 	lastMovementSnapshot = (struct MovementSnapshot){ 0 };
+	incomingPlayerData = (struct IncomingPlayer){ 0 };
+	lastPositionSnapshot = (struct PositionSnapshot){ 0 };
 }
 
 // Create a server session
@@ -202,6 +205,13 @@ bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_
 	}
 	printf("Client started. Connecting to %s:%d ...\n", host, port);
 	return true;
+}
+
+bool SessionManager_Client_IsConnected()
+{
+	if (NBN_GameClient_IsConnected())
+		return true;
+	return false;
 }
 
 void SessionManager_StopClient()

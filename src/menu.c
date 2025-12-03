@@ -2,13 +2,18 @@
 
 #include "menu.h"
 #include "includes.h"
+#include "sessionManager.h"
+#include "sessionStateController.h"
 
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
 Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
-Button exitButton = { { 100, 400, 200, 50 }, "Exit Game" };
-Button optionsButton = { { 100, 300, 200, 50 }, "Options" };
-Button menuButton = { { 100, 200, 200, 50 }, "Back to Menu" };
 Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
+Button multiMenuButton = { { 100, 400, 200, 50 }, "Multiplayer" };
+Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
+Button exitButton = { { 100, 600, 200, 50 }, "Exit Game" };
+Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
+Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
+Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
 
 
 static MenuScreen currentScreen = menu_main;
@@ -25,6 +30,8 @@ void DrawMenu()
         DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(playButton, DARKGRAY);
 		DrawButton(saveButton, DARKGRAY);
+		DrawButton(levelButton, DARKGRAY);
+		DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
         break;
@@ -44,6 +51,8 @@ void DrawMenu()
 
     case menu_multi:
         DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
+        DrawButton(multiHostButton, DARKGRAY);
+        DrawButton(multiJoinButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
 		break;
 
@@ -73,15 +82,29 @@ void DrawButton(Button button, Color color)
             // Buttons trigger screen changes:
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
-
-            if (strcmp(button.text, "Options") == 0)
+            else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
-
-            if (strcmp(button.text, "Exit Game") == 0)
-				CloseWindow();
-           
-            if (strcmp(button.text, "Back to Menu") == 0)
-				SetCurrentScreen(menu_main);
+            else if (strcmp(button.text, "Exit Game") == 0)
+                CloseWindow();
+            else if (strcmp(button.text, "Back to Menu") == 0)
+                SetCurrentScreen(menu_main);
+            else if (strcmp(button.text, "Multiplayer") == 0)
+                SetCurrentScreen(menu_multi);
+            else if (strcmp(button.text, "Host Game") == 0)
+            {
+                isServer = true;
+                SessionManager_CreateServer("UDP", SERVER_PORT);
+                multiplayerSession = true;
+                SetCurrentScreen(menu_game);
+            }
+            else if (strcmp(button.text, "Join Game") == 0)
+            {
+                playerColor = BLUE;
+                const char* host = "127.0.0.1"; // set default host to localhost
+                SessionManager_CreateClient("UDP", host, SERVER_PORT);
+                multiplayerSession = true;
+                SetCurrentScreen(menu_game);
+            }
         }
     }
 }

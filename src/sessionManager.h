@@ -55,6 +55,7 @@ struct IncomingPlayer { // Sent once upon connection
 	uint8_t isGrounded;
 };
 
+extern bool isServer;
 extern NBN_ConnectionHandle connectedClientHandle;
 extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
@@ -73,6 +74,7 @@ int SessionManager_Server_SendPackets();
 
 // Client functions
 bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_t port);
+bool SessionManager_Client_IsConnected();
 void SessionManager_StopClient();
 int SessionManager_Client_HandleEvents();
 bool SessionManager_Client_SendReliableByteArray(uint8_t* data, unsigned int length);
