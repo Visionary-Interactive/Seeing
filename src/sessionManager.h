@@ -59,8 +59,7 @@ extern NBN_ConnectionHandle connectedClientHandle;
 extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 extern struct PositionSnapshot lastPositionSnapshot;
-extern Rectangle test;
-extern Rectangle test;
+
 
 void SessionManager_Init();
 
