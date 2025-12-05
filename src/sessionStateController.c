@@ -168,6 +168,12 @@ void NetworkTick(bool isServer)
 			playerList[clientPlayerCount] = NULL;
 			clientPlayerCount--;
 		}
+		if (!isServer)
+		{
+			SessionStateController_Init();
+			multiplayerSession = false;
+			return;
+		}
 		break;
 	}
 	default:
