@@ -10,7 +10,7 @@ void LoadPropTest(Props* props)
 		0.0f, 4.0, -7.0f
 	},
 		(Vector3) {
-		1.0, 1.0, 1.0
+		6.0, 4.0, 1.0
 	},
 		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
 

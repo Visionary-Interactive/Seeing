@@ -33,6 +33,8 @@ typedef struct Props {
 	int interactType[MAX_PROPS];
 	int scriptID[MAX_PROPS];
 
+	Shader shader[MAX_PROPS];
+
 } Props;
 
 typedef enum InteractableType {

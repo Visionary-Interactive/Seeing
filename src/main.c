@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	remoteColor = BLACK;
 
 	//all this stuff should be toggleable
-	SetConfigFlags(FLAG_MSAA_4X_HINT);
+	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetTargetFPS(120);
@@ -36,6 +36,8 @@ int main(int argc, char** argv)
 	//Map gameMap;
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
+	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
+	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -77,11 +79,13 @@ int main(int argc, char** argv)
 			UpdatePlayer(props);
 		}
 		UpdateImpairment(astig);
+		UpdateImpairment(convex);
 		SessionStateController_Tick(isServer);
 		RefreshCamera(playerList[0]);
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 		BeginImpairment(astig);
+		//BeginImpairment(convex);
 
 		BeginMode3D(*camera);
 		DrawFloor();//&gameMap);
@@ -100,7 +104,8 @@ int main(int argc, char** argv)
 		}
 
 		EndImpairment(astig);
-		DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+		//EndImpairment(convex);
+		/*DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
 		DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
 		DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
 		DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
@@ -109,11 +114,13 @@ int main(int argc, char** argv)
 			10, 130, 20, DARKGRAY);
 		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
 			camera->target.x, camera->target.y, camera->target.z),
-			10, 160, 20, DARKGRAY);
+			10, 160, 20, DARKGRAY);*/
 		EndDrawing();
 	}
 
 	DestroyImpairment(astig);
+	DestroyImpairment(tritan);
+	DestroyImpairment(convex);
 	DestroyCamera();
 	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;
