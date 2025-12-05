@@ -209,7 +209,7 @@ void UpdateInteractions(Props* obj)
         if (dist < range)
         {
             // Show prompt
-            DrawText("Press E to interact:", 10, 200, 24, YELLOW);
+            DrawText("Press E to interact:", 10, 200, 24, RED);
 
             if (IsKeyPressed(KEY_E))
             {
