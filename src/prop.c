@@ -27,7 +27,7 @@ int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color co
 	//set up collider code based on model
 	ColliderSetup(obj, id);
 	obj->components[id] = components; // Default components
-	return (int)id;
+	return id;
 }
 
 void CreateLight(Props* obj, int id, Color color, float intensity) {
@@ -38,7 +38,6 @@ void CreateLight(Props* obj, int id, Color color, float intensity) {
 	obj->lightIntensity[id] = intensity;
 	obj->components[id] |= PROP_LIGHT; // Add light component
 }
-
 
 void ColliderSetup(Props* obj, int id) {
 	if (id < 0 || id >= obj->count) {
@@ -57,12 +56,20 @@ void ColliderSetup(Props* obj, int id) {
 
 }
 
-
 void RenderProps(const Props* obj) {
 	for (size_t i = 0; i < obj->count; i++) {
+		if (obj->components[i] & PROP_LENS) continue;
 		if (obj->components[i] & PROP_VISIBILE ) {
 			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
 		}
 	}
 }
 
+void RenderLensProps(const Props* obj) {
+	for (size_t i = 0; i < obj->count; i++) {
+		if (!(obj->components[i] & PROP_LENS)) continue;
+		if (obj->components[i] & PROP_VISIBILE ) {
+			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
+		}
+	}
+}

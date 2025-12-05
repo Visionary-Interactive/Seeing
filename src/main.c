@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
+#include "lens.h"
 
 
 int main(int argc, char** argv)
@@ -19,7 +20,8 @@ int main(int argc, char** argv)
 	remoteColor = BLACK;
 
 	//all this stuff should be toggleable
-	SetConfigFlags(FLAG_MSAA_4X_HINT);
+	//SetConfigFlags(FLAG_MSAA_4X_HINT);
+
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
@@ -34,10 +36,15 @@ int main(int argc, char** argv)
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
+	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
+	InitLensShader(screenWidth, screenHeight, sceneColorRT);
+
 	LoadPropTest(props);
 	//Map gameMap;
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
+	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
+	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -76,68 +83,71 @@ int main(int argc, char** argv)
 
 		if (currentScreen == menu_game)
 		{
-			if (IsKeyPressed(KEY_ESCAPE))
-			{
-				SetCurrentScreen(menu_main);
-			}
-			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
-			{
-				//if (playerList[i] == NULL) continue;
-				SetPlayer(playerList[i]);
-				UpdatePlayer(props);
-			}
-			UpdateImpairment(astig);
-			SessionStateController_Tick(isServer);
-			RefreshCamera(playerList[0]);
-	
+			if (playerList[i] == NULL) continue;
+			SetPlayer(playerList[i]);
+			UpdatePlayer(props);
 		}
-		BeginDrawing();
-		ClearBackground(RAYWHITE);
 
-		if (currentScreen != menu_game)
+		UpdateImpairment(astig);
+		//UpdateImpairment(convex);
+		SessionStateController_Tick(isServer);
+		RefreshCamera(playerList[0]);
+
+		BeginTextureMode(sceneColorRT);
+        ClearBackground(RAYWHITE);
+
+        BeginMode3D(*camera);
+        DrawFloor();
+        DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+		// Draw remote player
+		if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
+		RenderProps(props);
+        EndMode3D();
+        EndTextureMode();
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+		BeginImpairment(astig);
+
+		Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
+		Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
+		DrawTexturePro(sceneColorRT.texture, src, dst, (Vector2){ 0, 0 }, 0.0f, WHITE);
+
+		UpdateLensShaderPerFrame(camera, sceneColorRT);
+		rlDisableDepthMask();
+		BeginMode3D(*camera);
+			RenderLensProps(props);
+		EndMode3D();
+		rlEnableDepthMask();
+
+		EndImpairment(astig);
+
+		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 		{
-			DrawMenu();
+			if (playerList[i] == NULL) continue;
+			SetPlayer(playerList[i]);
+			UpdateInteractions(props);
 		}
 
-
-		if (currentScreen == menu_game)
-		{
-		
-			BeginImpairment(astig);
-			BeginMode3D(*camera);
-			DrawFloor();//&gameMap);
-			// Draw Player
-			DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-			// Draw remote player
-			if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
-			RenderProps(props);
-			EndMode3D();
-
-			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
-			{
-				//if (playerList[i] == NULL) continue;
-				SetPlayer(playerList[i]);
-				UpdateInteractions(props);
-			}
-
-			EndImpairment(astig);
-			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
-			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
-			DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
-			DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
-			DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
-				playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
-				10, 130, 20, DARKGRAY);
-			DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
-				camera->target.x, camera->target.y, camera->target.z),
-				10, 160, 20, DARKGRAY);
-			
-		}
-		
+		DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+		DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
+		DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+		DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
+		DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
+			playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
+			10, 130, 20, DARKGRAY);
+		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
+			camera->target.x, camera->target.y, camera->target.z),
+			10, 160, 20, DARKGRAY);
 		EndDrawing();
 	}
 
+	UnloadRenderTexture(sceneColorRT);
+
 	DestroyImpairment(astig);
+	DestroyImpairment(tritan);
+	DestroyImpairment(convex);
 	DestroyCamera();
 	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;

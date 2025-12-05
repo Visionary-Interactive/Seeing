@@ -12,8 +12,12 @@ static Shader LoadImpairmentFile(Impairments type)
         case Tritanopia:
             return LoadShader("resources/shaders/impairment.vs", 
                               "resources/shaders/tritanopia.fs");
+        case Convex:
+            return LoadShader("resources/shaders/impairment.vs", 
+                              "resources/shaders/convex.fs");
         default:
             TraceLog(LOG_WARNING, "Unknown impairment type...");
+            return LoadShader(0, 0);
     }
 }
 
@@ -34,17 +38,31 @@ Impairment *LoadImpairment(Impairments type, int screenW, int screenH)
     im->radiusMinor = 1.5f;
     im->samples = 15;
 
-    im->locIntensity  = GetShaderLocation(im->shader, "intensity");
+    im->refractiveIndex = 1.15f;
+    im->lensStrength = 0.35f;
+
+    im->locIntensity = GetShaderLocation(im->shader, "intensity");
     im->locResolution = GetShaderLocation(im->shader, "resolution");
     float res[2] = { (float)screenW, (float)screenH };
     SetShaderValue(im->shader, im->locResolution, res, SHADER_UNIFORM_VEC2);
 
     if (type == Astigmatism)
     {
-        im->locAngle   = GetShaderLocation(im->shader, "angle");
-        im->locRMajor  = GetShaderLocation(im->shader, "radiusMajor");
-        im->locRMinor  = GetShaderLocation(im->shader, "radiusMinor");
+        im->locAngle = GetShaderLocation(im->shader, "angle");
+        im->locRMajor = GetShaderLocation(im->shader, "radiusMajor");
+        im->locRMinor = GetShaderLocation(im->shader, "radiusMinor");
         im->locSamples = GetShaderLocation(im->shader, "samples");
+    }
+
+    if (type == Convex)
+    {
+        im->locRefractiveIndex = GetShaderLocation(im->shader, "refractiveIndex");
+        im->locLensStrength = GetShaderLocation(im->shader, "lensStrength");
+
+        SetShaderValue(im->shader, im->locRefractiveIndex,
+                    &im->refractiveIndex, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(im->shader, im->locLensStrength,
+                    &im->lensStrength, SHADER_UNIFORM_FLOAT);
     }
 
     return im;
@@ -72,6 +90,12 @@ void EndImpairment(Impairment *im)
         SetShaderValue(im->shader, im->locSamples, &im->samples, SHADER_UNIFORM_INT);
     }
 
+    if (im->type == Convex)
+    {
+        SetShaderValue(im->shader, im->locRefractiveIndex, &im->refractiveIndex, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(im->shader, im->locLensStrength, &im->lensStrength, SHADER_UNIFORM_FLOAT);
+    }
+
     EndTextureMode();
 
     BeginShaderMode(im->shader);
@@ -85,36 +109,44 @@ void UpdateImpairment(Impairment *im)
 {
     if (!im) return;
 
-    if (IsKeyDown(KEY_RIGHT)) im->angle += 0.02f;
-    if (IsKeyDown(KEY_LEFT))  im->angle -= 0.02f;
+    //universal controls
     if (IsKeyDown(KEY_UP))    im->intensity += 0.01f;
     if (IsKeyDown(KEY_DOWN))  im->intensity -= 0.01f;
 
-    if (IsKeyDown(KEY_RIGHT)) im->angle += 0.02f;
-    if (IsKeyDown(KEY_LEFT)) im->angle -= 0.02f;
-    if (IsKeyDown(KEY_UP)) im->intensity += 0.01f;
-    if (IsKeyDown(KEY_DOWN)) im->intensity -= 0.01f;
-    if (IsKeyDown(KEY_O))
+    if (im->type == Astigmatism)
     {
-        im->intensity = 0.4f;
-        im->angle = 0.0f;
-        im->radiusMajor = 4.0f;
-        im->radiusMinor = 1.2f;
-        im->samples = 11;
+        if (IsKeyDown(KEY_RIGHT)) im->angle += 0.02f;
+        if (IsKeyDown(KEY_LEFT))  im->angle -= 0.02f;
+
+        if (IsKeyPressed(KEY_O)) {
+            im->intensity = 0.4f;
+            im->angle = 0.0f;
+            im->radiusMajor = 4.0f;
+            im->radiusMinor = 1.2f;
+            im->samples = 11;
+        }
+        if (IsKeyPressed(KEY_P)) {
+            im->intensity = 0.2f;
+            im->angle = 0.0f;
+            im->radiusMajor = 10.0f;
+            im->radiusMinor = 2.0f;
+            im->samples = 20;
+        }
     }
-    if (IsKeyDown(KEY_P))
+
+    if (im->type == Convex)
     {
-        im->intensity = 0.2f;
-        im->angle = 0.0f;
-        im->radiusMajor = 10.0f;
-        im->radiusMinor = 2.0f;
-        im->samples = 20;
+        if (IsKeyDown(KEY_RIGHT)) im->lensStrength += 0.01f;
+        if (IsKeyDown(KEY_LEFT))  im->lensStrength -= 0.01f;
+
+        if (IsKeyDown(KEY_O)) im->refractiveIndex += 0.01f;
+        if (IsKeyDown(KEY_P)) im->refractiveIndex -= 0.01f;
     }
 }
 
 void DestroyImpairment(Impairment *im)
 {
-    M_ASSERT(im, "Tried to free non-existant impairment memory...");
+    M_ASSERT(im, "Tried to free non-existent impairment memory...")
     UnloadRenderTexture(im->target);
     UnloadShader(im->shader);
     free(im);
