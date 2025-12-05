@@ -12,6 +12,7 @@
 #define PROP_PUSHABLE (1 << 5)
 #define PROP_DOOR (1 << 6)
 #define PROP_PICKUP (1 << 7)
+#define PROP_LENS (1 << 8)
 
 typedef struct Props {
 	size_t count;
@@ -49,5 +50,6 @@ int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color co
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 void RenderProps(const Props* obj);
+void RenderLensProps(const Props* obj);
 
 #endif

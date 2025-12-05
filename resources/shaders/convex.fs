@@ -1,48 +1,55 @@
+// resources/shaders/lens_convex.fs
 #version 330
 
-in vec2 fragTexCoord;
-in vec3 fragPosition;
+in vec3 fragPos;
+in vec3 fragNormal;
+in vec4 fragClip;
 
 out vec4 finalColor;
 
-uniform sampler2D sceneTex;   // scene rendered previously
-uniform float radius;         // radius of lens in UV space
-uniform float refractiveIndex; // e.g., 1.1–1.3
-uniform float intensity;       // refraction strength
+uniform vec3 cameraPosition;
+uniform sampler2D sceneTex;
+uniform vec2 resolution;
 
-void main()
-{
-    // Convert UV to [-1, 1] lens space
-    vec2 uv = fragTexCoord * 2.0 - 1.0;
+uniform float refractiveIndex;
+uniform float lensStrength; //how much the UVs bend
+uniform float tintStrength; //0..1 blend toward tintColor
+uniform vec3 tintColor; //RGB tint to simulate glass absorption
+uniform float alpha; //overall translucency
 
-    // Distance from center determines curvature
-    float dist = length(uv);
+vec2 parallaxOffset(vec3 refracted, float strength) {
+    float z = max(abs(refracted.z), 0.001);
+    return (refracted.xy / z) * strength;
+}
 
-    // If pixel is outside lens, show normal scene
-    if (dist > radius) {
-        finalColor = texture(sceneTex, fragTexCoord);
-        return;
-    }
+vec3 sampleScene(vec2 uv, vec2 offset) {
+    vec2 uvR = clamp(uv + offset * 0.9, 0.001, 0.999);
+    vec2 uvG = clamp(uv + offset,     0.001, 0.999);
+    vec2 uvB = clamp(uv + offset * 1.1, 0.001, 0.999);
 
-    // Normal of a convex lens surface (sphere-like)
-    float z = sqrt(max(0.0, radius * radius - dist * dist));
-    vec3 normal = normalize(vec3(uv.x, uv.y, z));
+    float r = texture(sceneTex, uvR).r;
+    float g = texture(sceneTex, uvG).g;
+    float b = texture(sceneTex, uvB).b;
+    return vec3(r, g, b);
+}
 
-    // Convert normal to refraction offset
-    vec2 offset = normal.xy * (1.0 - refractiveIndex) * intensity;
+void main() {
+    vec3 N = normalize(fragNormal);
+    vec3 I = normalize(fragPos - cameraPosition);
 
-    // Sample refracted scene
-    vec2 refractedUV = fragTexCoord + offset;
+    float eta = 1.0 / refractiveIndex;
+    vec3 refracted = refract(I, N, eta);
 
-    // Clamp to avoid sampling outside texture
-    refractedUV = clamp(refractedUV, 0.001, 0.999);
+    vec2 ndc = fragClip.xy / fragClip.w;
+    vec2 screenUV = ndc * 0.5 + 0.5;
 
-    vec4 sceneColor = texture(sceneTex, refractedUV);
+    vec2 offset = parallaxOffset(refracted, lensStrength);
+    vec3 sceneColor = sampleScene(screenUV, offset);
 
-    // Slight tint to look like glass
-    vec4 glassTint = vec4(0.85, 0.9, 1.0, 0.35);
+    vec3 tinted = mix(sceneColor, sceneColor * tintColor, clamp(tintStrength, 0.0, 1.0));
 
-    // Mix refracted scene with glass tint
-    //finalColor = mix(sceneColor, glassTint, glassTint.a);
-    finalColor = vec4(1,0,0,1);
+    float fresnel = pow(1.0 - max(dot(-I, N), 0.0), 3.0);
+    float rimFade = smoothstep(0.0, 1.0, fresnel);
+
+    finalColor = vec4(tinted, alpha * (1.0 - 0.35 * rimFade));
 }

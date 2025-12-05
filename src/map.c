@@ -1,4 +1,5 @@
 #include "map.h"
+#include "lens.h"
 
 void LoadPropTest(Props* props)
 {
@@ -34,6 +35,14 @@ void LoadPropTest(Props* props)
 	},
 		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP;
+
+    Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
+    Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
+    CreateLensProp(props, lensPos, lensSize);
+
+    lensPos  = (Vector3){ -3.25f, 2.0f, -20.1f };
+    lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
+    CreateLensProp(props, lensPos, lensSize);
 }
 
 //a Drawlevel code to implement level creation in its own function
