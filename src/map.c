@@ -4,16 +4,42 @@
 void LoadPropTest(Props* props)
 {
     Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+	Model Wall = LoadModelFromMesh(GenMeshCube(20.0, 4.0, 1.0));
+	Model Wall2 = LoadModelFromMesh(GenMeshCube(1.0, 4.0, 20.0));
 
     //Create a Wall to test collision
-	CreateProp(props,
-		(Vector3) {
-		0.0f, 4.0, -7.0f
-	},
-		(Vector3) {
-		6.0, 4.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+	
+	int wallID = CreateProp(props,
+        (Vector3) {
+        0, 2.0f, -15.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall, BROWN, PROP_VISIBILE | PROP_COLLIDER);
+
+    int wall2ID = CreateProp(props,
+        (Vector3) {
+        -10.0f, 2.0f, -5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall2, BROWN, PROP_VISIBILE | PROP_COLLIDER);
+
+    int wall3ID = CreateProp(props,
+        (Vector3) {
+        10.0f, 2.0f, -5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall2, BROWN, PROP_VISIBILE | PROP_COLLIDER);
+
+    int Wall4ID = CreateProp(props,
+        (Vector3) {
+        0.0f, 2.0f, 5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall, BROWN, PROP_VISIBILE | PROP_COLLIDER);
 
 
 	//Create the door PROP to interact with

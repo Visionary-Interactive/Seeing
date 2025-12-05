@@ -45,8 +45,8 @@ void ColliderSetup(Props* obj, int id) {
 	}
 	//get the boundingbox from the model, adds scale to it 
 	BoundingBox bb = GetModelBoundingBox(obj->model[id]);
-	bb.min.x *= obj->size[id].x;  bb.min.y *= obj->size[id].y;  bb.min.z *= obj->size[id].z;
-	bb.max.x *= obj->size[id].x;  bb.max.y *= obj->size[id].y;  bb.max.z *= obj->size[id].z;
+	//bb.min.x *= obj->size[id].x;  bb.min.y *= obj->size[id].y;  bb.min.z *= obj->size[id].z;
+	//bb.max.x *= obj->size[id].x;  bb.max.y *= obj->size[id].y;  bb.max.z *= obj->size[id].z;
 
 	//offsets the box based on the position
 	bb.min = Vector3Add(bb.min, obj->position[id]);
