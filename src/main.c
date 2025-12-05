@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "impairment.h"
 #include "map.h"
+#include "menu.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
 #include "lens.h"
@@ -11,6 +12,7 @@
 
 int main(int argc, char** argv)
 {
+
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
@@ -21,8 +23,9 @@ int main(int argc, char** argv)
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
-	DisableCursor();
+	//DisableCursor();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -76,7 +79,9 @@ int main(int argc, char** argv)
 
 	while (!WindowShouldClose())
 	{
-		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+		MenuScreen currentScreen = GetCurrentScreen();
+
+		if (currentScreen == menu_game)
 		{
 			if (playerList[i] == NULL) continue;
 			SetPlayer(playerList[i]);
