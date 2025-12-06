@@ -3,7 +3,11 @@
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
-#include "includes.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #define MSG_TYPE_SNAPSHOT 1
 #define MSG_TYPE_INCOMINGPLAYER 2
@@ -35,7 +39,6 @@ extern NBN_ConnectionHandle connectedClientHandle;
 extern struct Snapshot lastSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 
-extern Rectangle test;
 
 void SessionManager_Init();
 
@@ -61,4 +64,4 @@ void SessionManager_Tick(struct Snapshot player, bool isServer);
 extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 
-#endif
+#endif SESSIONMANAGER_H
