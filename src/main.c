@@ -9,10 +9,8 @@
 #include "sessionStateController.h"
 #include "lens.h"
 
-
 int main(int argc, char** argv)
 {
-
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
@@ -21,18 +19,19 @@ int main(int argc, char** argv)
 
 	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
-
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
-	//DisableCursor();
 
+	//player setup
 	InitPlayer();
 	playerList[0] = GetPlayer();
 
+	//camera setup
 	InitCamera();
 	Camera* camera = GetCamera();
 
+	//level objects setup
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
@@ -40,16 +39,15 @@ int main(int argc, char** argv)
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
 
 	LoadPropTest(props);
-	//Map gameMap;
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
-	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
+
 
 	SessionManager_Init();
 	SessionStateController_Init();
 
-	// Set up Server/Client
+	//server/client setup
 	bool isServer = false;
 	if (argc < 2)
 	{
@@ -77,7 +75,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	while (!WindowShouldClose())
+	while (!WindowShouldClose() && !IsExitRequested())
 	{
 		MenuScreen currentScreen = GetCurrentScreen();
 		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
@@ -93,7 +91,6 @@ int main(int argc, char** argv)
 			}
 
 			UpdateImpairment(astig);
-			//UpdateImpairment(convex);
 			SessionStateController_Tick(isServer);
 			RefreshCamera(playerList[0]);
 
@@ -103,13 +100,13 @@ int main(int argc, char** argv)
 			BeginMode3D(*camera);
 			DrawFloor();
 			DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-			// Draw remote player
+
+			//draw remote player
 			if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
 			RenderProps(props);
 			if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game) { SetCurrentScreen(menu_game_paused); }
 
 		}
-
 
         EndMode3D();
         EndTextureMode();
@@ -134,15 +131,14 @@ int main(int argc, char** argv)
 
 			EndImpairment(astig);
 
-			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+			//update for all players
+			for (int i = 0; i < clientPlayerCount + 1; i++)
 			{
 				if (playerList[i] == NULL) continue;
 				SetPlayer(playerList[i]);
 				UpdateInteractions(props);
 			}
 
-
-			//Drawing things that will play during the game
 			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
 			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
 			DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
@@ -155,7 +151,6 @@ int main(int argc, char** argv)
 				10, 160, 20, DARKGRAY);
 			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
 			DrawUI();
-
 		}
 
 		if (currentScreen != menu_game)
@@ -170,19 +165,15 @@ int main(int argc, char** argv)
 
 	DestroyImpairment(astig);
 	DestroyImpairment(tritan);
-	DestroyImpairment(convex);
 	DestroyCamera();
 	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
 
-	// Stop Server/Client
-	if (argc >= 2)
-	{
-		if (strcmp(argv[1], "server") == 0) SessionManager_StopServer();
-		else if (strcmp(argv[1], "client") == 0) SessionManager_StopClient();
-	}
+	//stop Server/Client
+	if (isServer) SessionManager_StopServer();
+	else SessionManager_StopClient();
 
 	CloseWindow();
 	free(props);

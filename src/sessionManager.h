@@ -64,4 +64,4 @@ void SessionManager_Tick(struct Snapshot player, bool isServer);
 extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 
-#endif SESSIONMANAGER_H
+#endif

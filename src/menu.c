@@ -1,5 +1,3 @@
-#pragma once
-
 #include "menu.h"
 #include "includes.h"
 
@@ -12,9 +10,17 @@ Button menuButton = { { 100, 400, 200, 50 }, "Back to Menu" };
 Button levelButton = { { 100, 100, 200, 50 }, "Level Select" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 
-
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
+static bool gExitRequested = false;
+
+bool IsExitRequested(void) {
+    return gExitRequested;
+}
+
+void RequestExit(void) {
+    gExitRequested = true;
+}
 
 // Draws the current menu screen based on the current state
 void DrawMenu()
@@ -95,8 +101,7 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_options);
 
             if (strcmp(button.text, "Exit Game") == 0)
-				CloseWindow();
-           
+                RequestExit();
             if (strcmp(button.text, "Back to Menu") == 0)
 				SetCurrentScreen(menu_main);
 			if (strcmp(button.text, "Level Select") == 0)
@@ -125,7 +130,7 @@ MenuScreen GetCurrentScreen() {
 // Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
-    static MenuScreen lastScreen = menu_main;
+    lastScreen = menu_main;
 
     if (currentScreen != lastScreen)
     {

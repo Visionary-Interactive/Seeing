@@ -2,9 +2,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-
 #include "includes.h"
-
 
 static bool uiInteraction;
 
@@ -19,7 +17,6 @@ typedef enum MenuScreen {
 
 } MenuScreen;
 
-
 typedef struct Button
 {
 	Rectangle bounds;
@@ -27,26 +24,15 @@ typedef struct Button
 
 } Button;
 
-
-
 void DrawMenu();
-
 void DrawUI();
-
 void DrawButton(struct Button button, Color color);
-
 MenuScreen GetCurrentScreen();
 void SetCurrentScreen(MenuScreen newScreen);
-
 void SetUIInteraction(bool interaction);
 
-
-
-
-
-
-
-
+bool IsExitRequested(void);
+void RequestExit(void);
 
 #endif // !MENU_H
 

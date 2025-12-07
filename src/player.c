@@ -218,7 +218,7 @@ void UpdateInteractions(Props* obj)
                 {
                     case INTERACTABLE_DOOR:
                         DrawText("You interacted with a door!", 10, 200, 24, GREEN);
-                        CloseWindow();
+                        RequestExit();
                         break;
                     case INTERACTABLE_PICKUP:
                         if (heldObject == -1)
