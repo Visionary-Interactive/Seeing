@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "includes.h"
 
+// Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
 Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
 Button exitButton = { { 100, 400, 200, 50 }, "Exit Game" };
@@ -15,7 +16,7 @@ Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
 
-
+// Draws the current menu screen based on the current state
 void DrawMenu()
 {
     MenuScreen screen = GetCurrentScreen();
@@ -31,6 +32,7 @@ void DrawMenu()
         break;
 
     case menu_game:
+        DrawUI();
         break;
 
     case menu_options:
@@ -69,6 +71,7 @@ void DrawMenu()
     }
 }
 
+//Draws a button and handles its interaction logic
 void DrawButton(Button button, Color color)
 {
     DrawRectangleRec(button.bounds, color);
@@ -104,11 +107,22 @@ void DrawButton(Button button, Color color)
     }
 }
 
+//will draw interaction to the UI for the player
+void DrawUI()
+{
+    if (uiInteraction == true)
+    {
+        DrawRectangle(160, 840, 75, 75, BLUE);
+    }
+}
 
+
+// Returns the current menu screen
 MenuScreen GetCurrentScreen() {
     return currentScreen;
 }
 
+// Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
     static MenuScreen lastScreen = menu_main;
@@ -120,3 +134,11 @@ void SetCurrentScreen(MenuScreen newScreen) {
         lastScreen = currentScreen;
     }
 }
+
+// Sets whether the UI is currently being interacted with
+void SetUIInteraction(bool interaction)
+{
+	uiInteraction = interaction;
+	printf("UI Interaction set to: %s\n", interaction ? "true" : "false");
+}
+

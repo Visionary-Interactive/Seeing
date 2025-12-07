@@ -8,6 +8,7 @@ int heldObject = -1; // No object held initially
 const float jumpStrength = 10.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 
+//initializes the player struct with default values
 void InitPlayer()
 {
     player = (Player*)malloc(sizeof(Player));
@@ -37,7 +38,7 @@ void SetPlayer(Player* p)
 {
 	player = p;
 }
-
+//Updates the player's position and handles input
 void UpdatePlayer(Props* obj)
 {
     float dt = GetFrameTime();
@@ -229,6 +230,7 @@ void UpdateInteractions(Props* obj)
                             obj->components[i] &= ~PROP_COLLIDER;
 
                             printf("Picked up object %zu\n", i);
+                            SetUIInteraction(true);
                         }
                         break;
                     default:

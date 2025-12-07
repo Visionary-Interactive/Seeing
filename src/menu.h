@@ -6,6 +6,8 @@
 #include "includes.h"
 
 
+static bool uiInteraction;
+
 typedef enum MenuScreen {
 	menu_main,
 	menu_game,
@@ -29,10 +31,15 @@ typedef struct Button
 
 void DrawMenu();
 
+void DrawUI();
+
 void DrawButton(struct Button button, Color color);
 
 MenuScreen GetCurrentScreen();
 void SetCurrentScreen(MenuScreen newScreen);
+
+void SetUIInteraction(bool interaction);
+
 
 
 

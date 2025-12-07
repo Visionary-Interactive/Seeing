@@ -4,6 +4,7 @@
 
 #include "includes.h"
 #include "prop.h"
+#include "menu.h"
 
 typedef struct Player {
     Vector3 position;

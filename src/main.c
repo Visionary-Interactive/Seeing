@@ -141,6 +141,8 @@ int main(int argc, char** argv)
 				UpdateInteractions(props);
 			}
 
+
+			//Drawing things that will play during the game
 			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
 			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
 			DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
@@ -152,6 +154,7 @@ int main(int argc, char** argv)
 				camera->target.x, camera->target.y, camera->target.z),
 				10, 160, 20, DARKGRAY);
 			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
+			DrawUI();
 
 		}
 
