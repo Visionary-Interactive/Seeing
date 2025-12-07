@@ -16,9 +16,6 @@ int main(int argc, char** argv)
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	playerColor = RED;
-	remoteColor = BLACK;
-
 	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
@@ -49,37 +46,11 @@ int main(int argc, char** argv)
 	SessionManager_Init();
 	SessionStateController_Init();
 
-	// Set up Server/Client
-	bool isServer = false;
-	if (argc < 2)
-	{
-		printf("No CLI argument provided for <server|client>, defaulting to server\n");
-		isServer = true;
-		SessionManager_CreateServer("UDP", SERVER_PORT);
-	}
-	else
-	{
-		if (strcmp(argv[1], "server") == 0)
-		{
-			isServer = true;
-			SessionManager_CreateServer("UDP", SERVER_PORT);
-		}
-		else if (strcmp(argv[1], "client") == 0)
-		{
-			playerColor = BLUE;
-			const char* host = (argc >= 3) ? argv[2] : "127.0.0.1"; // set default host to localhost
-			SessionManager_CreateClient("UDP", host, SERVER_PORT);
-		}
-		else
-		{
-			printf("Invalid CLI argument! It's hosed. Aborting...\n");
-			return 1;
-		}
-	}
-
 	while (!WindowShouldClose())
 	{
 		MenuScreen currentScreen = GetCurrentScreen();
+		if (multiplayerSession)
+			SessionStateController_Tick(isServer); // Networking tick
 		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
 
 		if (currentScreen == menu_game)
@@ -93,8 +64,6 @@ int main(int argc, char** argv)
 			}
 
 			UpdateImpairment(astig);
-			//UpdateImpairment(convex);
-			SessionStateController_Tick(isServer);
 			RefreshCamera(playerList[0]);
 
 			BeginTextureMode(sceneColorRT);
