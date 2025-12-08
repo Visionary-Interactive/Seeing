@@ -230,7 +230,7 @@ void UpdateInteractions(Props* obj)
 					if (!player->remotePlayer)
 					{
 						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
-						CloseWindow();
+						RequestExit();
 					}
 					break;
 				case INTERACTABLE_PICKUP:

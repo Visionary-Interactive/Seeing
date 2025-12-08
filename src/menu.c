@@ -1,5 +1,3 @@
-#pragma once
-
 #include "menu.h"
 #include "includes.h"
 #include "sessionManager.h"
@@ -23,6 +21,7 @@ bool ipBoxFocused = false;
 
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
+static bool gExitRequested = false;
 
 // Draws the current menu screen based on the current state
 void DrawMenu()
@@ -105,7 +104,7 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Exit Game") == 0)
-                CloseWindow();
+                RequestExit();
             else if (strcmp(button.text, "Back to Menu") == 0)
                 SetCurrentScreen(menu_main);
             else if (strcmp(button.text, "Multiplayer") == 0)
@@ -199,3 +198,10 @@ void SetUIInteraction(bool interaction)
 	printf("UI Interaction set to: %s\n", interaction ? "true" : "false");
 }
 
+bool IsExitRequested(void) {
+    return gExitRequested;
+}
+
+void RequestExit(void) {
+    gExitRequested = true;
+}

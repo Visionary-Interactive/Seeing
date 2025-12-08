@@ -4,7 +4,6 @@
 
 #include "includes.h"
 
-
 static bool uiInteraction;
 
 typedef enum MenuScreen {
@@ -26,24 +25,16 @@ typedef struct Button
 } Button;
 
 void DrawMenu();
-
 void DrawUI();
-
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 
 MenuScreen GetCurrentScreen();
 void SetCurrentScreen(MenuScreen newScreen);
-
 void SetUIInteraction(bool interaction);
 
-
-
-
-
-
-
-
+bool IsExitRequested(void);
+void RequestExit(void);
 
 #endif // !MENU_H
 

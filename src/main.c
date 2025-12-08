@@ -16,6 +16,8 @@ int main(int argc, char** argv)
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
+	bool swap = false;
+
 	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
@@ -46,8 +48,17 @@ int main(int argc, char** argv)
 	SessionManager_Init();
 	SessionStateController_Init();
 
-	while (!WindowShouldClose())
+	while (!WindowShouldClose() && !IsExitRequested())
 	{
+		if (IsKeyDown(KEY_LEFT_BRACKET))
+        {
+            swap = false;
+        }
+        if (IsKeyDown(KEY_RIGHT_BRACKET))
+        {
+            swap = true;
+        }
+
 		MenuScreen currentScreen = GetCurrentScreen();
 		if (multiplayerSession)
 			SessionStateController_Tick(isServer); // Networking tick
@@ -55,7 +66,6 @@ int main(int argc, char** argv)
 
 		if (currentScreen == menu_game)
 		{
-
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
 				if (playerList[i] == NULL) continue;
@@ -63,6 +73,7 @@ int main(int argc, char** argv)
 				UpdatePlayer(props);
 			}
 
+			UpdateImpairment(tritan);
 			UpdateImpairment(astig);
 			RefreshCamera(playerList[0]);
 
@@ -76,9 +87,7 @@ int main(int argc, char** argv)
 			if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
 			RenderProps(props);
 			if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game) { SetCurrentScreen(menu_game_paused); }
-
 		}
-
 
         EndMode3D();
         EndTextureMode();
@@ -88,7 +97,8 @@ int main(int argc, char** argv)
 
 		if (currentScreen == menu_game || currentScreen == menu_game_paused)
 		{
-			BeginImpairment(astig);
+			if (swap) BeginImpairment(tritan);
+			else BeginImpairment(astig);
 
 			Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
 			Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
@@ -101,7 +111,8 @@ int main(int argc, char** argv)
 			EndMode3D();
 			rlEnableDepthMask();
 
-			EndImpairment(astig);
+			if (swap) EndImpairment(tritan);
+			else EndImpairment(astig);
 
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
@@ -110,11 +121,11 @@ int main(int argc, char** argv)
 				UpdateInteractions(props);
 			}
 
-
 			//Drawing things that will play during the game
 			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
 			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
-			DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+			if (!swap) DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+			else DrawText("Current Impairment Loaded: Tritanopia", 10, 70, 20, DARKGRAY);
 			DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
 			DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
 				playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
@@ -141,17 +152,14 @@ int main(int argc, char** argv)
 	DestroyImpairment(tritan);
 	DestroyImpairment(convex);
 	DestroyCamera();
-	for (int i = 0; i < clientPlayerCount + 1; i++) {
+	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
 
 	// Stop Server/Client
-	if (argc >= 2)
-	{
-		if (strcmp(argv[1], "server") == 0) SessionManager_StopServer();
-		else if (strcmp(argv[1], "client") == 0) SessionManager_StopClient();
-	}
+	/*if (isServer) SessionManager_StopServer();
+	else SessionManager_StopClient();*/
 
 	CloseWindow();
 	free(props);
