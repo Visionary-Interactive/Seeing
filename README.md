@@ -1,6 +1,6 @@
 # A Game About Seeing
 
-WIP
+A puzzle game made to show off and help the understanding of Visual Impairments in a simulation this game uses nbnet and Raylib functionality in order to showcase networking and visual rendering. Created by Jacob Kloet, Morgan Cowans and Alice Ramrattan.
 
 # Raylib-Quickstart License
 Copyright (c) 2020-2025 Jeffery Myers
