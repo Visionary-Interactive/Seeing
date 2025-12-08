@@ -1,33 +1,51 @@
 #include "sessionStateController.h"
 
+bool multiplayerSession = false;
 Player* playerList[MAX_PLAYERS];
-int clientPlayerCount = 0;
+uint8_t clientPlayerCount = 0;
 Color playerColor;
 Color remoteColor;
-clock_t last_network_tick = 0;
+clock_t lastNetworkTick = 0;
+uint16_t localSequence = 1;
+uint16_t lastPositionSequence = 0;
 
 void SessionStateController_Init()
 {
 	clientPlayerCount = 0;
-	//memset(playerList, 0, sizeof(playerList));
-	last_network_tick = clock();
-	CreatePlayer = CreateNewPlayer;
-	InitalizeRemotePlayer = InitRemotePlayer;
+	lastNetworkTick = clock();
+	CreatePlayer = CreateNewPlayer; // To be called when a new player connects
+	InitalizeRemotePlayer = InitRemotePlayer; // To be called to initialize remote player data
+	PlayerDesyncCorrection = UpdatePlayerPosition; // To be called to update player position
+
+	playerColor = RED;
+	remoteColor = BLACK;
 }
 
 void SessionStateController_Tick(bool isServer)
 {
 	// Handle networking events at fixed tick rate
 	clock_t now = clock();
-	int elapsed_ms = (int)(now - last_network_tick);
+	int elapsed_ms = (int)(now - lastNetworkTick);
 
-	if (elapsed_ms >= TICK_RATE_MS)
+	if (localSequence == UINT16_MAX) // Wrap around if we reach max value
 	{
-		last_network_tick = now;
+		localSequence = 1;
+		lastPositionSequence = 0;
+	}
+
+	if ((localSequence % 500) == 0) // Every 500 ticks
+	{
+		NetworkCorrectionTick(isServer);
+		localSequence++;
+	}
+	else if (elapsed_ms >= TICK_RATE_MS)
+	{
+		lastNetworkTick = now;
 		NetworkTick(isServer);
 	}
 }
 
+// Called when a new player connects
 void CreateNewPlayer()
 {
 	// Create a new remote player and set its properties based on incoming data
@@ -37,26 +55,65 @@ void CreateNewPlayer()
 	clientPlayerCount++;
 }
 
+// Called to initialize remote player data
 void InitRemotePlayer()
 {
-	playerList[clientPlayerCount]->position.x = incomingPlayerData.posX;
-	playerList[clientPlayerCount]->position.y = incomingPlayerData.posY;
-	playerList[clientPlayerCount]->position.z = incomingPlayerData.posZ;
-	playerList[clientPlayerCount]->size.x = incomingPlayerData.scaleX;
-	playerList[clientPlayerCount]->size.y = incomingPlayerData.scaleY;
-	playerList[clientPlayerCount]->size.z = incomingPlayerData.scaleZ;
+	playerList[clientPlayerCount]->position = (Vector3){
+		incomingPlayerData.position.x,
+		incomingPlayerData.position.y,
+		incomingPlayerData.position.z
+	};
+	playerList[clientPlayerCount]->size = (Vector3){
+		incomingPlayerData.scale.x,
+		incomingPlayerData.scale.y,
+		incomingPlayerData.scale.z
+	};
 	remoteColor.r = incomingPlayerData.r;
 	remoteColor.g = incomingPlayerData.g;
 	remoteColor.b = incomingPlayerData.b;
-	playerList[clientPlayerCount]->velocity.x = incomingPlayerData.velX;
-	playerList[clientPlayerCount]->velocity.y = incomingPlayerData.velY;
-	playerList[clientPlayerCount]->velocity.z = incomingPlayerData.velZ;
+	playerList[clientPlayerCount]->velocity = (Vector3){
+		incomingPlayerData.velocity.x,
+		incomingPlayerData.velocity.y,
+		incomingPlayerData.velocity.z
+	};
 	playerList[clientPlayerCount]->speed = incomingPlayerData.speed;
 	playerList[clientPlayerCount]->yaw = incomingPlayerData.yaw;
 	playerList[clientPlayerCount]->pitch = incomingPlayerData.pitch;
 	playerList[clientPlayerCount]->isGrounded = incomingPlayerData.isGrounded;
 }
 
+// Called to update remote player position based on received snapshot
+void UpdatePlayerPosition()
+{
+	printf("last position seq: %d, last remote position seq: %d\n", 
+		lastPositionSequence, lastPositionSnapshot.sequence);
+	if (clientPlayerCount > 0 
+		&& lastPositionSnapshot.sequence > lastPositionSequence) // Only apply if new data
+	{
+		lastPositionSequence = lastPositionSnapshot.sequence;
+		playerList[1]->position = (Vector3){
+			DequantizeFloat(lastPositionSnapshot.posX, MAX_BOUNDS),
+			DequantizeFloat(lastPositionSnapshot.posY, MAX_BOUNDS),
+			DequantizeFloat(lastPositionSnapshot.posZ, MAX_BOUNDS)
+		};
+		playerList[1]->yaw = DequantizeFloat(lastPositionSnapshot.yaw, MAX_BOUNDS);
+		playerList[1]->pitch = DequantizeFloat(lastPositionSnapshot.pitch, MAX_BOUNDS);
+		printf("lastPositionSnapshot: %d, %d, %d\tyaw: %d, pitch: %d\n",
+			lastPositionSnapshot.posX,
+			lastPositionSnapshot.posY,
+			lastPositionSnapshot.posZ,
+			lastPositionSnapshot.yaw,
+			lastPositionSnapshot.pitch);
+		printf("Updated remote player position to: %.3f, %.3f, %.3f\tyaw: %.3f, pitch: %.3f\n",
+			playerList[1]->position.x,
+			playerList[1]->position.y,
+			playerList[1]->position.z,
+			playerList[1]->yaw,
+			playerList[1]->pitch);
+	}
+}
+
+// Network tick function - runs often
 void NetworkTick(bool isServer)
 {
 	int ev; // event variable
@@ -71,27 +128,35 @@ void NetworkTick(bool isServer)
 	{
 		// New connection, send the incoming player data
 		struct IncomingPlayer incomingPlayer;
-		incomingPlayer.posX = playerList[0]->position.x;
-		incomingPlayer.posY = playerList[0]->position.y;
-		incomingPlayer.posZ = playerList[0]->position.z;
-		incomingPlayer.scaleX = playerList[0]->size.x;
-		incomingPlayer.scaleY = playerList[0]->size.y;
-		incomingPlayer.scaleZ = playerList[0]->size.z;
+		incomingPlayer.position = (struct SessionVec3){
+			playerList[0]->position.x,
+			playerList[0]->position.y,
+			playerList[0]->position.z
+		};
+		incomingPlayer.scale = (struct SessionVec3){
+			playerList[0]->size.x,
+			playerList[0]->size.y,
+			playerList[0]->size.z
+		};
 		incomingPlayer.r = playerColor.r;
 		incomingPlayer.g = playerColor.g;
 		incomingPlayer.b = playerColor.b;
-		incomingPlayer.velX = playerList[0]->velocity.x;
-		incomingPlayer.velY = playerList[0]->velocity.y;
-		incomingPlayer.velZ = playerList[0]->velocity.z;
+		incomingPlayer.velocity = (struct SessionVec3){
+			playerList[0]->velocity.x,
+			playerList[0]->velocity.y,
+			playerList[0]->velocity.z
+		};
 		incomingPlayer.speed = playerList[0]->speed;
 		incomingPlayer.yaw = playerList[0]->yaw;
 		incomingPlayer.pitch = playerList[0]->pitch;
 		incomingPlayer.isGrounded = playerList[0]->isGrounded;
 
-		if (isServer)
-			SendIncomingPlayer(connectedClientHandle, &incomingPlayer, true);
-		else
-			SendIncomingPlayer(connectedClientHandle, &incomingPlayer, false);
+		// Send IncomingPlayer packet
+		uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
+		buffer[0] = IncomingPlayer; // Set message type
+		memcpy(buffer + 1, &incomingPlayer, sizeof(struct IncomingPlayer));
+		SendPlayerData(buffer, sizeof(buffer), isServer);
+
 		break;
 	}
 	case 3: // NBN_CLIENT_DISCONNECTED / NBN_DISCONNECTED
@@ -103,33 +168,99 @@ void NetworkTick(bool isServer)
 			playerList[clientPlayerCount] = NULL;
 			clientPlayerCount--;
 		}
+		if (!isServer)
+		{
+			SessionStateController_Init();
+			multiplayerSession = false;
+			return;
+		}
 		break;
 	}
 	default:
 		break;
 	}
-	struct Snapshot playerPosition;
-	playerPosition.forward = IsKeyDown(KEY_W);
-	playerPosition.backward = IsKeyDown(KEY_S);
-	playerPosition.left = IsKeyDown(KEY_A);
-	playerPosition.right = IsKeyDown(KEY_D);
-	playerPosition.y = playerList[0]->position.y;
-	playerPosition.pitch = playerList[0]->pitch;
-	playerPosition.yaw = playerList[0]->yaw;
-	if (clientPlayerCount > 0)
-	{
-		playerList[1]->ex_W = lastSnapshot.forward;
-		playerList[1]->ex_S = lastSnapshot.backward;
-		playerList[1]->ex_A = lastSnapshot.left;
-		playerList[1]->ex_D = lastSnapshot.right;
 
-		playerList[1]->position.y = lastSnapshot.y;
-		playerList[1]->pitch = lastSnapshot.pitch;
-		playerList[1]->yaw = lastSnapshot.yaw;
+	struct MovementSnapshot movementSnapshot;
+	movementSnapshot.sequence = localSequence;
+	movementSnapshot.forward = IsKeyDown(KEY_W);
+	movementSnapshot.backward = IsKeyDown(KEY_S);
+	movementSnapshot.left = IsKeyDown(KEY_A);
+	movementSnapshot.right = IsKeyDown(KEY_D);
+	movementSnapshot.interact = IsKeyDown(KEY_E);
+	movementSnapshot.place = IsKeyDown(KEY_R);
+	movementSnapshot.sprint = IsKeyDown(KEY_LEFT_SHIFT);
+	movementSnapshot.y = QuantizeFloat(playerList[0]->position.y, MAX_BOUNDS);
+	movementSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
+	movementSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
+
+	// Waits for a new position snapshot every 500 ticks before updating remote player input
+	if (clientPlayerCount > 0 && playerList[1] != NULL 
+		&& (lastMovementSnapshot.sequence - lastPositionSequence) < 500)
+	{
+		localSequence++;
+		playerList[1]->input.W = lastMovementSnapshot.forward;
+		playerList[1]->input.S = lastMovementSnapshot.backward;
+		playerList[1]->input.A = lastMovementSnapshot.left;
+		playerList[1]->input.D = lastMovementSnapshot.right;
+		playerList[1]->input.E = lastMovementSnapshot.interact;
+		playerList[1]->input.R = lastMovementSnapshot.place;
+		playerList[1]->input.SHIFT = lastMovementSnapshot.sprint;
+
+		playerList[1]->position.y = DequantizeFloat(lastMovementSnapshot.y, MAX_BOUNDS);
+		playerList[1]->pitch = DequantizeFloat(lastMovementSnapshot.pitch, MAX_BOUNDS);
+		playerList[1]->yaw = DequantizeFloat(lastMovementSnapshot.yaw, MAX_BOUNDS);
 	}
-	SessionManager_Tick(playerPosition, isServer);
+
+	// Send Movement data packet
+	uint8_t buffer[1 + sizeof(struct MovementSnapshot)];
+	buffer[0] = MovementSnapshot; // Set message type
+	memcpy(buffer + 1, &movementSnapshot, sizeof(struct MovementSnapshot));
+	SendPlayerData(buffer, sizeof(buffer), isServer);
+
 	if (isServer)
 		SessionManager_Server_SendPackets();
 	else
 		SessionManager_Client_SendPackets();
+}
+
+// Network correction tick - runs occasionally to correct desynchronization
+void NetworkCorrectionTick(bool isServer)
+{
+	struct PositionSnapshot positionSnapshot;
+	positionSnapshot.sequence = localSequence;
+	positionSnapshot.posX = QuantizeFloat(playerList[0]->position.x, MAX_BOUNDS);
+	positionSnapshot.posY = QuantizeFloat(playerList[0]->position.y, MAX_BOUNDS);
+	positionSnapshot.posZ = QuantizeFloat(playerList[0]->position.z, MAX_BOUNDS);
+	positionSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
+	positionSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
+
+	// Send position correction packet
+	uint8_t buffer[1 + sizeof(struct PositionSnapshot)];
+	buffer[0] = PositionSnapshot; // Set message type
+	memcpy(buffer + 1, &positionSnapshot, sizeof(struct PositionSnapshot));
+	SendPlayerData(buffer, sizeof(buffer), isServer);
+
+	if (isServer)
+		SessionManager_Server_SendPackets();
+	else
+		SessionManager_Client_SendPackets();
+}
+
+// Stores float into a quantized int16_t based on max absolute value
+int16_t QuantizeFloat(float value, float max_abs) 
+{
+	float scaled = (value / max_abs) * 32767.0f;
+
+	if (scaled > 32767.0f) 
+		scaled = 32767.0f;
+	else if (scaled < -32767.0f) 
+		scaled = -32767.0f;
+
+	return (int16_t)lroundf(scaled);
+}
+
+// Retrieves float from quantized int16_t based on max absolute value
+float DequantizeFloat(int16_t scaledValue, float max_abs) 
+{
+	return (scaledValue / 32767.0f) * max_abs;
 }

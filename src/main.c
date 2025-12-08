@@ -16,8 +16,7 @@ int main(int argc, char** argv)
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	playerColor = RED;
-	remoteColor = BLACK;
+	bool swap = false;
 
 	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -49,97 +48,101 @@ int main(int argc, char** argv)
 	SessionManager_Init();
 	SessionStateController_Init();
 
-	// Set up Server/Client
-	bool isServer = false;
-	if (argc < 2)
+	while (!WindowShouldClose() && !IsExitRequested())
 	{
-		printf("No CLI argument provided for <server|client>, defaulting to server\n");
-		isServer = true;
-		SessionManager_CreateServer("UDP", SERVER_PORT);
-	}
-	else
-	{
-		if (strcmp(argv[1], "server") == 0)
-		{
-			isServer = true;
-			SessionManager_CreateServer("UDP", SERVER_PORT);
-		}
-		else if (strcmp(argv[1], "client") == 0)
-		{
-			playerColor = BLUE;
-			const char* host = (argc >= 3) ? argv[2] : "127.0.0.1"; // set default host to localhost
-			SessionManager_CreateClient("UDP", host, SERVER_PORT);
-		}
-		else
-		{
-			printf("Invalid CLI argument! It's hosed. Aborting...\n");
-			return 1;
-		}
-	}
+		if (IsKeyDown(KEY_LEFT_BRACKET))
+        {
+            swap = false;
+        }
+        if (IsKeyDown(KEY_RIGHT_BRACKET))
+        {
+            swap = true;
+        }
 
-	while (!WindowShouldClose())
-	{
 		MenuScreen currentScreen = GetCurrentScreen();
+		if (multiplayerSession)
+			SessionStateController_Tick(isServer); // Networking tick
+		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
 
 		if (currentScreen == menu_game)
 		{
-			if (playerList[i] == NULL) continue;
-			SetPlayer(playerList[i]);
-			UpdatePlayer(props);
+			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+			{
+				if (playerList[i] == NULL) continue;
+				SetPlayer(playerList[i]);
+				UpdatePlayer(props);
+			}
+
+			UpdateImpairment(tritan);
+			UpdateImpairment(astig);
+			RefreshCamera(playerList[0]);
+
+			BeginTextureMode(sceneColorRT);
+			ClearBackground(RAYWHITE);
+
+			BeginMode3D(*camera);
+			DrawFloor();
+			DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+			// Draw remote player
+			if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
+			RenderProps(props);
+			if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game) { SetCurrentScreen(menu_game_paused); }
 		}
 
-		UpdateImpairment(astig);
-		//UpdateImpairment(convex);
-		SessionStateController_Tick(isServer);
-		RefreshCamera(playerList[0]);
-
-		BeginTextureMode(sceneColorRT);
-        ClearBackground(RAYWHITE);
-
-        BeginMode3D(*camera);
-        DrawFloor();
-        DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-		// Draw remote player
-		if (clientPlayerCount == 1) DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
-		RenderProps(props);
         EndMode3D();
         EndTextureMode();
 
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(WHITE);
 
-		BeginImpairment(astig);
-
-		Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
-		Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
-		DrawTexturePro(sceneColorRT.texture, src, dst, (Vector2){ 0, 0 }, 0.0f, WHITE);
-
-		UpdateLensShaderPerFrame(camera, sceneColorRT);
-		rlDisableDepthMask();
-		BeginMode3D(*camera);
-			RenderLensProps(props);
-		EndMode3D();
-		rlEnableDepthMask();
-
-		EndImpairment(astig);
-
-		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+		if (currentScreen == menu_game || currentScreen == menu_game_paused)
 		{
-			if (playerList[i] == NULL) continue;
-			SetPlayer(playerList[i]);
-			UpdateInteractions(props);
+			if (swap) BeginImpairment(tritan);
+			else BeginImpairment(astig);
+
+			Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
+			Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
+			DrawTexturePro(sceneColorRT.texture, src, dst, (Vector2) { 0, 0 }, 0.0f, WHITE);
+
+			UpdateLensShaderPerFrame(camera, sceneColorRT);
+			rlDisableDepthMask();
+			BeginMode3D(*camera);
+			RenderLensProps(props);
+			EndMode3D();
+			rlEnableDepthMask();
+
+			if (swap) EndImpairment(tritan);
+			else EndImpairment(astig);
+
+			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
+			{
+				if (playerList[i] == NULL) continue;
+				SetPlayer(playerList[i]);
+				UpdateInteractions(props);
+			}
+
+			//Drawing things that will play during the game
+			DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+			DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
+			if (!swap) DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
+			else DrawText("Current Impairment Loaded: Tritanopia", 10, 70, 20, DARKGRAY);
+			DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
+			DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
+				playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
+				10, 130, 20, DARKGRAY);
+			DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
+				camera->target.x, camera->target.y, camera->target.z),
+				10, 160, 20, DARKGRAY);
+			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
+			DrawUI();
+
 		}
 
-		DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
-		DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
-		DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
-		DrawText("[LEFT/RIGHT] to adjust angle, [UP/DOWN] to adjust intensity, [O/P] to swap presets", 10, 100, 20, DARKGRAY);
-		DrawText(TextFormat("Player Position: (%.3f, %.3f, %.3f)",
-			playerList[0]->position.x, playerList[0]->position.y, playerList[0]->position.z),
-			10, 130, 20, DARKGRAY);
-		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
-			camera->target.x, camera->target.y, camera->target.z),
-			10, 160, 20, DARKGRAY);
+		if (currentScreen != menu_game)
+		{
+			DrawMenu();
+		}
+
 		EndDrawing();
 	}
 
@@ -149,17 +152,14 @@ int main(int argc, char** argv)
 	DestroyImpairment(tritan);
 	DestroyImpairment(convex);
 	DestroyCamera();
-	for (int i = 0; i < clientPlayerCount + 1; i++) {
+	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
 
 	// Stop Server/Client
-	if (argc >= 2)
-	{
-		if (strcmp(argv[1], "server") == 0) SessionManager_StopServer();
-		else if (strcmp(argv[1], "client") == 0) SessionManager_StopClient();
-	}
+	/*if (isServer) SessionManager_StopServer();
+	else SessionManager_StopClient();*/
 
 	CloseWindow();
 	free(props);
