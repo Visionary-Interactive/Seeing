@@ -1,8 +1,19 @@
 # A Game About Seeing
 
-WIP
+A puzzle game made to aid in the understanding of vision impairments. Created by Jacob Kloet, Morgan Cowans and Alice Ramrattan.
 
-# Raylib-Quickstart License
+## Build & Play
+
+On Windows/Visual Studio:
+1. Open the root folder.
+2. Build and run with MSVC.
+
+Other platforms:
+1. Install `gcc`.
+2. Open the root folder.
+3. Run `cd build && ./premake5 gmake && cd .. && make && ./bin/Debug/Seeing`... or whichever executable is relevant to you.
+
+### Raylib-Quickstart License
 Copyright (c) 2020-2025 Jeffery Myers
 
 This software is provided "as-is", without any express or implied warranty. In no event 
