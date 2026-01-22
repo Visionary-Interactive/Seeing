@@ -20,7 +20,7 @@
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
 
-#define SERVER_PORT 12345
+#define SERVER_PORT 1337
 
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION 330
