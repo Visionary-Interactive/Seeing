@@ -4,6 +4,7 @@
 
 #include "includes.h"
 #include "prop.h"
+#include "menu.h"
 
 struct InputState {
     bool W;
@@ -21,7 +22,7 @@ typedef struct Player {
     Vector3 size;
     Vector3 velocity;
 	Vector3 lookDirection;
-	Model model; // Player's 3D model
+	Model model; // Player's 3D model to be seen by another player
     float speed;
     float yaw;   // left/right rotation
     float pitch; // up/down rotation

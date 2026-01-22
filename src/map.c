@@ -1,29 +1,101 @@
 #include "map.h"
+#include "lens.h"
 
 void LoadPropTest(Props* props)
 {
     Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
+	Model Wall = LoadModelFromMesh(GenMeshCube(18.0, 4.0, 1.0));
+	Model Wall2 = LoadModelFromMesh(GenMeshCube(1.0, 4.0, 20.0));
 
     //Create a Wall to test collision
-	CreateProp(props,
-		(Vector3) {
-		0.0f, 4.0, -7.0f
-	},
-		(Vector3) {
-		1.0, 1.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+	
+	/*int wallID = CreateProp(props,
+        (Vector3) {
+        0, 2.0f, -15.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
 
+    int wall2ID = CreateProp(props,
+        (Vector3) {
+        -10.0f, 2.0f, -5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
+
+    int wall3ID = CreateProp(props,
+        (Vector3) {
+        10.0f, 2.0f, -5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
+
+    int Wall4ID = CreateProp(props,
+        (Vector3) {
+        0.0f, 2.0f, 5.0f
+    },
+        (Vector3) {
+        0.0f, 0.0f, 0.0f
+	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);*/
+
+    int puzzle = CreateProp(props, (Vector3) {5.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {3.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {-1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props, (Vector3) {-3.0f, 10.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+
+    puzzle = CreateProp(props, (Vector3) {5.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {3.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), YELLOW, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {1.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {-1.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props, (Vector3) {-3.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+
+    puzzle = CreateProp(props, (Vector3) {5.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {3.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {1.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {-1.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props, (Vector3) {-3.0f, 6.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+
+    puzzle = CreateProp(props, (Vector3) {5.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {3.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {1.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {-1.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), YELLOW, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props, (Vector3) {-3.0f, 4.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    puzzle = CreateProp(props, (Vector3) {5.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {3.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props,(Vector3) {-1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    puzzle = CreateProp(props, (Vector3) {-3.0f, 2.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
 
 	//Create the door PROP to interact with
 	int doorID = CreateProp(props,
 		(Vector3) {
-		0, 2.0f, -10.0f
+		-4.0f, 2.0f, -10.0f
+	},
+		(Vector3) {
+		3.0f, 1.0f, 0.5f
+	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    int doorID2 = CreateProp(props,
+		(Vector3) {
+		0.0f, 2.0f, -10.0f
+	},
+		(Vector3) {
+		3.0f, 1.0f, 0.5f
+	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    int doorID3 = CreateProp(props,
+		(Vector3) {
+		4.0f, 2.0f, -10.0f
 	},
 		(Vector3) {
 		3.0f, 1.0f, 0.5f
 	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
-	props->interactType[doorID] = INTERACTABLE_DOOR;
+    props->interactType[doorID3] = INTERACTABLE_DOOR;
 
 	int pickupID = CreateProp(props,
 		(Vector3) {
@@ -34,6 +106,14 @@ void LoadPropTest(Props* props)
 	},
 		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP;
+
+    Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
+    Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
+    CreateLensProp(props, lensPos, lensSize);
+
+    /*lensPos  = (Vector3){ -3.25f, 2.0f, -20.1f };
+    lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
+    CreateLensProp(props, lensPos, lensSize);*/
 }
 
 //a Drawlevel code to implement level creation in its own function
@@ -59,7 +139,7 @@ void DrawFloor()//const Map *map)
     const Color towerColor = (Color){ 150, 200, 200, 255 };
 
 	//premade draws within the raylib library to draw cubes
-    Vector3 towerPos = (Vector3){ 16.0f, 16.0f, 16.0f };
+    Vector3 towerPos = (Vector3){ 32.0f, 16.0f, 32.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 

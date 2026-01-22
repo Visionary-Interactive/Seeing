@@ -27,7 +27,7 @@ int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color co
 	//set up collider code based on model
 	ColliderSetup(obj, id);
 	obj->components[id] = components; // Default components
-	return (int)id;
+	return id;
 }
 
 void CreateLight(Props* obj, int id, Color color, float intensity) {
@@ -39,15 +39,12 @@ void CreateLight(Props* obj, int id, Color color, float intensity) {
 	obj->components[id] |= PROP_LIGHT; // Add light component
 }
 
-
 void ColliderSetup(Props* obj, int id) {
 	if (id < 0 || id >= obj->count) {
 		return; // Invalid ID
 	}
 	//get the boundingbox from the model, adds scale to it 
 	BoundingBox bb = GetModelBoundingBox(obj->model[id]);
-	bb.min.x *= obj->size[id].x;  bb.min.y *= obj->size[id].y;  bb.min.z *= obj->size[id].z;
-	bb.max.x *= obj->size[id].x;  bb.max.y *= obj->size[id].y;  bb.max.z *= obj->size[id].z;
 
 	//offsets the box based on the position
 	bb.min = Vector3Add(bb.min, obj->position[id]);
@@ -57,12 +54,20 @@ void ColliderSetup(Props* obj, int id) {
 
 }
 
-
 void RenderProps(const Props* obj) {
 	for (size_t i = 0; i < obj->count; i++) {
+		if (obj->components[i] & PROP_LENS) continue;
 		if (obj->components[i] & PROP_VISIBILE ) {
 			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
 		}
 	}
 }
 
+void RenderLensProps(const Props* obj) {
+	for (size_t i = 0; i < obj->count; i++) {
+		if (!(obj->components[i] & PROP_LENS)) continue;
+		if (obj->components[i] & PROP_VISIBILE ) {
+			DrawModel(obj->model[i], obj->position[i], 1.0f, obj->color[i]);
+		}
+	}
+}

@@ -8,6 +8,7 @@ int heldObject = -1; // No object held initially
 const float jumpStrength = 10.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 
+//initializes the player struct with default values
 void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
@@ -44,7 +45,7 @@ void SetPlayer(Player* p)
 {
 	player = p;
 }
-
+//Updates the player's position and handles input
 void UpdatePlayer(Props* obj)
 {
 	float dt = GetFrameTime();
@@ -219,7 +220,7 @@ void UpdateInteractions(Props* obj)
 		{
 			// Show prompt
 			if (!player->remotePlayer)
-				DrawText("Press E to interact:", 10, 200, 24, YELLOW);
+				DrawText("Press E to interact:", 10, 200, 24, RED);
 
 			if (player->input.E)
 			{
@@ -229,7 +230,7 @@ void UpdateInteractions(Props* obj)
 					if (!player->remotePlayer)
 					{
 						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
-						CloseWindow();
+						RequestExit();
 					}
 					break;
 				case INTERACTABLE_PICKUP:
@@ -241,12 +242,13 @@ void UpdateInteractions(Props* obj)
 						obj->components[i] &= ~PROP_VISIBILE;
 						obj->components[i] &= ~PROP_COLLIDER;
 
-						printf("Picked up object %zu\n", i);
-					}
-					break;
-				default:
-					DrawText("You interacted with something!", 10, 200, 24, GREEN);
-					break;
+                            printf("Picked up object %zu\n", i);
+                            SetUIInteraction(true);
+                        }
+                        break;
+                    default:
+                        DrawText("You interacted with something!", 10, 200, 24, GREEN);
+                        break;
 				}
 			}
 			if (player->input.R)

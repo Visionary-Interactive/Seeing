@@ -30,4 +30,4 @@ void NetworkCorrectionTick(bool isServer);
 int16_t QuantizeFloat(float value, float max_abs);
 float DequantizeFloat(int16_t scaled, float max_abs);
 
-#endif// SESSIONSTATECONTROLLER_H
+#endif
