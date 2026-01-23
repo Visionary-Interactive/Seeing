@@ -44,6 +44,7 @@ int main(int argc, char** argv)
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
+	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -75,6 +76,7 @@ int main(int argc, char** argv)
 
 			UpdateImpairment(tritan);
 			UpdateImpairment(astig);
+			UpdateImpairment(glau);
 			RefreshCamera(playerList[0]);
 
 			BeginTextureMode(sceneColorRT);
@@ -98,7 +100,7 @@ int main(int argc, char** argv)
 		if (currentScreen == menu_game || currentScreen == menu_game_paused)
 		{
 			if (swap) BeginImpairment(tritan);
-			else BeginImpairment(astig);
+			else BeginImpairment(glau);
 
 			Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
 			Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
@@ -112,7 +114,7 @@ int main(int argc, char** argv)
 			rlEnableDepthMask();
 
 			if (swap) EndImpairment(tritan);
-			else EndImpairment(astig);
+			else EndImpairment(glau);
 
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
@@ -151,6 +153,7 @@ int main(int argc, char** argv)
 	DestroyImpairment(astig);
 	DestroyImpairment(tritan);
 	DestroyImpairment(convex);
+	DestroyImpairment(glau);
 	DestroyCamera();
 	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
