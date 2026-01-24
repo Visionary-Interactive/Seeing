@@ -15,7 +15,6 @@
 // As far as what those two structs looks like we still need to figure that out. But the overall structure of the map is something like this.
 
 typedef struct Map {
-    //Block (*blocks)[MAX_MAP_Y][MAX_MAP_Z];
     Matrix *transforms;
     Mesh cubeMesh; //should be pulling textures from the object pool eventually
     Material matInstances;
@@ -34,6 +33,7 @@ void DrawFloor();
 void SaveMap(Map *map, const char *mapPath);
 void LoadPropTest(Props* props);
 void LoadMap(Props* props);//(Map *map, const char *mapPath); // really this should return bool/int
+void LoadMapFile(const char *mapPath);
 void UnloadMap(Map *map);
 void BuildTransforms(Map *map);
 

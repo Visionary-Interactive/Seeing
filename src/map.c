@@ -1,45 +1,16 @@
 #include "map.h"
 #include "lens.h"
 
+bool InitMap(Map *map, const char *mapPath)
+{
+    return true;
+}
+
 void LoadPropTest(Props* props)
 {
     Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
 	Model Wall = LoadModelFromMesh(GenMeshCube(18.0, 4.0, 1.0));
 	Model Wall2 = LoadModelFromMesh(GenMeshCube(1.0, 4.0, 20.0));
-
-    //Create a Wall to test collision
-	
-	/*int wallID = CreateProp(props,
-        (Vector3) {
-        0, 2.0f, -15.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int wall2ID = CreateProp(props,
-        (Vector3) {
-        -10.0f, 2.0f, -5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int wall3ID = CreateProp(props,
-        (Vector3) {
-        10.0f, 2.0f, -5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int Wall4ID = CreateProp(props,
-        (Vector3) {
-        0.0f, 2.0f, 5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);*/
 
     int puzzle = CreateProp(props, (Vector3) {5.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {3.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
@@ -110,10 +81,6 @@ void LoadPropTest(Props* props)
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
-
-    /*lensPos  = (Vector3){ -3.25f, 2.0f, -20.1f };
-    lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
-    CreateLensProp(props, lensPos, lensSize);*/
 }
 
 //a Drawlevel code to implement level creation in its own function
@@ -177,6 +144,7 @@ void SaveMap(Map *map, const char *mapPath)
     for (size_t i = 0; i < props->count; i++) {
         fwrite(&props->position[i], sizeof(Vector3), 1, f);
         fwrite(&props->size[i], sizeof(Vector3), 1, f);
+        //fwrite(&props->model[i], sizeof(Model), 1, f);
         fwrite(&props->color[i], sizeof(Color), 1, f);
         fwrite(&props->interactRange[i], sizeof(Vector3), 1, f);
         fwrite(&props->lightColor[i], sizeof(Color), 1, f);
@@ -222,6 +190,7 @@ void LoadMapFile(const char *mapPath)
     for (size_t i = 0; i < count; i++) {
         fread(&props->position[i], sizeof(Vector3), 1, f);
         fread(&props->size[i], sizeof(Vector3), 1, f);
+        //fread(&props->model[i], sizeof(Model), 1, f);
         fread(&props->color[i], sizeof(Color), 1, f);
         fread(&props->interactRange[i], sizeof(Vector3), 1, f);
         fread(&props->lightColor[i], sizeof(Color), 1, f);
