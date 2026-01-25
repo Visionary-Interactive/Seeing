@@ -11,16 +11,9 @@
 
 int main(int argc, char** argv)
 {
-	char cwd[1024];
-	getcwd(cwd, sizeof(cwd));
-	printf("Entered main at: %s\n", cwd);
-
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	bool swap = false;
-
-	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
@@ -40,9 +33,9 @@ int main(int argc, char** argv)
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
 
 	Map gameMap;
-	InitMap(&gameMap, "maps/pz_1");
-	//LoadPropTest(props);
-	LoadMapFile("maps/pz_1");
+	InitMap(&gameMap, "resources/maps/pz_1");
+	LoadPropTest(props);
+	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
@@ -51,6 +44,8 @@ int main(int argc, char** argv)
 
 	SessionManager_Init();
 	SessionStateController_Init();
+
+	bool swap = false;
 
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
@@ -143,7 +138,7 @@ int main(int argc, char** argv)
 		EndDrawing();
 	}
 
-	SaveMap(&gameMap, "maps/pz_1");
+	SaveMap(&gameMap, "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
 
@@ -163,7 +158,7 @@ int main(int argc, char** argv)
 	//else SessionManager_StopClient();
 
 	CloseWindow();
-	free(props);
+	RL_FREE(props);
 	return 0;
 }
 

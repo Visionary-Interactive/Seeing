@@ -33,7 +33,7 @@ void DrawFloor();
 void SaveMap(Map *map, const char *mapPath);
 void LoadPropTest(Props* props);
 void LoadMap(Props* props);//(Map *map, const char *mapPath); // really this should return bool/int
-void LoadMapFile(const char *mapPath);
+void LoadMapFile(Map *map, const char *mapPath);
 void UnloadMap(Map *map);
 void BuildTransforms(Map *map);
 

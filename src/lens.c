@@ -43,7 +43,7 @@ void SetPropShader(Props* obj, int id, Shader shader) {
 int CreateLensProp(Props* props, Vector3 position, Vector3 size) {
     int id = props->count++;
     Model lensModel = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
-    id = CreateProp(props, position, size, lensModel, WHITE, PROP_VISIBILE | PROP_LENS);
+    id = CreateProp(props, lensModel, position, size, WHITE, PROP_VISIBILE | PROP_LENS);
     SetPropShader(props, id, gLens.shader);
     return id;
 }

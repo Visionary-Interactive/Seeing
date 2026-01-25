@@ -8,11 +8,15 @@ bool InitMap(Map *map, const char *mapPath)
 
 void LoadPropTest(Props* props)
 {
-    Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
-	Model Wall = LoadModelFromMesh(GenMeshCube(18.0, 4.0, 1.0));
-	Model Wall2 = LoadModelFromMesh(GenMeshCube(1.0, 4.0, 20.0));
-
-    int puzzle = CreateProp(props, (Vector3) {5.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f - 2.0f * j, 10.0f - 2.0f * i, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+        }
+    }
+    /*int puzzle = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    
     puzzle = CreateProp(props,(Vector3) {3.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {-1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
@@ -41,17 +45,22 @@ void LoadPropTest(Props* props)
     puzzle = CreateProp(props,(Vector3) {1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {-1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props, (Vector3) {-3.0f, 2.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
+*/
 	//Create the door PROP to interact with
-	int doorID = CreateProp(props,
-		(Vector3) {
-		-4.0f, 2.0f, -10.0f
-	},
-		(Vector3) {
-		3.0f, 1.0f, 0.5f
-	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
-    int doorID2 = CreateProp(props,
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f},
+		(Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {0.0f, 2.0f, -10.0f},
+    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {4.0f, 2.0f, -10.0f},
+    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
+    props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
+
+    /*int doorID2 = CreateProp(props,
 		(Vector3) {
 		0.0f, 2.0f, -10.0f
 	},
@@ -66,17 +75,10 @@ void LoadPropTest(Props* props)
 		(Vector3) {
 		3.0f, 1.0f, 0.5f
 	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
-    props->interactType[doorID3] = INTERACTABLE_DOOR;
+    props->interactType[doorID3] = INTERACTABLE_DOOR;*/
 
-	int pickupID = CreateProp(props,
-		(Vector3) {
-		-10, 4.0, 0
-	},
-		(Vector3) {
-		1.0, 1.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_PICKUP;
+	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
@@ -163,7 +165,7 @@ void SaveMap(Map *map, const char *mapPath)
     TraceLog(LOG_INFO, "Map saved successfully.");
 }
 
-void LoadMapFile(const char *mapPath)
+void LoadMapFile(Map *map, const char *mapPath)
 {
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "rb");
     if (!f) {
