@@ -22,9 +22,18 @@ typedef struct Map {
     int blockCount;
 } Map;
 
-static const int diffx[] = { -1, 1, 0, 0, 0, 0 };
-static const int diffy[] = {  0, 0,-1, 1, 0, 0 };
-static const int diffz[] = {  0, 0, 0, 0,-1, 1 };
+typedef struct PropRecord {
+    PrimitiveModelId prim;
+    Vector3 position;
+    Vector3 size;
+    Color color;
+    uint32_t components;
+    Vector3 interactRange;
+    Color lightColor;
+    float lightIntensity;
+    int interactType;
+    int scriptID;
+} PropRecord;
 
 //something like this...
 bool InitMap(Map *map, const char *mapPath);

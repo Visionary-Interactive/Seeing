@@ -125,7 +125,7 @@ void DrawFloor()//const Map *map)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 }
 
-void SaveMap(Map *map, const char *mapPath)
+/*void SaveMap(Map *map, const char *mapPath)
 {
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
     if (!f) {
@@ -144,9 +144,10 @@ void SaveMap(Map *map, const char *mapPath)
     fwrite(&count, sizeof(uint32_t), 1, f);
 
     for (size_t i = 0; i < props->count; i++) {
+        fwrite(&props->prim[i], sizeof(Vector3), 1, f);
+        //fwrite(&props->model[i], sizeof(Model), 1, f);
         fwrite(&props->position[i], sizeof(Vector3), 1, f);
         fwrite(&props->size[i], sizeof(Vector3), 1, f);
-        //fwrite(&props->model[i], sizeof(Model), 1, f);
         fwrite(&props->color[i], sizeof(Color), 1, f);
         fwrite(&props->interactRange[i], sizeof(Vector3), 1, f);
         fwrite(&props->lightColor[i], sizeof(Color), 1, f);
@@ -155,20 +156,76 @@ void SaveMap(Map *map, const char *mapPath)
         fwrite(&props->interactType[i], sizeof(int32_t), 1, f);
         fwrite(&props->scriptID[i], sizeof(int32_t), 1, f);
 
-        //model path todo
-        /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
-        fwrite(&len, sizeof(uint16_t), 1, f);
-        fwrite(props->modelPath[i], sizeof(char), len, f);*/
+    
     }
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map saved successfully.");
+}*/
+
+void SaveMap(Map *map, const char *mapPath)
+{
+    FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
+    if (!f)
+    {
+        TraceLog(LOG_ERROR, "Failed to open map file for writing!");
+        return;
+    }
+
+    uint8_t version[2] = { MAJOR_VERSION, MINOR_VERSION };
+    fwrite(version, sizeof(uint8_t), 2, f);
+
+    Props *props = GetPropStructure();
+    uint32_t count = (uint32_t)props->count;
+    fwrite(&count, sizeof(uint32_t), 1, f);
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec = {
+            .prim          = props->prim[i],
+            .position      = props->position[i],
+            .size          = props->size[i],
+            .color         = props->color[i],
+            .components    = props->components[i],
+            .interactRange = props->interactRange[i],
+            .lightColor    = props->lightColor[i],
+            .lightIntensity= props->lightIntensity[i],
+            .interactType  = props->interactType[i],
+            .scriptID      = props->scriptID[i]
+        };
+
+        fwrite(&rec, sizeof(PropRecord), 1, f);
+    }
+
+    //model path todo
+    /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
+    fwrite(&len, sizeof(uint16_t), 1, f);
+    fwrite(props->modelPath[i], sizeof(char), len, f);*/
 
     fclose(f);
     TraceLog(LOG_INFO, "Map saved successfully.");
 }
 
+static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
+{
+    if (rec->prim != NO_PRIM)
+    {
+        return CreatePropPrimitive(props, rec->prim, rec->position, rec->size, rec->color, rec->components);
+    }
+
+    //non-primitive placeholder, currently this includes lenses
+    Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    return CreateProp(props, fallback, rec->position, rec->size,
+                      rec->color, rec->components);
+}
+
 void LoadMapFile(Map *map, const char *mapPath)
 {
+    (void)map;
+
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "rb");
-    if (!f) {
+    if (!f)
+    {
         TraceLog(LOG_ERROR, "Failed to open map file for loading!");
         return;
     }
@@ -176,9 +233,10 @@ void LoadMapFile(Map *map, const char *mapPath)
     uint8_t version[2];
     fread(version, sizeof(uint8_t), 2, f);
 
-	if (version[0] <= MAJOR_VERSION && version[1] < MINOR_VERSION) {
-        TraceLog(LOG_WARNING, "This map was designed in an older version (%u,%u), some elements may not work correctly",
-                 version[0], version[1]);
+    if (version[0] < MAJOR_VERSION || (version[0] == MAJOR_VERSION && version[1] < MINOR_VERSION))
+    {
+        TraceLog(LOG_WARNING, "Map version (%u,%u) is older than expected (%u,%u); some elements may not work.",
+                 version[0], version[1], MAJOR_VERSION, MINOR_VERSION);
     }
 
     Props *props = GetPropStructure();
@@ -187,29 +245,20 @@ void LoadMapFile(Map *map, const char *mapPath)
     uint32_t count = 0;
     fread(&count, sizeof(uint32_t), 1, f);
 
-    props->count = count;
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec;
+        fread(&rec, sizeof(PropRecord), 1, f);
 
-    for (size_t i = 0; i < count; i++) {
-        fread(&props->position[i], sizeof(Vector3), 1, f);
-        fread(&props->size[i], sizeof(Vector3), 1, f);
-        //fread(&props->model[i], sizeof(Model), 1, f);
-        fread(&props->color[i], sizeof(Color), 1, f);
-        fread(&props->interactRange[i], sizeof(Vector3), 1, f);
-        fread(&props->lightColor[i], sizeof(Color), 1, f);
-        fread(&props->lightIntensity[i], sizeof(float), 1, f);
-        fread(&props->components[i], sizeof(uint32_t), 1, f);
-        fread(&props->interactType[i], sizeof(int32_t), 1, f);
-        fread(&props->scriptID[i], sizeof(int32_t), 1, f);
+        int id = RebuildPropFromRecord(props, &rec);
+        if (id < 0) continue;
 
-        //model path todo
-        /*uint16_t len;
-        fread(&len, sizeof(uint16_t), 1, f);
-        fread(props->modelPath[i], sizeof(char), len, f);
-        props->modelPath[i][len] = '\0';
-
-        props->model[i] = LoadModel(props->modelPath[i]);*/
-
-        ColliderSetup(props, i);
+        props->interactRange[id]  = rec.interactRange;
+        props->lightColor[id]     = rec.lightColor;
+        props->lightIntensity[id] = rec.lightIntensity;
+        props->components[id]     = rec.components;
+        props->interactType[id]   = rec.interactType;
+        props->scriptID[id]       = rec.scriptID;
     }
 
     fclose(f);
