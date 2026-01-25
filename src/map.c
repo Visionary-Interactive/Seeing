@@ -12,7 +12,9 @@ void LoadPropTest(Props* props)
     {
         for (int j = 0; j < 5; j++)
         {
-            CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f - 2.0f * j, 10.0f - 2.0f * i, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+            CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
+                (Vector3) {5.0f - 2.0f * j, 10.0f - 2.0f * i, 10.0f}, 
+                (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
         }
     }
     /*int puzzle = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
@@ -48,7 +50,9 @@ void LoadPropTest(Props* props)
 */
 	//Create the door PROP to interact with
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, 
+        (Vector3) {-4.0f, 2.0f, -10.0f}, 
+        (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
 	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f},
 		(Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
@@ -77,7 +81,9 @@ void LoadPropTest(Props* props)
 	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
     props->interactType[doorID3] = INTERACTABLE_DOOR;*/
 
-	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
+        (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
+        BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
@@ -125,44 +131,6 @@ void DrawFloor()//const Map *map)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 }
 
-/*void SaveMap(Map *map, const char *mapPath)
-{
-    FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
-    if (!f) {
-        TraceLog(LOG_ERROR, "Failed to open map file for writing!");
-        return;
-    }
-
-    //write game version
-    uint8_t version[2] = { MAJOR_VERSION, MINOR_VERSION };
-    fwrite(version, sizeof(uint8_t), 2, f);
-
-    Props *props = GetPropStructure();
-
-    //write the prop count
-    uint32_t count = (uint32_t)props->count;
-    fwrite(&count, sizeof(uint32_t), 1, f);
-
-    for (size_t i = 0; i < props->count; i++) {
-        fwrite(&props->prim[i], sizeof(Vector3), 1, f);
-        //fwrite(&props->model[i], sizeof(Model), 1, f);
-        fwrite(&props->position[i], sizeof(Vector3), 1, f);
-        fwrite(&props->size[i], sizeof(Vector3), 1, f);
-        fwrite(&props->color[i], sizeof(Color), 1, f);
-        fwrite(&props->interactRange[i], sizeof(Vector3), 1, f);
-        fwrite(&props->lightColor[i], sizeof(Color), 1, f);
-        fwrite(&props->lightIntensity[i], sizeof(float), 1, f);
-        fwrite(&props->components[i], sizeof(uint32_t), 1, f);
-        fwrite(&props->interactType[i], sizeof(int32_t), 1, f);
-        fwrite(&props->scriptID[i], sizeof(int32_t), 1, f);
-
-    
-    }
-
-    fclose(f);
-    TraceLog(LOG_INFO, "Map saved successfully.");
-}*/
-
 void SaveMap(Map *map, const char *mapPath)
 {
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
@@ -208,12 +176,17 @@ void SaveMap(Map *map, const char *mapPath)
 
 static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 {
+    if (rec->prim == PRIMITIVE_MODEL_LENS)
+    {
+        return CreateLensProp(props, rec->position, rec->size);
+    }
+
     if (rec->prim != NO_PRIM)
     {
         return CreatePropPrimitive(props, rec->prim, rec->position, rec->size, rec->color, rec->components);
     }
 
-    //non-primitive placeholder, currently this includes lenses
+    //non-primitive placeholder
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     return CreateProp(props, fallback, rec->position, rec->size,
                       rec->color, rec->components);

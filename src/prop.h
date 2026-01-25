@@ -52,12 +52,14 @@ typedef enum InteractableType {
 	INTERACTABLE_PICKUP,
 } InteractableType;
 
-void CreatePropStructure();
-Props* GetPropStructure();
+void CreatePropStructure(void);
+Props* GetPropStructure(void);
 int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components);
 int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components);
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
+void AddPropComponent(Props* obj, int id, uint32_t componentMask);
+void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);
 void RenderLensProps(const Props* obj);
 

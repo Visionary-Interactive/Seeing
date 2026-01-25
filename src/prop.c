@@ -2,13 +2,13 @@
 
 static Props* props;
 
-void CreatePropStructure()
+void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
 	memset(props, 0, sizeof(Props));
 }
 
-Props* GetPropStructure()
+Props* GetPropStructure(void)
 {
 	return props;
 }
@@ -42,6 +42,9 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
         case PRIMITIVE_MODEL_DOOR:
             model = LoadModelFromMesh(GenMeshCube(3.0f, 4.0f, 0.5f));
             break;
+		case PRIMITIVE_MODEL_LENS:
+            model = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
+            break;
         default:
             return -1;
     }
@@ -68,6 +71,18 @@ void ColliderSetup(Props* obj, int id) {
 
 	obj->collider[id] = bb;
 
+}
+
+void AddPropComponent(Props* obj, int id, uint32_t componentMask)
+{
+    if (!obj || id < 0 || id >= (int)obj->count) return;
+    obj->components[id] |= componentMask;
+}
+
+void RemovePropComponent(Props* obj, int id, uint32_t componentMask)
+{
+    if (!obj || id < 0 || id >= (int)obj->count) return;
+    obj->components[id] &= ~componentMask;
 }
 
 void RenderProps(const Props* obj) {
