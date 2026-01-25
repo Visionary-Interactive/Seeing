@@ -14,6 +14,13 @@
 #define PROP_PICKUP (1 << 7)
 #define PROP_LENS (1 << 8)
 
+typedef enum {
+	NO_PRIM = 0,
+    PRIMITIVE_MODEL_CUBE,
+    PRIMITIVE_MODEL_DOOR,
+    PRIMITIVE_MODEL_LENS
+} PrimitiveModelId;
+
 typedef struct Props {
 	size_t count;
 
@@ -35,6 +42,7 @@ typedef struct Props {
 	int scriptID[MAX_PROPS];
 
 	Shader shader[MAX_PROPS];
+	PrimitiveModelId prim[MAX_PROPS];
 
 } Props;
 
@@ -46,7 +54,8 @@ typedef enum InteractableType {
 
 void CreatePropStructure();
 Props* GetPropStructure();
-int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color color,uint32_t components);
+int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components);
+int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components);
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 void RenderProps(const Props* obj);

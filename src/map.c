@@ -1,47 +1,22 @@
 #include "map.h"
 #include "lens.h"
 
+bool InitMap(Map *map, const char *mapPath)
+{
+    return true;
+}
+
 void LoadPropTest(Props* props)
 {
-    Model doorModel = LoadModelFromMesh(GenMeshCube(3.0, 4.0, 0.5));
-	Model Wall = LoadModelFromMesh(GenMeshCube(18.0, 4.0, 1.0));
-	Model Wall2 = LoadModelFromMesh(GenMeshCube(1.0, 4.0, 20.0));
-
-    //Create a Wall to test collision
-	
-	/*int wallID = CreateProp(props,
-        (Vector3) {
-        0, 2.0f, -15.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int wall2ID = CreateProp(props,
-        (Vector3) {
-        -10.0f, 2.0f, -5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int wall3ID = CreateProp(props,
-        (Vector3) {
-        10.0f, 2.0f, -5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall2, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);
-
-    int Wall4ID = CreateProp(props,
-        (Vector3) {
-        0.0f, 2.0f, 5.0f
-    },
-        (Vector3) {
-        0.0f, 0.0f, 0.0f
-	}, Wall, LIGHTGRAY, PROP_VISIBILE | PROP_COLLIDER);*/
-
-    int puzzle = CreateProp(props, (Vector3) {5.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f - 2.0f * j, 10.0f - 2.0f * i, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+        }
+    }
+    /*int puzzle = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    
     puzzle = CreateProp(props,(Vector3) {3.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {-1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
@@ -70,17 +45,22 @@ void LoadPropTest(Props* props)
     puzzle = CreateProp(props,(Vector3) {1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {-1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props, (Vector3) {-3.0f, 2.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
+*/
 	//Create the door PROP to interact with
-	int doorID = CreateProp(props,
-		(Vector3) {
-		-4.0f, 2.0f, -10.0f
-	},
-		(Vector3) {
-		3.0f, 1.0f, 0.5f
-	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
-    int doorID2 = CreateProp(props,
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f},
+		(Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {0.0f, 2.0f, -10.0f},
+    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {4.0f, 2.0f, -10.0f},
+    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
+    props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
+
+    /*int doorID2 = CreateProp(props,
 		(Vector3) {
 		0.0f, 2.0f, -10.0f
 	},
@@ -95,25 +75,14 @@ void LoadPropTest(Props* props)
 		(Vector3) {
 		3.0f, 1.0f, 0.5f
 	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
-    props->interactType[doorID3] = INTERACTABLE_DOOR;
+    props->interactType[doorID3] = INTERACTABLE_DOOR;*/
 
-	int pickupID = CreateProp(props,
-		(Vector3) {
-		-10, 4.0, 0
-	},
-		(Vector3) {
-		1.0, 1.0, 1.0
-	},
-		LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_PICKUP;
+	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
-
-    /*lensPos  = (Vector3){ -3.25f, 2.0f, -20.1f };
-    lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
-    CreateLensProp(props, lensPos, lensSize);*/
 }
 
 //a Drawlevel code to implement level creation in its own function
@@ -156,7 +125,7 @@ void DrawFloor()//const Map *map)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 }
 
-void SaveMap(Map *map, const char *mapPath)
+/*void SaveMap(Map *map, const char *mapPath)
 {
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
     if (!f) {
@@ -175,6 +144,8 @@ void SaveMap(Map *map, const char *mapPath)
     fwrite(&count, sizeof(uint32_t), 1, f);
 
     for (size_t i = 0; i < props->count; i++) {
+        fwrite(&props->prim[i], sizeof(Vector3), 1, f);
+        //fwrite(&props->model[i], sizeof(Model), 1, f);
         fwrite(&props->position[i], sizeof(Vector3), 1, f);
         fwrite(&props->size[i], sizeof(Vector3), 1, f);
         fwrite(&props->color[i], sizeof(Color), 1, f);
@@ -185,20 +156,76 @@ void SaveMap(Map *map, const char *mapPath)
         fwrite(&props->interactType[i], sizeof(int32_t), 1, f);
         fwrite(&props->scriptID[i], sizeof(int32_t), 1, f);
 
-        //model path todo
-        /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
-        fwrite(&len, sizeof(uint16_t), 1, f);
-        fwrite(props->modelPath[i], sizeof(char), len, f);*/
+    
     }
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map saved successfully.");
+}*/
+
+void SaveMap(Map *map, const char *mapPath)
+{
+    FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
+    if (!f)
+    {
+        TraceLog(LOG_ERROR, "Failed to open map file for writing!");
+        return;
+    }
+
+    uint8_t version[2] = { MAJOR_VERSION, MINOR_VERSION };
+    fwrite(version, sizeof(uint8_t), 2, f);
+
+    Props *props = GetPropStructure();
+    uint32_t count = (uint32_t)props->count;
+    fwrite(&count, sizeof(uint32_t), 1, f);
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec = {
+            .prim          = props->prim[i],
+            .position      = props->position[i],
+            .size          = props->size[i],
+            .color         = props->color[i],
+            .components    = props->components[i],
+            .interactRange = props->interactRange[i],
+            .lightColor    = props->lightColor[i],
+            .lightIntensity= props->lightIntensity[i],
+            .interactType  = props->interactType[i],
+            .scriptID      = props->scriptID[i]
+        };
+
+        fwrite(&rec, sizeof(PropRecord), 1, f);
+    }
+
+    //model path todo
+    /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
+    fwrite(&len, sizeof(uint16_t), 1, f);
+    fwrite(props->modelPath[i], sizeof(char), len, f);*/
 
     fclose(f);
     TraceLog(LOG_INFO, "Map saved successfully.");
 }
 
-void LoadMapFile(const char *mapPath)
+static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 {
+    if (rec->prim != NO_PRIM)
+    {
+        return CreatePropPrimitive(props, rec->prim, rec->position, rec->size, rec->color, rec->components);
+    }
+
+    //non-primitive placeholder, currently this includes lenses
+    Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    return CreateProp(props, fallback, rec->position, rec->size,
+                      rec->color, rec->components);
+}
+
+void LoadMapFile(Map *map, const char *mapPath)
+{
+    (void)map;
+
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "rb");
-    if (!f) {
+    if (!f)
+    {
         TraceLog(LOG_ERROR, "Failed to open map file for loading!");
         return;
     }
@@ -206,9 +233,10 @@ void LoadMapFile(const char *mapPath)
     uint8_t version[2];
     fread(version, sizeof(uint8_t), 2, f);
 
-	if (version[0] <= MAJOR_VERSION && version[1] < MINOR_VERSION) {
-        TraceLog(LOG_WARNING, "This map was designed in an older version (%u,%u), some elements may not work correctly",
-                 version[0], version[1]);
+    if (version[0] < MAJOR_VERSION || (version[0] == MAJOR_VERSION && version[1] < MINOR_VERSION))
+    {
+        TraceLog(LOG_WARNING, "Map version (%u,%u) is older than expected (%u,%u); some elements may not work.",
+                 version[0], version[1], MAJOR_VERSION, MINOR_VERSION);
     }
 
     Props *props = GetPropStructure();
@@ -217,28 +245,20 @@ void LoadMapFile(const char *mapPath)
     uint32_t count = 0;
     fread(&count, sizeof(uint32_t), 1, f);
 
-    props->count = count;
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec;
+        fread(&rec, sizeof(PropRecord), 1, f);
 
-    for (size_t i = 0; i < count; i++) {
-        fread(&props->position[i], sizeof(Vector3), 1, f);
-        fread(&props->size[i], sizeof(Vector3), 1, f);
-        fread(&props->color[i], sizeof(Color), 1, f);
-        fread(&props->interactRange[i], sizeof(Vector3), 1, f);
-        fread(&props->lightColor[i], sizeof(Color), 1, f);
-        fread(&props->lightIntensity[i], sizeof(float), 1, f);
-        fread(&props->components[i], sizeof(uint32_t), 1, f);
-        fread(&props->interactType[i], sizeof(int32_t), 1, f);
-        fread(&props->scriptID[i], sizeof(int32_t), 1, f);
+        int id = RebuildPropFromRecord(props, &rec);
+        if (id < 0) continue;
 
-        //model path todo
-        /*uint16_t len;
-        fread(&len, sizeof(uint16_t), 1, f);
-        fread(props->modelPath[i], sizeof(char), len, f);
-        props->modelPath[i][len] = '\0';
-
-        props->model[i] = LoadModel(props->modelPath[i]);*/
-
-        ColliderSetup(props, i);
+        props->interactRange[id]  = rec.interactRange;
+        props->lightColor[id]     = rec.lightColor;
+        props->lightIntensity[id] = rec.lightIntensity;
+        props->components[id]     = rec.components;
+        props->interactType[id]   = rec.interactType;
+        props->scriptID[id]       = rec.scriptID;
     }
 
     fclose(f);

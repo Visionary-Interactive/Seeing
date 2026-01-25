@@ -9,22 +9,16 @@
 #include "sessionStateController.h"
 #include "lens.h"
 
-
 int main(int argc, char** argv)
 {
-
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	bool swap = false;
-
-	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
-	//DisableCursor();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -38,8 +32,10 @@ int main(int argc, char** argv)
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
 
-	LoadPropTest(props);
-	//Map gameMap;
+	Map gameMap;
+	InitMap(&gameMap, "resources/maps/pz_1");
+	//LoadPropTest(props);
+	LoadMapFile(&gameMap, "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
@@ -49,20 +45,15 @@ int main(int argc, char** argv)
 	SessionManager_Init();
 	SessionStateController_Init();
 
+	bool swap = false;
+
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
-		if (IsKeyDown(KEY_LEFT_BRACKET))
-        {
-            swap = false;
-        }
-        if (IsKeyDown(KEY_RIGHT_BRACKET))
-        {
-            swap = true;
-        }
+		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = false;
+        if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = true;
 
 		MenuScreen currentScreen = GetCurrentScreen();
-		if (multiplayerSession)
-			SessionStateController_Tick(isServer); // Networking tick
+		if (multiplayerSession) SessionStateController_Tick(isServer); // Networking tick
 		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
 
 		if (currentScreen == menu_game)
@@ -137,7 +128,6 @@ int main(int argc, char** argv)
 				10, 160, 20, DARKGRAY);
 			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
 			DrawUI();
-
 		}
 
 		if (currentScreen != menu_game)
@@ -148,6 +138,8 @@ int main(int argc, char** argv)
 		EndDrawing();
 	}
 
+	SaveMap(&gameMap, "resources/maps/pz_1");
+
 	UnloadRenderTexture(sceneColorRT);
 
 	DestroyImpairment(astig);
@@ -155,17 +147,18 @@ int main(int argc, char** argv)
 	DestroyImpairment(convex);
 	DestroyImpairment(glau);
 	DestroyCamera();
+
 	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
 
-	// Stop Server/Client
-	/*if (isServer) SessionManager_StopServer();
-	else SessionManager_StopClient();*/
+	// Stop Server/Client //ask alice about this
+	//if (isServer) SessionManager_StopServer();
+	//else SessionManager_StopClient();
 
 	CloseWindow();
-	free(props);
+	RL_FREE(props);
 	return 0;
 }
 
