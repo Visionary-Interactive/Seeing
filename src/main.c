@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 			Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
 			DrawTexturePro(sceneColorRT.texture, src, dst, (Vector2) { 0, 0 }, 0.0f, WHITE);
 
-			UpdateLensShaderPerFrame(camera, sceneColorRT);
+			UpdateLensShader(camera, sceneColorRT);
 			rlDisableDepthMask();
 			BeginMode3D(*camera);
 			RenderLensProps(props);
