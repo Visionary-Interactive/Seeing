@@ -3,10 +3,10 @@
 #define NBNET_IMPL
 
 #ifndef DEBUG_LOGGING
-#define DEBUG_LOGGING 0
+#define DEBUG_LOGGING 2
 #endif
 
-#if DEBUG_LOGGING
+#if DEBUG_LOGGING == 1
 // Basic logging to console
 #define NBN_LogInfo(...)   printf(__VA_ARGS__); printf("\n")
 #define NBN_LogError(...)  printf(__VA_ARGS__); printf("\n")
@@ -29,6 +29,7 @@ NBN_ConnectionHandle connectedClientHandle = 0;
 struct MovementSnapshot lastMovementSnapshot = { 0 };
 struct IncomingPlayer incomingPlayerData = { 0 };
 struct PositionSnapshot lastPositionSnapshot = { 0 };
+struct LobbyQuery lastLobbyQuery = { 0 };
 
 void (*CreatePlayer)() = NULL;
 void (*InitalizeRemotePlayer)() = NULL;
@@ -42,6 +43,7 @@ void SessionManager_Init()
 	lastMovementSnapshot = (struct MovementSnapshot){ 0 };
 	incomingPlayerData = (struct IncomingPlayer){ 0 };
 	lastPositionSnapshot = (struct PositionSnapshot){ 0 };
+	lastLobbyQuery = (struct LobbyQuery){ 0 };
 }
 
 // Create a server session
@@ -107,6 +109,8 @@ int SessionManager_Server_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
 					struct IncomingPlayer recv_player;
 					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
+
+					#if DEBUG_LOGGING >= 1
 					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
 						recv_player.position.x,
 						recv_player.position.y,
@@ -124,6 +128,7 @@ int SessionManager_Server_HandleEvents()
 						recv_player.yaw,
 						recv_player.pitch,
 						recv_player.isGrounded);
+					#endif
 
 					incomingPlayerData = recv_player;
 					// Initialize remote player with received data
@@ -134,13 +139,15 @@ int SessionManager_Server_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
 					struct PositionSnapshot recv_pos;
 					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
-					//printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
-					//	recv_pos.sequence,
-					//	recv_pos.position.x,
-					//	recv_pos.position.y,
-					//	recv_pos.position.z,
-					//	recv_pos.yaw,
-					//	recv_pos.pitch);
+					#if DEBUG_LOGGING >= 1
+					printf("Received PositionSnapshot: seq=%d pos=(%d, %d, %d) yaw=%d pitch=%d\n",
+						recv_pos.sequence,
+						recv_pos.posX,
+						recv_pos.posY,
+						recv_pos.posZ,
+						recv_pos.yaw,
+						recv_pos.pitch);
+					#endif
 
 					lastPositionSnapshot = recv_pos;
 					// Update player position with received data
@@ -256,14 +263,6 @@ int SessionManager_Client_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct MovementSnapshot)) {
 					struct MovementSnapshot recv_snap;
 					memcpy(&recv_snap, bmsg->bytes + 1, sizeof(struct MovementSnapshot));
-					//printf("Received MovementSnapshot: forward=%d \tbackward=%d \tleft=%d \tright=%d \ty=%.3f \tpitch=%.3f \tyaw=%.3f\n",
-					//	recv_snap.forward,
-					//	recv_snap.backward,
-					//	recv_snap.left,
-					//	recv_snap.right,
-					//	recv_snap.y,
-					//	recv_snap.pitch,
-					//	recv_snap.yaw);
 
 					lastMovementSnapshot = recv_snap;
 				}
@@ -272,6 +271,7 @@ int SessionManager_Client_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct IncomingPlayer)) {
 					struct IncomingPlayer recv_player;
 					memcpy(&recv_player, bmsg->bytes + 1, sizeof(struct IncomingPlayer));
+					#if DEBUG_LOGGING >= 1
 					printf("Received IncomingPlayer: pos=(%.3f, %.3f, %.3f) scale=(%.3f, %.3f, %.3f) color=(%c, %c, %c) vel=(%.3f, %.3f, %.3f) speed=%.3f yaw=%.3f pitch=%.3f isGrounded=%d\n",
 						recv_player.position.x,
 						recv_player.position.y,
@@ -289,6 +289,7 @@ int SessionManager_Client_HandleEvents()
 						recv_player.yaw,
 						recv_player.pitch,
 						recv_player.isGrounded);
+					#endif
 
 					incomingPlayerData = recv_player;
 					// Initialize remote player with received data
@@ -299,18 +300,31 @@ int SessionManager_Client_HandleEvents()
 				if (bmsg->length >= 1 + sizeof(struct PositionSnapshot)) {
 					struct PositionSnapshot recv_pos;
 					memcpy(&recv_pos, bmsg->bytes + 1, sizeof(struct PositionSnapshot));
-					//printf("Received PositionSnapshot: seq=%d pos=(%.3f, %.3f, %.3f) yaw=%.3f pitch=%.3f\n",
-					//	recv_pos.sequence,
-					//	recv_pos.position.x,
-					//	recv_pos.position.y,
-					//	recv_pos.position.z,
-					//	recv_pos.yaw,
-					//	recv_pos.pitch);
+					#if DEBUG_LOGGING >= 1
+					printf("Received PositionSnapshot: seq=%d pos=(%d, %d, %d) yaw=%d pitch=%d\n",
+						recv_pos.sequence,
+						recv_pos.posX,
+						recv_pos.posY,
+						recv_pos.posZ,
+						recv_pos.yaw,
+						recv_pos.pitch);
+					#endif
 
 					lastPositionSnapshot = recv_pos;
 					// Update player position with received data
 					PlayerDesyncCorrection();
+				}
+				break;
+			case LobbyQuery:
+				if (bmsg->length >= 1 + sizeof(struct LobbyQuery)) {
+					struct LobbyQuery recv_lobbyQuery;
+					memcpy(&recv_lobbyQuery, bmsg->bytes + 1, sizeof(struct LobbyQuery));
+					#if DEBUG_LOGGING >= 1
+					printf("Received LobbyQuery: isHost=%d\n",
+						recv_lobbyQuery.isHost);
+					#endif
 
+					lastLobbyQuery = recv_lobbyQuery;
 				}
 				break;
 			default:
