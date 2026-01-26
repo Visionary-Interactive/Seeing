@@ -2,18 +2,18 @@
 
 static Props* props;
 
-void CreatePropStructure()
+void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
 	memset(props, 0, sizeof(Props));
 }
 
-Props* GetPropStructure()
+Props* GetPropStructure(void)
 {
 	return props;
 }
 
-int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color color ,uint32_t components) {
+int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components) {
 	if (obj->count >= MAX_PROPS) {
 		return -1; // Max props reached
 	}
@@ -27,22 +27,41 @@ int CreateProp(Props* obj, Vector3 position, Vector3 size, Model model, Color co
 	//set up collider code based on model
 	ColliderSetup(obj, id);
 	obj->components[id] = components; // Default components
+	obj->prim[id] = NO_PRIM;
+
 	return id;
 }
 
+int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components)
+{
+    Model model;
+    switch (prim) {
+        case PRIMITIVE_MODEL_CUBE:
+            model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+            break;
+        case PRIMITIVE_MODEL_DOOR:
+            model = LoadModelFromMesh(GenMeshCube(3.0f, 4.0f, 0.5f));
+            break;
+		case PRIMITIVE_MODEL_LENS:
+            model = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
+            break;
+        default:
+            return -1;
+    }
+    int id = CreateProp(obj, model, position, size, color, components);
+    if (id >= 0) obj->prim[id] = prim;
+    return id;
+}
+
 void CreateLight(Props* obj, int id, Color color, float intensity) {
-	if (id < 0 || id >= obj->count) {
-		return; // Invalid ID
-	}
+	if (id < 0 || id >= obj->count) return;
 	obj->lightColor[id] = color;
 	obj->lightIntensity[id] = intensity;
 	obj->components[id] |= PROP_LIGHT; // Add light component
 }
 
 void ColliderSetup(Props* obj, int id) {
-	if (id < 0 || id >= obj->count) {
-		return; // Invalid ID
-	}
+	if (id < 0 || id >= obj->count) return;
 	//get the boundingbox from the model, adds scale to it 
 	BoundingBox bb = GetModelBoundingBox(obj->model[id]);
 
@@ -52,6 +71,18 @@ void ColliderSetup(Props* obj, int id) {
 
 	obj->collider[id] = bb;
 
+}
+
+void AddPropComponent(Props* obj, int id, uint32_t componentMask)
+{
+    if (!obj || id < 0 || id >= (int)obj->count) return;
+    obj->components[id] |= componentMask;
+}
+
+void RemovePropComponent(Props* obj, int id, uint32_t componentMask)
+{
+    if (!obj || id < 0 || id >= (int)obj->count) return;
+    obj->components[id] &= ~componentMask;
 }
 
 void RenderProps(const Props* obj) {

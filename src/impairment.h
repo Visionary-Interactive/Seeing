@@ -7,7 +7,8 @@
 typedef enum {
     Tritanopia,
     Astigmatism,
-    Convex
+    Convex,
+    Glaucoma
 } Impairments;
 
 typedef struct {
@@ -26,6 +27,12 @@ typedef struct {
     int locRMinor;
     int locSamples;
 
+    //glaucoma
+    float locTunnelRadius;
+    float locBlurStrength;
+    float locContrastLoss;
+    float locEdgeDarkening;
+
     //convex lens
     int locRefractiveIndex;
     int locLensStrength;
@@ -40,6 +47,12 @@ typedef struct {
     //these are for convex but we could probably consolidate these
     float refractiveIndex;
     float lensStrength;
+    
+    //glau
+    float tunnelRadius;
+    float contrastLoss;
+    float blurStrength;
+    float edgeDarkening;
 
 } Impairment;
 

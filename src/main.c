@@ -9,22 +9,16 @@
 #include "sessionStateController.h"
 #include "lens.h"
 
-
 int main(int argc, char** argv)
 {
-
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	bool swap = false;
-
-	//all this stuff should be toggleable
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
-	//DisableCursor();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -38,30 +32,28 @@ int main(int argc, char** argv)
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
 
-	LoadPropTest(props);
-	//Map gameMap;
+	Map gameMap;
+	InitMap(&gameMap, "resources/maps/pz_1");
+	//LoadPropTest(props);
+	LoadMapFile(&gameMap, "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
+	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);
 
 	SessionManager_Init();
 	SessionStateController_Init();
 
+	bool swap = false;
+
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
-		if (IsKeyDown(KEY_LEFT_BRACKET))
-        {
-            swap = false;
-        }
-        if (IsKeyDown(KEY_RIGHT_BRACKET))
-        {
-            swap = true;
-        }
+		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = false;
+        if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = true;
 
 		MenuScreen currentScreen = GetCurrentScreen();
-		if (multiplayerSession)
-			SessionStateController_Tick(isServer); // Networking tick
+		if (multiplayerSession) SessionStateController_Tick(isServer); // Networking tick
 		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
 
 		if (currentScreen == menu_game)
@@ -75,6 +67,7 @@ int main(int argc, char** argv)
 
 			UpdateImpairment(tritan);
 			UpdateImpairment(astig);
+			UpdateImpairment(glau);
 			RefreshCamera(playerList[0]);
 
 			BeginTextureMode(sceneColorRT);
@@ -98,13 +91,13 @@ int main(int argc, char** argv)
 		if (currentScreen == menu_game || currentScreen == menu_game_paused)
 		{
 			if (swap) BeginImpairment(tritan);
-			else BeginImpairment(astig);
+			else BeginImpairment(glau);
 
 			Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
 			Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
 			DrawTexturePro(sceneColorRT.texture, src, dst, (Vector2) { 0, 0 }, 0.0f, WHITE);
 
-			UpdateLensShaderPerFrame(camera, sceneColorRT);
+			UpdateLensShader(camera, sceneColorRT);
 			rlDisableDepthMask();
 			BeginMode3D(*camera);
 			RenderLensProps(props);
@@ -112,7 +105,7 @@ int main(int argc, char** argv)
 			rlEnableDepthMask();
 
 			if (swap) EndImpairment(tritan);
-			else EndImpairment(astig);
+			else EndImpairment(glau);
 
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
@@ -135,7 +128,6 @@ int main(int argc, char** argv)
 				10, 160, 20, DARKGRAY);
 			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
 			DrawUI();
-
 		}
 
 		if (currentScreen != menu_game)
@@ -146,23 +138,27 @@ int main(int argc, char** argv)
 		EndDrawing();
 	}
 
+	SaveMap(&gameMap, "resources/maps/pz_1");
+
 	UnloadRenderTexture(sceneColorRT);
 
 	DestroyImpairment(astig);
 	DestroyImpairment(tritan);
 	DestroyImpairment(convex);
+	DestroyImpairment(glau);
 	DestroyCamera();
+
 	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
 
-	// Stop Server/Client
-	/*if (isServer) SessionManager_StopServer();
-	else SessionManager_StopClient();*/
+	// Stop Server/Client //ask alice about this
+	//if (isServer) SessionManager_StopServer();
+	//else SessionManager_StopClient();
 
 	CloseWindow();
-	free(props);
+	RL_FREE(props);
 	return 0;
 }
 

@@ -15,6 +15,9 @@ static Shader LoadImpairmentFile(Impairments type)
         case Convex:
             return LoadShader("resources/shaders/impairment.vs", 
                               "resources/shaders/convex.fs");
+        case Glaucoma:
+            return LoadShader("resources/shaders/impairment.vs", 
+                              "resources/shaders/glaucoma.fs");
         default:
             TraceLog(LOG_WARNING, "Unknown impairment type...");
             return LoadShader(0, 0);
@@ -32,11 +35,18 @@ Impairment *LoadImpairment(Impairments type, int screenW, int screenH)
     im->shader = LoadImpairmentFile(type);
     im->target = LoadRenderTexture(screenW, screenH);
 
+    //astig
     im->intensity = 0.4f;
     im->angle = 0.0f;
     im->radiusMajor = 6.0f;
     im->radiusMinor = 1.5f;
     im->samples = 15;
+
+    //glaucoma
+    im->tunnelRadius = 0.35f;
+    im->blurStrength = 2.0f;
+    im->contrastLoss = 0.4f;
+    im->edgeDarkening = 0.8f;
 
     im->refractiveIndex = 1.15f;
     im->lensStrength = 0.35f;
@@ -58,11 +68,14 @@ Impairment *LoadImpairment(Impairments type, int screenW, int screenH)
     {
         im->locRefractiveIndex = GetShaderLocation(im->shader, "refractiveIndex");
         im->locLensStrength = GetShaderLocation(im->shader, "lensStrength");
+    }
 
-        SetShaderValue(im->shader, im->locRefractiveIndex,
-                    &im->refractiveIndex, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(im->shader, im->locLensStrength,
-                    &im->lensStrength, SHADER_UNIFORM_FLOAT);
+    if (type == Glaucoma)
+    {
+        im->locTunnelRadius = GetShaderLocation(im->shader, "tunnelRadius");
+        im->locBlurStrength = GetShaderLocation(im->shader, "blurStrength");
+        im->locEdgeDarkening = GetShaderLocation(im->shader, "edgeDarkening");
+        im->locContrastLoss = GetShaderLocation(im->shader, "contrastLoss");
     }
 
     return im;
@@ -94,6 +107,14 @@ void EndImpairment(Impairment *im)
     {
         SetShaderValue(im->shader, im->locRefractiveIndex, &im->refractiveIndex, SHADER_UNIFORM_FLOAT);
         SetShaderValue(im->shader, im->locLensStrength, &im->lensStrength, SHADER_UNIFORM_FLOAT);
+    }
+
+    if (im->type == Glaucoma)
+    {
+        SetShaderValue(im->shader, im->locTunnelRadius, &im->tunnelRadius, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(im->shader, im->locBlurStrength, &im->blurStrength, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(im->shader, im->locEdgeDarkening, &im->edgeDarkening, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(im->shader, im->locContrastLoss, &im->contrastLoss, SHADER_UNIFORM_FLOAT);
     }
 
     EndTextureMode();
@@ -149,6 +170,6 @@ void DestroyImpairment(Impairment *im)
     M_ASSERT(im, "Tried to free non-existent impairment memory...")
     UnloadRenderTexture(im->target);
     UnloadShader(im->shader);
-    free(im);
+    RL_FREE(im);
 }
 

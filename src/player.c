@@ -55,6 +55,10 @@ void UpdatePlayer(Props* obj)
 	player->yaw -= mouseDelta.x * mouseSensitivity;
 	player->pitch -= mouseDelta.y * mouseSensitivity;
 
+	const float pitchLimit = 89.0f * PI/180;
+	if (player->pitch > pitchLimit) player->pitch = pitchLimit;
+	if (player->pitch < -pitchLimit) player->pitch = -pitchLimit;
+
 	// Clamp pitch to avoid flipping
 	if (player->pitch > PI / 2.0f) player->pitch = PI / 2.0f;
 	if (player->pitch < -PI / 2.0f) player->pitch = -PI / 2.0f;
