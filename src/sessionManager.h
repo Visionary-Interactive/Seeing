@@ -9,12 +9,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define SERVER_PORT 1337
+#define HOME_SERVER_IP "142.189.221.121"
+
 typedef uint32_t NBN_ConnectionHandle;
 
 typedef enum {
 	MovementSnapshot,
 	PositionSnapshot,
-	IncomingPlayer
+	IncomingPlayer,
+	LobbyQuery
 } MsgType;
 
 struct SessionVec3 {
@@ -55,11 +59,18 @@ struct IncomingPlayer { // Sent once upon connection
 	uint8_t isGrounded;
 };
 
+struct LobbyQuery { // Sent upon joining lobby
+	uint8_t auth : 1;	// Authenticated by server
+	uint8_t isHost : 1;
+	uint8_t isFull : 1;
+};
+
 extern bool isServer;
 extern NBN_ConnectionHandle connectedClientHandle;
 extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 extern struct PositionSnapshot lastPositionSnapshot;
+extern struct LobbyQuery lastLobbyQuery;
 
 
 void SessionManager_Init();

@@ -45,6 +45,11 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 		case PRIMITIVE_MODEL_LENS:
             model = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
             break;
+		case PRIMITIVE_MODEL_PLATFORM:
+			model = LoadModelFromMesh(GenMeshCube(4.0f, 0.5f, 4.0f));
+			break;
+		case PRIMITIVE_MODEL_WALL:
+			model = LoadModelFromMesh(GenMeshCube(0.5f, 4.0f, 4.0f));
         default:
             return -1;
     }
