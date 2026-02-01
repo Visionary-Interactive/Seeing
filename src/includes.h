@@ -20,8 +20,6 @@
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
 
-#define SERVER_PORT 12345
-
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION 330
 #else   //android or web...

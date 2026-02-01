@@ -22,6 +22,7 @@ void InitPlayer()
 	player->isGrounded = true;
 	player->remotePlayer = false;
 	player->input = (struct InputState){ 0 };
+	player->bottom = player->position.y - player->size.y;
 }
 
 Player* GetPlayer()
@@ -107,19 +108,19 @@ void UpdatePlayer(Props* obj)
 	//checks if there is any movement input
 	if (Vector3Length(move) > 0.0f)
 	{
-
+		float prevFeetY = player->bottom;
 		move = Vector3Normalize(move);
 		move = Vector3Scale(move, player->speed * dt);
 
 		Vector3 newPos = Vector3Add(player->position, (Vector3) { move.x, 0, move.z }); // only horizontal
-		GetPlayerCollision(player->model, newPos); //update player bounding box
+		GetPlayerCollision(player->bottom, newPos); //update player bounding box
 		bool blocked = false;
-
+		BoundingBox playerBox = GetPlayerCollision(player->bottom, newPos);
 		for (size_t i = 0; i < obj->count; i++) {
 			// Assuming PROPs is a globally accessible variable
 			if (i < obj->count && (obj->components[i] & PROP_COLLIDER)) {
 				BoundingBox objBox = obj->collider[i];
-				BoundingBox playerBox = GetPlayerCollision(player->model, newPos);
+
 				if (CheckCollisionBoxes(playerBox, objBox)) {
 					blocked = true;
 					break;
@@ -143,63 +144,33 @@ void UpdatePlayer(Props* obj)
 		player->velocity.y = 0.0f;
 		player->isGrounded = true;
 	}
+
 }
 
 //Grabs the player's bounding box for collision detection & makes sure it up to date on where the player is.
-BoundingBox GetPlayerCollision(Model model, Vector3 position)
+BoundingBox GetPlayerCollision(float bottom, Vector3 position)
 {
-	BoundingBox playerbounding_box = GetMeshBoundingBox(model.meshes[0]);
-	Vector3 min_boundary = Vector3Add(position, playerbounding_box.min);
-	Vector3 max_boundary = Vector3Add(position, playerbounding_box.max);
-	playerbounding_box.max = max_boundary;
-	playerbounding_box.min = min_boundary;
+
+	BoundingBox playerbounding_box;
+
+	playerbounding_box.min = (Vector3){ position.x - player->size.x, position.y - player->size.y, position.z - player->size.z };
+	playerbounding_box.max = (Vector3){ position.x + player->size.x , position.y + bottom, position.z + player->size.z };
 	return playerbounding_box;
 }
 
-void CheckCollision(char axis, BoundingBox playerBox, BoundingBox propBox)
+
+void CheckGroundCollision(BoundingBox playerBox, BoundingBox platformBox)
 {
-	if (CheckCollisionBoxes(playerBox, propBox))
+	if (CheckCollisionBoxes(playerBox, platformBox))
 	{
-		if (axis == 'x')
+		// Simple ground collision response
+		if (player->position.y > platformBox.max.y)
 		{
-			if (player->position.x < propBox.min.x)
-			{
-				player->position.x = propBox.min.x - player->size.x / 2.0f;
-			}
-			else if (player->position.x > propBox.max.x)
-			{
-				player->position.x = propBox.max.x + player->size.x / 2.0f;
-			}
-		}
-		else if (axis == 'z')
-		{
-			if (player->position.z < propBox.min.z)
-			{
-				player->position.z = propBox.min.z - player->size.z / 2.0f;
-			}
-			else if (player->position.z > propBox.max.z)
-			{
-				player->position.z = propBox.max.z + player->size.z / 2.0f;
-			}
-		}
-		else if (axis == 'y')
-		{
-			if (player->position.y < propBox.min.y)
-			{
-				// Player is hitting underside of the object (ceiling)
-				player->position.y = propBox.min.y - player->size.y / 2.0f;
-				player->velocity.y = 0;        // stop upwards velocity
-			}
-			else if (player->position.y > propBox.max.y)
-			{
-				// Player lands on top of the object
-				player->position.y = propBox.max.y + player->size.y / 2.0f;
-				player->velocity.y = 0;        // stop falling
-				player->isGrounded = true;     // allow jumping again
-			}
+			player->position.y = platformBox.max.y + player->size.y / 2.0f;
+			player->velocity.y = 0;        // stop falling
+			player->isGrounded = true;     // allow jumping again
 		}
 	}
-
 }
 
 void UpdateInteractions(Props* obj)
@@ -248,6 +219,7 @@ void UpdateInteractions(Props* obj)
 
                             printf("Picked up object %zu\n", i);
                             SetUIInteraction(true);
+
                         }
                         break;
                     default:

@@ -14,6 +14,11 @@ Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
 Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
+#define SAVE_COLS 4
+#define SAVE_ROWS 3
+#define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
+
+Button saveSlots[SAVE_SLOT_COUNT];
 
 Rectangle ipAddressText = { 400, 200, 200, 50 };
 char ipAddress[32] = "127.0.0.1";
@@ -64,6 +69,14 @@ void DrawMenu()
 		break;
 
     case menu_save:
+        for (int i = 0; i < SAVE_SLOT_COUNT; i++)
+        {
+            DrawButton(saveSlots[i], DARKGRAY);
+        }
+
+        DrawButton(menuButton, DARKGRAY);
+        break;
+
         DrawText("SAVE/LOAD", 100, 40, 30, PURPLE);
 		DrawButton(menuButton, DARKGRAY);
         break;
@@ -176,6 +189,36 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
 // Returns the current menu screen
 MenuScreen GetCurrentScreen() {
     return currentScreen;
+}
+
+//sets up the save slots in the save/load menu
+void InitSaveSlots()
+{
+    const int startX = 100;
+    const int startY = 120;
+    const int size = 80;
+    const int padding = 20;
+
+    int index = 0;
+
+    for (int row = 0; row < SAVE_ROWS; row++) {
+        for (int col = 0; col < SAVE_COLS; col++)
+        {
+            saveSlots[index].bounds = (Rectangle){
+                startX + col * (size + padding),
+                startY + row * (size + padding),
+                size,
+                size
+            };
+
+            // Label: Slot 1, Slot 2, etc
+            static char labels[SAVE_SLOT_COUNT][16];
+            sprintf(labels[index], "Slot %d", index + 1);
+            saveSlots[index].text = labels[index];
+
+            index++;
+        }
+	}
 }
 
 // Sets the current menu screen and manages cursor visibility
