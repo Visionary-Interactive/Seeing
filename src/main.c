@@ -36,8 +36,8 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 	InitSaveSlots();
-	LoadPropTest(props);
-	//LoadMapFile(&gameMap, "resources/maps/pz_1");
+	//LoadPropTest(props);
+	LoadMapFile(&gameMap, "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		if (multiplayerSession) SessionStateController_Tick(isServer); // Networking tick
 		if (IsKeyPressed(KEY_ESCAPE) && currentScreen == menu_game_paused) { SetCurrentScreen(menu_game); }
 
-		if (currentScreen == menu_game)
+		if (currentScreen == menu_game || currentScreen == menu_editor)
 		{
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
@@ -80,6 +80,8 @@ int main(int argc, char** argv)
 	
 	DestroyCamera();
 
+	DestroyProps(props);
+
 	for (int i = 0; i < clientPlayerCount; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
@@ -90,7 +92,6 @@ int main(int argc, char** argv)
 	//else SessionManager_StopClient();
 
 	CloseWindow();
-	RL_FREE(props);
 	return 0;
 }
 

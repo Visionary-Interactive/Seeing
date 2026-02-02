@@ -39,10 +39,7 @@ void DestroySceneImpairments(void)
 
 void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props)
 {
-    bool inGameplay = (currentScreen == menu_game);
-    bool gameOrPaused = inGameplay || (currentScreen == menu_game_paused);
-
-    if (gameOrPaused)
+    if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
     {
         BeginTextureMode(sceneColorRT);
         ClearBackground(RAYWHITE);
@@ -56,7 +53,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
         EndMode3D();
         EndTextureMode();
 
-        if (inGameplay && IsKeyPressed(KEY_ESCAPE)) SetCurrentScreen(menu_game_paused);
+        if ((currentScreen == menu_game && IsKeyPressed(KEY_ESCAPE)) || (currentScreen == menu_editor && IsKeyPressed(KEY_ESCAPE))) SetCurrentScreen(menu_game_paused);
         return;
     }
 
@@ -70,7 +67,7 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 	BeginDrawing();
 	ClearBackground(WHITE);
 
-	if (currentScreen == menu_game || currentScreen == menu_game_paused)
+	if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
 	{
 		UpdateSceneImpairments();
 

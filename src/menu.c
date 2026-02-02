@@ -7,7 +7,8 @@
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
 Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
 Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
-Button multiMenuButton = { { 100, 400, 200, 50 }, "Multiplayer" };
+Button editorButton = { { 100, 400, 200, 50 }, "Level Editor" };
+Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
 Button exitButton = { { 100, 600, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
@@ -39,7 +40,7 @@ void DrawMenu()
         DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
 		DrawButton(saveButton, DARKGRAY);
-		DrawButton(levelButton, DARKGRAY);
+		DrawButton(editorButton, DARKGRAY);
 		DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
@@ -59,6 +60,10 @@ void DrawMenu()
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 		break;
+
+    case menu_editor:
+        DrawUI();
+        break;
 
     case menu_multi:
         DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
@@ -116,6 +121,8 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
+            else if (strcmp(button.text, "Level Editor") == 0) 
+                SetCurrentScreen(menu_editor);
             else if (strcmp(button.text, "Exit Game") == 0)
                 RequestExit();
             else if (strcmp(button.text, "Back to Menu") == 0)
@@ -228,8 +235,12 @@ void SetCurrentScreen(MenuScreen newScreen) {
 
     if (currentScreen != lastScreen)
     {
-        if (currentScreen == menu_game) DisableCursor();
+        if (currentScreen == menu_game || currentScreen == menu_editor) DisableCursor();
         else EnableCursor();
+        if (currentScreen == menu_editor)
+        {
+            ResetProps();
+        }
         lastScreen = currentScreen;
     }
 }
