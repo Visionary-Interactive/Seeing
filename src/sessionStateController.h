@@ -3,7 +3,6 @@
 #ifndef SESSIONSTATECONTROLLER_H
 #define SESSIONSTATECONTROLLER_H
 
-#include <time.h>
 #include "sessionManager.h"
 #include "player.h"
 
@@ -15,7 +14,6 @@ extern bool multiplayerSession;
 extern Player* playerList[MAX_PLAYERS];
 extern uint8_t clientPlayerCount;
 extern Color playerColor, remoteColor;
-extern clock_t lastNetworkTick;
 extern uint16_t localSequence;
 extern uint16_t lastPositionSequence;
 
@@ -23,6 +21,7 @@ void SessionStateController_Init();
 void SessionStateController_Tick(bool isServer);
 void CreateNewPlayer();
 void InitRemotePlayer();
+void SendPlayerDataToRemote();
 void UpdatePlayerPosition();
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);

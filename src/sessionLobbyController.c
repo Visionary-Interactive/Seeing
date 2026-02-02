@@ -1,12 +1,11 @@
 #include "sessionLobbyController.h"
 
-bool isHost = 0;
 bool isLobbyFull = 0;
 
 void ConnectToHomeServer()
 {
 	// Connect to home server
-	while (!SessionManager_CreateClient("UDP", HOME_SERVER_IP, SERVER_PORT))
+	if (!SessionManager_CreateClient("UDP", HOME_SERVER_IP, SERVER_PORT))
 	{
 		printf("Failed to connect to home server. Retrying...\n");
 	}
@@ -19,6 +18,9 @@ void SendLobbyQuery()
 {
 	if (SessionManager_Client_IsConnected())
 	{
+		#if DEBUG_LOGGING >= 1
+			printf("Sending Lobby Query");
+		#endif
 		// Send LobbyQuery to server
 		struct LobbyQuery lobbyQuery = { 0 };
 		uint8_t buffer[1 + sizeof(struct LobbyQuery)];
@@ -38,9 +40,18 @@ bool AssignMultiplayerStatus()
 			printf("Waiting for response from server...");
 		#endif
 		// Wait for response from server
-		while (!lastLobbyQuery.auth)
+		clock_t now;
+		while (true)
 		{
-			SessionManager_Client_HandleEvents();
+			now = clock();
+			if ((int)(now - lastNetworkTick) > 100)
+			{
+				SessionManager_Client_HandleEvents();
+				SessionManager_Client_SendPackets();
+
+				if (lastLobbyQuery.auth)
+					break;
+			}
 		}
 		#if DEBUG_LOGGING >= 1
 			printf("isHost = %d", lastLobbyQuery.isHost);
@@ -60,6 +71,7 @@ bool CheckLobbyStatus()
 
 		// Check if lobby is full
 		SessionManager_Client_HandleEvents();
+		SessionManager_Client_SendPackets();
 		if (lastLobbyQuery.auth)
 		{
 			isLobbyFull = lastLobbyQuery.isFull;
