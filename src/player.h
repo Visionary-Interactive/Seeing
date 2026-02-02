@@ -26,6 +26,7 @@ typedef struct Player {
     float speed;
     float yaw;   // left/right rotation
     float pitch; // up/down rotation
+    float bottom;
 	bool isGrounded; //checks if the player is on the ground
 	bool remotePlayer; // Is this a remote player?
 	struct InputState input; // Current input state
@@ -36,9 +37,9 @@ void LocalInputUpdate(struct InputState *input);
 void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
-BoundingBox GetPlayerCollision(Model model, Vector3 position);
+BoundingBox GetPlayerCollision(float bottom, Vector3 position);
 
-void CheckCollision(char axis, BoundingBox playerBox, BoundingBox propBox);
+
 void DestroyPlayer();
 
 #endif

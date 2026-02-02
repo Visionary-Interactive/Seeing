@@ -42,13 +42,12 @@ void SetPropShader(Props* obj, int id, Shader shader) {
 
 int CreateLensProp(Props* props, Vector3 position, Vector3 size) {
     int id = props->count++;
-    Model lensModel = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
-    id = CreateProp(props, position, size, lensModel, WHITE, PROP_VISIBILE | PROP_LENS);
+    id = CreatePropPrimitive(props, PRIMITIVE_MODEL_LENS, position, size, WHITE, PROP_VISIBILE | PROP_LENS);
     SetPropShader(props, id, gLens.shader);
     return id;
 }
 
-void UpdateLensShaderPerFrame(const Camera* cam, RenderTexture2D sceneColorRT) {
+void UpdateLensShader(const Camera* cam, RenderTexture2D sceneColorRT) {
     SetShaderValueTexture(gLens.shader, gLens.locSceneTex, sceneColorRT.texture);
     Vector3 camPos = cam->position;
     SetShaderValue(gLens.shader, gLens.locCameraPos, &camPos, SHADER_UNIFORM_VEC3);

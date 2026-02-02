@@ -8,13 +8,19 @@
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
 Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
 Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
-Button multiMenuButton = { { 100, 400, 200, 50 }, "Multiplayer" };
+Button editorButton = { { 100, 400, 200, 50 }, "Level Editor" };
+Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
 Button exitButton = { { 100, 600, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
 Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
+#define SAVE_COLS 4
+#define SAVE_ROWS 3
+#define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
+
+Button saveSlots[SAVE_SLOT_COUNT];
 
 Rectangle ipAddressText = { 400, 200, 200, 50 };
 char ipAddress[32] = "127.0.0.1";
@@ -35,7 +41,7 @@ void DrawMenu()
         DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
 		DrawButton(saveButton, DARKGRAY);
-		DrawButton(levelButton, DARKGRAY);
+		DrawButton(editorButton, DARKGRAY);
 		DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
@@ -56,6 +62,10 @@ void DrawMenu()
 	   DrawButton(level1Button, DARKGRAY);
 		break;
 
+    case menu_editor:
+        DrawUI();
+        break;
+
     case menu_multi:
         DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
         DrawButton(multiHostButton, DARKGRAY);
@@ -65,6 +75,14 @@ void DrawMenu()
 		break;
 
     case menu_save:
+        for (int i = 0; i < SAVE_SLOT_COUNT; i++)
+        {
+            DrawButton(saveSlots[i], DARKGRAY);
+        }
+
+        DrawButton(menuButton, DARKGRAY);
+        break;
+
         DrawText("SAVE/LOAD", 100, 40, 30, PURPLE);
 		DrawButton(menuButton, DARKGRAY);
         break;
@@ -104,6 +122,8 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
+            else if (strcmp(button.text, "Level Editor") == 0) 
+                SetCurrentScreen(menu_editor);
             else if (strcmp(button.text, "Exit Game") == 0)
                 RequestExit();
             else if (strcmp(button.text, "Back to Menu") == 0)
@@ -204,6 +224,36 @@ MenuScreen GetCurrentScreen() {
     return currentScreen;
 }
 
+//sets up the save slots in the save/load menu
+void InitSaveSlots()
+{
+    const int startX = 100;
+    const int startY = 120;
+    const int size = 80;
+    const int padding = 20;
+
+    int index = 0;
+
+    for (int row = 0; row < SAVE_ROWS; row++) {
+        for (int col = 0; col < SAVE_COLS; col++)
+        {
+            saveSlots[index].bounds = (Rectangle){
+                startX + col * (size + padding),
+                startY + row * (size + padding),
+                size,
+                size
+            };
+
+            // Label: Slot 1, Slot 2, etc
+            static char labels[SAVE_SLOT_COUNT][16];
+            sprintf(labels[index], "Slot %d", index + 1);
+            saveSlots[index].text = labels[index];
+
+            index++;
+        }
+	}
+}
+
 // Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
@@ -211,8 +261,12 @@ void SetCurrentScreen(MenuScreen newScreen) {
 
     if (currentScreen != lastScreen)
     {
-        if (currentScreen == menu_game) DisableCursor();
+        if (currentScreen == menu_game || currentScreen == menu_editor) DisableCursor();
         else EnableCursor();
+        if (currentScreen == menu_editor)
+        {
+            ResetProps();
+        }
         lastScreen = currentScreen;
     }
 }

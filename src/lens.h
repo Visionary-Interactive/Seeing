@@ -19,6 +19,6 @@ typedef struct LensShaderData {
 void InitLensShader(int screenW, int screenH, RenderTexture2D sceneColorRT);
 void SetPropShader(Props* obj, int id, Shader shader);
 int CreateLensProp(Props* props, Vector3 position, Vector3 size);
-void UpdateLensShaderPerFrame(const Camera* cam, RenderTexture2D sceneColorRT);
+void UpdateLensShader(const Camera* cam, RenderTexture2D sceneColorRT);
 
 #endif

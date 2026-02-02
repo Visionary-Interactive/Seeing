@@ -11,6 +11,7 @@ typedef enum MenuScreen {
 	menu_game,
 	menu_game_paused,
 	menu_options,
+	menu_editor,
 	menu_level_select,
 	menu_multi,
 	menu_save
@@ -30,6 +31,8 @@ void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 
 MenuScreen GetCurrentScreen();
+
+void InitSaveSlots();
 void SetCurrentScreen(MenuScreen newScreen);
 void SetUIInteraction(bool interaction);
 
