@@ -2,35 +2,22 @@
 
 #define NBNET_IMPL
 
-#ifndef DEBUG_LOGGING
-#define DEBUG_LOGGING 2
-#endif
-
-#if DEBUG_LOGGING == 1
-// Basic logging to console
-#define NBN_LogInfo(...)   printf(__VA_ARGS__); printf("\n")
-#define NBN_LogError(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogDebug(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogTrace(...)  printf(__VA_ARGS__); printf("\n")
-#define NBN_LogWarning(...) printf(__VA_ARGS__); printf("\n")
-#else
-#define NBN_LogInfo(...)    ((void)0)
-#define NBN_LogError(...)   ((void)0)
-#define NBN_LogDebug(...)   ((void)0)
-#define NBN_LogTrace(...)   ((void)0)
-#define NBN_LogWarning(...) ((void)0)
-#endif
-
 #include "nbnet.h"
 #include "net_drivers/udp.h"
 
+clock_t lastNetworkTick = 0;
 bool isServer = false;
+bool isHost = false;
 NBN_ConnectionHandle connectedClientHandle = 0;
 struct MovementSnapshot lastMovementSnapshot = { 0 };
 struct IncomingPlayer incomingPlayerData = { 0 };
 struct PositionSnapshot lastPositionSnapshot = { 0 };
 struct LobbyQuery lastLobbyQuery = { 0 };
+uint32_t peerIP = 0;
+uint16_t peerPort = 0;
 
+void (*HostPlayerCallback)() = NULL;
+void (*ClientPlayerCallback)() = NULL;
 void (*CreatePlayer)() = NULL;
 void (*InitalizeRemotePlayer)() = NULL;
 void (*PlayerDesyncCorrection)() = NULL;
@@ -39,11 +26,14 @@ void SessionManager_Init()
 {
 	// Initialize Protocol
 	NBN_UDP_Register();
+	lastNetworkTick = clock();
 	connectedClientHandle = 0;
 	lastMovementSnapshot = (struct MovementSnapshot){ 0 };
 	incomingPlayerData = (struct IncomingPlayer){ 0 };
 	lastPositionSnapshot = (struct PositionSnapshot){ 0 };
 	lastLobbyQuery = (struct LobbyQuery){ 0 };
+	peerIP = 0;
+	peerPort = 0;
 }
 
 // Create a server session
@@ -72,10 +62,9 @@ int SessionManager_Server_HandleEvents()
 	{
 	case NBN_NEW_CONNECTION:
 	{
-		NBN_ConnectionHandle new_conn = NBN_GameServer_GetIncomingConnection();
-		connectedClientHandle = new_conn;
-		unsigned int len = NBN_GameServer_ReadIncomingConnectionData(NULL); // can pass buffer to read data
-		printf("New connection: handle=%u, initial_data_len=%u\n", new_conn, len);
+		connectedClientHandle = NBN_GameServer_GetIncomingConnection();
+		unsigned int len = NBN_GameServer_ReadIncomingConnectionData(NULL);
+		printf("New connection: handle=%u, initial_data_len=%u\n", connectedClientHandle, len);
 
 		if (NBN_GameServer_AcceptIncomingConnection() < 0)
 			printf("Warning: failed to accept incoming connection\n");
@@ -320,11 +309,49 @@ int SessionManager_Client_HandleEvents()
 					struct LobbyQuery recv_lobbyQuery;
 					memcpy(&recv_lobbyQuery, bmsg->bytes + 1, sizeof(struct LobbyQuery));
 					#if DEBUG_LOGGING >= 1
-					printf("Received LobbyQuery: isHost=%d\n",
-						recv_lobbyQuery.isHost);
+						printf("Received LobbyQuery from client %u: auth=%u isHost=%u isFull=%u\n",
+							info.sender,
+							recv_lobbyQuery.auth,
+							recv_lobbyQuery.isHost,
+							recv_lobbyQuery.isFull);
+						printf("HOST IP: %u.%u.%u.%u:%u\n",
+							(recv_lobbyQuery.hostIP >> 24) & 0xFF,
+							(recv_lobbyQuery.hostIP >> 16) & 0xFF,
+							(recv_lobbyQuery.hostIP >> 8) & 0xFF,
+							(recv_lobbyQuery.hostIP) & 0xFF,
+							recv_lobbyQuery.hostPort);
 					#endif
 
+					peerIP = recv_lobbyQuery.hostIP;
+					peerPort = recv_lobbyQuery.hostPort;
 					lastLobbyQuery = recv_lobbyQuery;
+
+					// Once we have a response from the traversal server
+					if (lastLobbyQuery.auth && lastLobbyQuery.isFull) {
+						#if DEBUG_LOGGING >= 1
+							printf("Authenticated by server. isHost=%u\n", lastLobbyQuery.isHost);
+						#endif
+						// Host
+						if (lastLobbyQuery.isHost) 
+						{
+							#if DEBUG_LOGGING >= 1
+								printf("Host Player");
+							#endif
+							isHost = true;
+							HostPlayerCallback();
+						}
+						else // Client
+						{
+							#if DEBUG_LOGGING >= 1
+								printf("Client Player");
+							#endif
+							isHost = false;
+							ClientPlayerCallback();
+						}
+						#if DEBUG_LOGGING >= 1
+							printf("Sending player data across...\n");
+						#endif
+					}
 				}
 				break;
 			default:
@@ -385,4 +412,13 @@ void SendUnreliablePlayerData(uint8_t* buffer, unsigned int len, bool isServer)
 	else if (!isServer)
 		SessionManager_Client_SendUnreliableByteArray(buffer, len);
 }
-
+//
+//void SendRawToPeer(uint32_t host, uint16_t port, const void* buf, int size)
+//{
+//	NBN_UDP_SendRawTo(host, port, buf, size);
+//}
+//
+//void ReceiveRawFromPeer(void* buf, int bufsize)
+//{
+//	NBN_UDP_ReceiveRaw(buf, bufsize);
+//}

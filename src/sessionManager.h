@@ -8,9 +8,29 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
 
 #define SERVER_PORT 1337
 #define HOME_SERVER_IP "142.189.221.121"
+
+#ifndef DEBUG_LOGGING
+#define DEBUG_LOGGING 2
+#endif
+
+#if DEBUG_LOGGING == 1
+// Basic logging to console
+#define NBN_LogInfo(...)   printf(__VA_ARGS__); printf("\n")
+#define NBN_LogError(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogDebug(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogTrace(...)  printf(__VA_ARGS__); printf("\n")
+#define NBN_LogWarning(...) printf(__VA_ARGS__); printf("\n")
+#else
+#define NBN_LogInfo(...)    ((void)0)
+#define NBN_LogError(...)   ((void)0)
+#define NBN_LogDebug(...)   ((void)0)
+#define NBN_LogTrace(...)   ((void)0)
+#define NBN_LogWarning(...) ((void)0)
+#endif
 
 typedef uint32_t NBN_ConnectionHandle;
 
@@ -63,14 +83,20 @@ struct LobbyQuery { // Sent upon joining lobby
 	uint8_t auth : 1;	// Authenticated by server
 	uint8_t isHost : 1;
 	uint8_t isFull : 1;
+	uint32_t hostIP;
+	uint16_t hostPort;
 };
 
+extern clock_t lastNetworkTick;
 extern bool isServer;
+extern bool isHost;
 extern NBN_ConnectionHandle connectedClientHandle;
 extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 extern struct PositionSnapshot lastPositionSnapshot;
 extern struct LobbyQuery lastLobbyQuery;
+extern uint32_t peerIP;
+extern uint16_t peerPort;
 
 
 void SessionManager_Init();
@@ -94,7 +120,11 @@ int SessionManager_Client_SendPackets();
 
 void SendPlayerData(uint8_t* buffer, unsigned int len, bool isServer);
 void SendUnreliablePlayerData(uint8_t* buffer, unsigned int len, bool isServer);
+//void SendRawToPeer(uint32_t host, uint16_t port, const void* buf, int size);
+//void ReceiveRawFromPeer(void *buf, int bufsize);
 
+extern void (*HostPlayerCallback)();
+extern void (*ClientPlayerCallback)();
 extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 extern void (*PlayerDesyncCorrection)();

@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
+#include "sessionLobbyController.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -108,7 +109,32 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Back to Menu") == 0)
                 SetCurrentScreen(menu_main);
             else if (strcmp(button.text, "Multiplayer") == 0)
-                SetCurrentScreen(menu_multi);
+            {
+				ConnectToHomeServer();
+                //SessionManager_CreateClient("UDP", HOME_SERVER_IP, SERVER_PORT);
+                //multiplayerSession = true;
+                //SetCurrentScreen(menu_game);
+                //SetCurrentScreen(menu_multi);
+                lastNetworkTick = clock();
+                clock_t now;
+                int elapsed_ms = 0;
+                int ev;
+                while (true)
+                {
+                    now = clock();
+                    if ((int)(now - lastNetworkTick) > 100)
+                    {
+                        SessionManager_Client_HandleEvents();
+			            SessionManager_Client_SendPackets();
+
+						if (AssignMultiplayerStatus()) // wait for multiplayer status assignment
+                            break;
+						lastNetworkTick = now;
+                    }
+                }
+                multiplayerSession = true;
+                SetCurrentScreen(menu_game);
+            }
             else if (strcmp(button.text, "Host Game") == 0)
             {
                 isServer = true;
