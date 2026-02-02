@@ -11,6 +11,7 @@ typedef enum MenuScreen {
 	menu_game,
 	menu_game_paused,
 	menu_options,
+	menu_editor,
 	menu_level_select,
 	menu_multi,
 	menu_save

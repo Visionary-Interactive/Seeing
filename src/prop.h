@@ -64,5 +64,7 @@ void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);
 void RenderLensProps(const Props* obj);
+void ResetProps();
+void DestroyProps(Props* obj);
 
 #endif

@@ -107,3 +107,14 @@ void RenderLensProps(const Props* obj) {
 		}
 	}
 }
+
+void ResetProps()
+{
+	if (props == NULL) return;
+	memset(props, 0, sizeof(Props));
+}
+
+void DestroyProps(Props* obj)
+{
+	RL_FREE(obj);
+}
