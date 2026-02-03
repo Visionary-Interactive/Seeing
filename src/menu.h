@@ -16,6 +16,7 @@ typedef enum MenuScreen {
 	menu_editor,
 	menu_level_select,
 	menu_multi,
+	menu_multi2,
 	menu_save
 
 } MenuScreen;
