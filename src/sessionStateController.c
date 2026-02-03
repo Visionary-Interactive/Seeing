@@ -5,17 +5,17 @@ Player* playerList[MAX_PLAYERS];
 uint8_t clientPlayerCount = 0;
 Color playerColor;
 Color remoteColor;
-clock_t lastNetworkTick = 0;
 uint16_t localSequence = 1;
 uint16_t lastPositionSequence = 0;
 
 void SessionStateController_Init()
 {
 	clientPlayerCount = 0;
-	lastNetworkTick = clock();
 	CreatePlayer = CreateNewPlayer; // To be called when a new player connects
 	InitalizeRemotePlayer = InitRemotePlayer; // To be called to initialize remote player data
 	PlayerDesyncCorrection = UpdatePlayerPosition; // To be called to update player position
+	HostPlayerCallback = SendPlayerDataToRemote; // To be called to send player data
+	ClientPlayerCallback = SendPlayerDataToRemote;
 
 	playerColor = RED;
 	remoteColor = BLACK;
@@ -82,6 +82,41 @@ void InitRemotePlayer()
 	playerList[clientPlayerCount]->isGrounded = incomingPlayerData.isGrounded;
 }
 
+void SendPlayerDataToRemote()
+{
+	if (!lastLobbyQuery.isHost)
+		playerColor = BLUE;
+	struct IncomingPlayer incomingPlayer;
+	incomingPlayer.position = (struct SessionVec3){
+		playerList[0]->position.x,
+		playerList[0]->position.y,
+		playerList[0]->position.z
+	};
+	incomingPlayer.scale = (struct SessionVec3){
+		playerList[0]->size.x,
+		playerList[0]->size.y,
+		playerList[0]->size.z
+	};
+	incomingPlayer.r = playerColor.r;
+	incomingPlayer.g = playerColor.g;
+	incomingPlayer.b = playerColor.b;
+	incomingPlayer.velocity = (struct SessionVec3){
+		playerList[0]->velocity.x,
+		playerList[0]->velocity.y,
+		playerList[0]->velocity.z
+	};
+	incomingPlayer.speed = playerList[0]->speed;
+	incomingPlayer.yaw = playerList[0]->yaw;
+	incomingPlayer.pitch = playerList[0]->pitch;
+	incomingPlayer.isGrounded = playerList[0]->isGrounded;
+
+	// Send IncomingPlayer packet
+	uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
+	buffer[0] = IncomingPlayer; // Set message type
+	memcpy(buffer + 1, &incomingPlayer, sizeof(struct IncomingPlayer));
+	SendPlayerData(buffer, sizeof(buffer), isServer);
+}
+
 // Called to update remote player position based on received snapshot
 void UpdatePlayerPosition()
 {
@@ -127,37 +162,37 @@ void NetworkTick(bool isServer)
 	case 2: // NBN_NEW_CONNECTION / NBN_CONNECTED
 	{
 		// New connection, send the incoming player data
-		struct IncomingPlayer incomingPlayer;
-		incomingPlayer.position = (struct SessionVec3){
-			playerList[0]->position.x,
-			playerList[0]->position.y,
-			playerList[0]->position.z
-		};
-		incomingPlayer.scale = (struct SessionVec3){
-			playerList[0]->size.x,
-			playerList[0]->size.y,
-			playerList[0]->size.z
-		};
-		incomingPlayer.r = playerColor.r;
-		incomingPlayer.g = playerColor.g;
-		incomingPlayer.b = playerColor.b;
-		incomingPlayer.velocity = (struct SessionVec3){
-			playerList[0]->velocity.x,
-			playerList[0]->velocity.y,
-			playerList[0]->velocity.z
-		};
-		incomingPlayer.speed = playerList[0]->speed;
-		incomingPlayer.yaw = playerList[0]->yaw;
-		incomingPlayer.pitch = playerList[0]->pitch;
-		incomingPlayer.isGrounded = playerList[0]->isGrounded;
+		//struct IncomingPlayer incomingPlayer;
+		//incomingPlayer.position = (struct SessionVec3){
+		//	playerList[0]->position.x,
+		//	playerList[0]->position.y,
+		//	playerList[0]->position.z
+		//};
+		//incomingPlayer.scale = (struct SessionVec3){
+		//	playerList[0]->size.x,
+		//	playerList[0]->size.y,
+		//	playerList[0]->size.z
+		//};
+		//incomingPlayer.r = playerColor.r;
+		//incomingPlayer.g = playerColor.g;
+		//incomingPlayer.b = playerColor.b;
+		//incomingPlayer.velocity = (struct SessionVec3){
+		//	playerList[0]->velocity.x,
+		//	playerList[0]->velocity.y,
+		//	playerList[0]->velocity.z
+		//};
+		//incomingPlayer.speed = playerList[0]->speed;
+		//incomingPlayer.yaw = playerList[0]->yaw;
+		//incomingPlayer.pitch = playerList[0]->pitch;
+		//incomingPlayer.isGrounded = playerList[0]->isGrounded;
 
-		// Send IncomingPlayer packet
-		uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
-		buffer[0] = IncomingPlayer; // Set message type
-		memcpy(buffer + 1, &incomingPlayer, sizeof(struct IncomingPlayer));
-		SendPlayerData(buffer, sizeof(buffer), isServer);
+		//// Send IncomingPlayer packet
+		//uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
+		//buffer[0] = IncomingPlayer; // Set message type
+		//memcpy(buffer + 1, &incomingPlayer, sizeof(struct IncomingPlayer));
+		//SendPlayerData(buffer, sizeof(buffer), isServer);
 
-		break;
+		//break;
 	}
 	case 3: // NBN_CLIENT_DISCONNECTED / NBN_DISCONNECTED
 	{
