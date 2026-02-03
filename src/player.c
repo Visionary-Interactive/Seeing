@@ -25,6 +25,22 @@ void InitPlayer()
 	player->bottom = player->position.y - player->size.y;
 }
 
+void ManualInitPlayer(Vector3 position, Vector3 velocity, float yaw, float pitch, bool grounded)
+{
+    if (player == NULL)
+    {
+        InitPlayer();
+    }
+
+    player->position = position;
+    player->velocity = velocity;
+    player->yaw = yaw;
+    player->pitch = pitch;
+    player->isGrounded = grounded;
+    player->speed = grounded ? 8.0f : player->speed; // optional default
+    player->bottom = player->position.y - player->size.y;
+}
+
 Player* GetPlayer()
 {
 	return player;
