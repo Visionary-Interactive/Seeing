@@ -4,9 +4,10 @@
 Player* player;
 
 const float gravity = -16.0f; //gravity force
-int heldObject = -1; // No object held initially
 const float jumpStrength = 10.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
+InventoryItem inventory[INVENTORY_SIZE] = { 0 };
+int selectedSlot = 0;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -23,6 +24,10 @@ void InitPlayer()
 	player->remotePlayer = false;
 	player->input = (struct InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
+;
+memset(player->inventory, 0, sizeof(player->inventory));
+	player->selectedSlot = 0;
+
 }
 
 Player* GetPlayer()
@@ -40,6 +45,12 @@ void LocalInputUpdate(struct InputState* input)
 	player->input.R = IsKeyDown(KEY_R);
 	player->input.SHIFT = IsKeyDown(KEY_LEFT_SHIFT);
 	player->input.SPACE = IsKeyPressed(KEY_SPACE);
+	player->input.ONE = IsKeyPressed(KEY_ONE);
+	player->input.TWO = IsKeyPressed(KEY_TWO);
+	player->input.THREE = IsKeyPressed(KEY_THREE);
+	player->input.FOUR = IsKeyPressed(KEY_FOUR);
+	player->input.FIVE = IsKeyPressed(KEY_FIVE);
+
 }
 
 void SetPlayer(Player* p)
@@ -179,7 +190,14 @@ void UpdateInteractions(Props* obj)
 	if (!player->remotePlayer) // Local player input
 	{
 		LocalInputUpdate(&player->input);
+		if (player->input.ONE)   player->selectedSlot = 0;
+		if (player->input.TWO)   player->selectedSlot = 1;
+		if (player->input.THREE) player->selectedSlot = 2;
+		if (player->input.FOUR)  player->selectedSlot = 3;
+		if (player->input.FIVE)  player->selectedSlot = 4;
 	}
+
+	
 
 	for (size_t i = 0; i < obj->count; i++)
 	{
@@ -195,7 +213,7 @@ void UpdateInteractions(Props* obj)
 		{
 			// Show prompt
 			if (!player->remotePlayer)
-				DrawText("Press E to interact:", 10, 200, 24, RED);
+				DrawText("Press E to interact:", 10, 200, 30, BLACK);
 
 			if (player->input.E)
 			{
@@ -209,48 +227,56 @@ void UpdateInteractions(Props* obj)
 					}
 					break;
 				case INTERACTABLE_PICKUP:
-					if (heldObject == -1)
-					{
-						heldObject = i;
+				{
+					InventoryItem* slot = &player->inventory[player->selectedSlot];
 
-						// Hide object in world
+					if (!slot->occupied)
+					{
+						slot->propIndex = (int)i;
+						slot->position = obj->position[i];
+						slot->components = obj->components[i];
+						slot->occupied = true;
+
+						
 						obj->components[i] &= ~PROP_VISIBILE;
 						obj->components[i] &= ~PROP_COLLIDER;
 
-                            printf("Picked up object %zu\n", i);
-                            SetUIInteraction(true);
+						printf("Picked up prop %d into slot %d\n", i, player->selectedSlot);
+					}
+				}
 
-                        }
-                        break;
-                    default:
-                        DrawText("You interacted with something!", 10, 200, 24, GREEN);
-                        break;
 				}
 			}
-			if (player->input.R)
-			{
-				//get the direction the player is facing
-				Vector3 dir = {
+
+		}
+	}
+	//allows the player to replace the prop based on where they are looking
+	if (player->input.R && !player->remotePlayer)
+	{
+		InventoryItem* slot = &player->inventory[player->selectedSlot];
+
+		if (slot->occupied)
+		{
+			Vector3 dir = {
 				sinf(player->yaw) * cosf(player->pitch),
 				sinf(player->pitch),
 				cosf(player->yaw) * cosf(player->pitch)
-				};
+			};
 
-				//simple position in front of player
-				Vector3 placePos = Vector3Add(player->position, Vector3Scale(dir, 2.0f));
+			Vector3 placePos = Vector3Add(
+				player->position,
+				Vector3Scale(Vector3Normalize(dir), 2.0f)
+			);
 
-				obj->position[heldObject] = placePos;
+			int i = slot->propIndex;
 
-				// Show object again
-				obj->components[heldObject] |= PROP_VISIBILE;
-				obj->components[heldObject] |= PROP_COLLIDER;
+			obj->position[i] = placePos;
+			obj->collider[i] = ReBuildCollider(obj->model[i], placePos);
+			obj->components[i] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
-				printf("Placed object %d\n", heldObject);
-				DrawText("Placed object", 10, 120, 24, GREEN);
+			slot->occupied = false;
 
-				heldObject = -1;
-			}
-
+			printf("Placed prop %d from slot %d\n", i, player->selectedSlot);
 		}
 	}
 }

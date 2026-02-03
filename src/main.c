@@ -31,7 +31,6 @@ int main(int argc, char** argv)
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
-
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 	InitSaveSlots();
@@ -128,7 +127,7 @@ int main(int argc, char** argv)
 				camera->target.x, camera->target.y, camera->target.z),
 				10, 160, 20, DARKGRAY);
 			DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
-			DrawUI();
+			DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
 		}
 
 		if (currentScreen != menu_game)

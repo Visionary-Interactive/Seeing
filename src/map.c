@@ -64,11 +64,6 @@ void LoadPropTest(Props* props)
     (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
-        (Vector3) {-2.0f, 1.0f, -5.0f}, 
-		(Vector3) {
-		25.0f, 1.0f, 25.0f
-	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
@@ -78,14 +73,6 @@ void LoadPropTest(Props* props)
         25.0f, 1.0f, 25.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        5.0f, 4.0f, 3.0f
-    },
-        (Vector3) {
-        25.0f, 1.0f, 25.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
     /*int doorID2 = CreateProp(props,
 		(Vector3) {
@@ -108,6 +95,20 @@ void LoadPropTest(Props* props)
         (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
         BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
+
+    int pickupID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -15, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID2] = INTERACTABLE_PICKUP; //this also sucks
+
+    int pickupID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -25, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID3] = INTERACTABLE_PICKUP; //this also sucks
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };

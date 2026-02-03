@@ -50,6 +50,10 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 			break;
 		case PRIMITIVE_MODEL_WALL:
 			model = LoadModelFromMesh(GenMeshCube(0.5f, 4.0f, 4.0f));
+			break;
+		case PRIMITIVE_MODEL_BUTTON:
+			model = LoadModelFromMesh(GenMeshCube(1.0f, 0, 1.0f));
+			break;
         default:
             return -1;
     }
@@ -76,6 +80,16 @@ void ColliderSetup(Props* obj, int id) {
 
 	obj->collider[id] = bb;
 
+}
+
+BoundingBox ReBuildCollider(Model model, Vector3 position)
+{
+	BoundingBox local = GetMeshBoundingBox(model.meshes[0]);
+
+	local.min = Vector3Add(local.min, position);
+	local.max = Vector3Add(local.max, position);
+
+	return local;
 }
 
 void AddPropComponent(Props* obj, int id, uint32_t componentMask)
