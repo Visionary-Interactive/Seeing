@@ -47,7 +47,7 @@ void DrawMenu()
         break;
 
     case menu_game:
-        DrawUI();
+        DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
 
     case menu_options:
@@ -62,7 +62,7 @@ void DrawMenu()
 		break;
 
     case menu_editor:
-        DrawUI();
+        DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
 
     case menu_multi:
@@ -158,11 +158,17 @@ void DrawButton(Button button, Color color)
 }
 
 //will draw interaction to the UI for the player
-void DrawUI()
+void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
 {
-    if (uiInteraction == true)
+
+
+    for (int i = 0; i < INVENTORY_SIZE; i++)
     {
-        DrawRectangle(160, 840, 75, 75, BLUE);
+        Color c = (i == selectedSlot) ? YELLOW : GRAY;
+        DrawRectangle(500 + i * 100, 850, 80, 80, c);
+
+        if (item[i].occupied)
+            DrawText("X", 540 + i * 100, 860, 20, BLACK);
     }
 }
 

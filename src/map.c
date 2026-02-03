@@ -1,5 +1,6 @@
 #include "map.h"
 #include "lens.h"
+#include "player.h"
 
 bool InitMap(Map *map, const char *mapPath)
 {
@@ -64,33 +65,24 @@ void LoadPropTest(Props* props)
     (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
-        (Vector3) {-2.0f, 1.0f, -5.0f}, 
-		(Vector3) {
-		25.0f, 1.0f, 25.0f
-	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        0.0f, -1.0f, 0.0f
-    },
-        (Vector3) {
-        25.0f, 1.0f, 25.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        5.0f, 4.0f, 3.0f
-    },
-        (Vector3) {
-        25.0f, 1.0f, 25.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
         (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
         BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
+
+    int pickupID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -15, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID2] = INTERACTABLE_PICKUP; //this also sucks
+
+    int pickupID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -25, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID3] = INTERACTABLE_PICKUP; //this also sucks
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
@@ -136,7 +128,7 @@ void DrawFloor()//const Map *map)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 }
 
-void SaveMap(Map *map, const char *mapPath)
+void SaveMapFile(Map *map, const char *mapPath)
 {
     FILE *f = fopen(TextFormat("%s/map.bin", mapPath), "wb");
     if (!f)
@@ -177,6 +169,54 @@ void SaveMap(Map *map, const char *mapPath)
 
     fclose(f);
     TraceLog(LOG_INFO, "Map saved successfully.");
+}
+
+void SaveMapProgress(Map *map, Player *player, const char *mapPath)
+{
+    FILE *f = fopen(TextFormat("%s/map_mod1.bin", mapPath), "wb");
+    if (!f)
+    {
+        TraceLog(LOG_ERROR, "Failed to open map file for writing!");
+        return;
+    }
+
+    uint8_t version[2] = { MAJOR_VERSION, MINOR_VERSION };
+    fwrite(version, sizeof(uint8_t), 2, f);
+
+    Props *props = GetPropStructure();
+    uint32_t count = (uint32_t)props->count;
+    fwrite(&count, sizeof(uint32_t), 1, f);
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec = {
+            .prim = props->prim[i],
+            .position = props->position[i],
+            .size = props->size[i],
+            .color = props->color[i],
+            .components = props->components[i],
+            .interactRange = props->interactRange[i],
+            .lightColor = props->lightColor[i],
+            .lightIntensity= props->lightIntensity[i],
+            .interactType = props->interactType[i],
+            .scriptID = props->scriptID[i]
+        };
+
+        fwrite(&rec, sizeof(PropRecord), 1, f);
+    }
+
+    PlayerRecord rec = {
+        .position = player->position,
+        .velocity = player->velocity,
+        .yaw = player->yaw,
+        .pitch = player->pitch,
+        .speed = player->speed,
+        .isGrounded = player->isGrounded ? 1 : 0
+    };
+    fwrite(&rec, sizeof(PlayerRecord), 1, f);
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map progress saved successfully.");
 }
 
 static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
@@ -241,4 +281,66 @@ void LoadMapFile(Map *map, const char *mapPath)
 
     fclose(f);
     TraceLog(LOG_INFO, "Map loaded successfully.");
+}
+
+void LoadMapProgress(Map *map, Player *player, const char *mapPath)
+{
+    (void)map;
+
+    FILE *f = fopen(TextFormat("%s/map_mod1.bin", mapPath), "rb");
+    if (!f)
+    {
+        TraceLog(LOG_ERROR, "Failed to open map file for loading!");
+        return;
+    }
+
+    uint8_t version[2];
+    fread(version, sizeof(uint8_t), 2, f);
+
+    if (version[0] < MAJOR_VERSION || (version[0] == MAJOR_VERSION && version[1] < MINOR_VERSION))
+    {
+        TraceLog(LOG_WARNING, "Map version (%u,%u) is older than expected (%u,%u); some elements may not work.",
+                 version[0], version[1], MAJOR_VERSION, MINOR_VERSION);
+    }
+
+    Props *props = GetPropStructure();
+    ResetProps();
+
+    uint32_t count = 0;
+    fread(&count, sizeof(uint32_t), 1, f);
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        PropRecord rec;
+        fread(&rec, sizeof(PropRecord), 1, f);
+
+        int id = RebuildPropFromRecord(props, &rec);
+        if (id < 0) continue;
+
+        props->interactRange[id]  = rec.interactRange;
+        props->lightColor[id]     = rec.lightColor;
+        props->lightIntensity[id] = rec.lightIntensity;
+        props->components[id]     = rec.components;
+        props->interactType[id]   = rec.interactType;
+        props->scriptID[id]       = rec.scriptID;
+    }
+
+    PlayerRecord rec;
+    if (fread(&rec, sizeof(PlayerRecord), 1, f) != 1)
+    {
+        TraceLog(LOG_ERROR, "The loaded player record is hosed.");
+        fclose(f);
+        return;
+    }
+
+    player->position = rec.position;
+    player->velocity = rec.velocity;
+    player->yaw = rec.yaw;
+    player->pitch = rec.pitch;
+    player->speed = rec.speed;
+    player->isGrounded = rec.isGrounded != 0;
+    player->bottom = player->position.y - player->size.y;
+
+    fclose(f);
+    TraceLog(LOG_INFO, "Map checkpoint loaded successfully.");
 }
