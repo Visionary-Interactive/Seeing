@@ -35,9 +35,9 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 	InitSaveSlots();
-	//LoadPropTest(props);
+	LoadPropTest(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
-	LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
+	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
