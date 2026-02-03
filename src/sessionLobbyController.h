@@ -5,11 +5,10 @@
 
 #include "sessionManager.h"
 
-extern bool isHost;
 extern bool isLobbyFull;
 
-void SendLobbyQuery();
 void ConnectToHomeServer();
+void SendLobbyQuery();
 bool AssignMultiplayerStatus();
 bool CheckLobbyStatus();
 

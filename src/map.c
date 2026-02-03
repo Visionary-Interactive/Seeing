@@ -74,22 +74,13 @@ void LoadPropTest(Props* props)
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
-    /*int doorID2 = CreateProp(props,
-		(Vector3) {
-		0.0f, 2.0f, -10.0f
-	},
-		(Vector3) {
-		3.0f, 1.0f, 0.5f
-	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-    int doorID3 = CreateProp(props,
-		(Vector3) {
-		4.0f, 2.0f, -10.0f
-	},
-		(Vector3) {
-		3.0f, 1.0f, 0.5f
-	}, doorModel, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
-    props->interactType[doorID3] = INTERACTABLE_DOOR;*/
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        5.0f, 4.0f, 3.0f
+    },
+        (Vector3) {
+        25.0f, 1.0f, 25.0f
+    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
         (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
@@ -115,7 +106,6 @@ void LoadPropTest(Props* props)
     CreateLensProp(props, lensPos, lensSize);
 }
 
-//a Drawlevel code to implement level creation in its own function
 void DrawFloor()//const Map *map)
 {
     //creates a basic floor grid that we can multiply
@@ -174,16 +164,16 @@ void SaveMap(Map *map, const char *mapPath)
     for (uint32_t i = 0; i < count; ++i)
     {
         PropRecord rec = {
-            .prim          = props->prim[i],
-            .position      = props->position[i],
-            .size          = props->size[i],
-            .color         = props->color[i],
-            .components    = props->components[i],
+            .prim = props->prim[i],
+            .position = props->position[i],
+            .size = props->size[i],
+            .color = props->color[i],
+            .components = props->components[i],
             .interactRange = props->interactRange[i],
-            .lightColor    = props->lightColor[i],
+            .lightColor = props->lightColor[i],
             .lightIntensity= props->lightIntensity[i],
-            .interactType  = props->interactType[i],
-            .scriptID      = props->scriptID[i]
+            .interactType = props->interactType[i],
+            .scriptID = props->scriptID[i]
         };
 
         fwrite(&rec, sizeof(PropRecord), 1, f);
