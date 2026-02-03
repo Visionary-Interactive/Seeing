@@ -267,7 +267,7 @@ void UpdateInteractions(Props* obj)
 		}
 	}
 	//allows the player to replace the prop based on where they are looking
-	if (player->input.R && !player->remotePlayer)
+	if (player->input.R)
 	{
 		InventoryItem* slot = &player->inventory[player->selectedSlot];
 
