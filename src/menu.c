@@ -11,8 +11,8 @@ Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
 Button editorButton = { { 100, 400, 200, 50 }, "Level Editor" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
-Button exitButton = { { 100, 600, 200, 50 }, "Exit Game" };
-Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
+Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
+Button menuButton = { { 100, 700, 200, 50 }, "Back to Menu" };
 Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
 Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
@@ -63,7 +63,7 @@ void DrawMenu()
 		break;
 
     case menu_editor:
-        DrawUI();
+        DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
 
     case menu_multi:

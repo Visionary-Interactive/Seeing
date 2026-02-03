@@ -107,7 +107,7 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 			camera->target.x, camera->target.y, camera->target.z),
 			10, 160, 20, DARKGRAY);
 		DrawRectangle(130, screenHeight - 60, screenWidth - 260, 120, DARKGRAY);
-		DrawUI();
+		DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
 	}
 
 	if (currentScreen != menu_game)
