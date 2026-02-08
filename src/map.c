@@ -65,23 +65,6 @@ void LoadPropTest(Props* props)
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        0.0f, -1.0f, 0.0f
-    },
-        (Vector3) {
-        25.0f, 1.0f, 25.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        5.0f, 4.0f, 3.0f
-    },
-        (Vector3) {
-        25.0f, 1.0f, 25.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
         (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
         BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
@@ -92,18 +75,21 @@ void LoadPropTest(Props* props)
         -15, 4.0, 0
     }, (Vector3) { 1.0, 1.0, 1.0 },
             RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-    props->interactType[pickupID2] = INTERACTABLE_PICKUP; //this also sucks
+    props->interactType[pickupID2] = INTERACTABLE_PICKUP;
 
     int pickupID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
         (Vector3) {
         -25, 4.0, 0
     }, (Vector3) { 1.0, 1.0, 1.0 },
             GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-    props->interactType[pickupID3] = INTERACTABLE_PICKUP; //this also sucks
+    props->interactType[pickupID3] = INTERACTABLE_PICKUP;
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
+
+	Model wall = LoadModel("resources/assets/wall.glb");
+	int newWallID = CreateProp(props, wall, (Vector3) { -10.0f, 2.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
 }
 
 void DrawFloor()//const Map *map)
