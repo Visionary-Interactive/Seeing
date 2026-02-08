@@ -1,14 +1,19 @@
 #include "map.h"
-#include "lens.h"
-#include "player.h"
+
+static Model pillar;
 
 bool InitMap(Map *map, const char *mapPath)
 {
+    pillar = LoadModel("resources/global/models/pillar/scene.gltf");
+    Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
+    pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
 }
 
 void LoadPropTest(Props* props)
 {
+    CreateProp(props, pillar, (Vector3){100.0, 0.0, 100.0}, (Vector3) {0.1, 0.1, 0.1}, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 5; j++)
@@ -68,7 +73,7 @@ void LoadPropTest(Props* props)
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
         (Vector3) {-2.0f, 1.0f, -5.0f}, 
 		(Vector3) {
-		25.0f, 1.0f, 25.0f
+		1.0f, 1.0f, 1.0f
 	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
@@ -76,7 +81,7 @@ void LoadPropTest(Props* props)
         0.0f, -1.0f, 0.0f
     },
         (Vector3) {
-        25.0f, 1.0f, 25.0f
+        1.0f, 1.0f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
@@ -85,7 +90,7 @@ void LoadPropTest(Props* props)
         5.0f, 4.0f, 3.0f
     },
         (Vector3) {
-        25.0f, 1.0f, 25.0f
+        1.0f, 1.0f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
