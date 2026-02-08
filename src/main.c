@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	InitSaveSlots();
 	LoadPropTest(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
+	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
@@ -73,7 +74,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
-	SaveMap(&gameMap, "resources/maps/pz_1");
+	SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
 	

@@ -7,7 +7,7 @@
 #include "player.h"
 
 #define MAX_PLAYERS 2
-#define TICK_RATE_MS 50
+#define TICK_RATE_MS 25
 #define MAX_BOUNDS 1000
 
 extern bool multiplayerSession;

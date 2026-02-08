@@ -33,13 +33,14 @@ void SessionStateController_Tick(bool isServer)
 		lastPositionSequence = 0;
 	}
 
-	if ((localSequence % 500) == 0) // Every 500 ticks
+	if ((localSequence % 100) == 0) // Every 100 ticks
 	{
 		NetworkCorrectionTick(isServer);
 		localSequence++;
 	}
-	else if (elapsed_ms >= TICK_RATE_MS)
+	else if (elapsed_ms >= TICK_RATE_MS || forcePlayerTick)
 	{
+		forcePlayerTick = false;
 		lastNetworkTick = now;
 		NetworkTick(isServer);
 	}
@@ -228,9 +229,9 @@ void NetworkTick(bool isServer)
 	movementSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
 	movementSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
 
-	// Waits for a new position snapshot every 500 ticks before updating remote player input
+	// Waits for a new position snapshot every 100 ticks before updating remote player input
 	if (clientPlayerCount > 0 && playerList[1] != NULL 
-		&& (lastMovementSnapshot.sequence - lastPositionSequence) < 500)
+		&& (lastMovementSnapshot.sequence - lastPositionSequence) < 100)
 	{
 		localSequence++;
 		playerList[1]->input.W = lastMovementSnapshot.forward;
