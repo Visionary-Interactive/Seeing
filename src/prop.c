@@ -69,12 +69,27 @@ void ColliderSetup(Props* obj, int id) {
 	if (id < 0 || id >= obj->count) return;
 	//get the boundingbox from the model, adds scale to it 
 	BoundingBox bb = GetModelBoundingBox(obj->model[id]);
+	Vector3 scale = obj->size[id];
 
 	//offsets the box based on the position
-	bb.min = Vector3Add(bb.min, obj->position[id]);
-	bb.max = Vector3Add(bb.max, obj->position[id]);
+	Vector3 center = Vector3Scale(Vector3Add(bb.min, bb.max), 0.5f);
+    Vector3 halfExtents = Vector3Scale(Vector3Subtract(bb.max, bb.min), 0.5f);
 
-	obj->collider[id] = bb;
+    Vector3 scaledCenter = {
+        center.x * scale.x,
+        center.y * scale.y,
+        center.z * scale.z
+    };
+
+    Vector3 scaledHalf = {
+        fabsf(halfExtents.x * scale.x),
+        fabsf(halfExtents.y * scale.y),
+        fabsf(halfExtents.z * scale.z)
+    };
+
+    Vector3 worldCenter = Vector3Add(obj->position[id], scaledCenter);
+    obj->collider[id].min = Vector3Subtract(worldCenter, scaledHalf);
+    obj->collider[id].max = Vector3Add(worldCenter, scaledHalf);
 
 }
 
