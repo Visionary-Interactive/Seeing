@@ -152,67 +152,32 @@ void UpdatePlayerPosition()
 void NetworkTick(bool isServer)
 {
 	int ev; // event variable
-	if (isServer)
-		ev = SessionManager_Server_HandleEvents();
-	else
-		ev = SessionManager_Client_HandleEvents();
-
-	switch (ev)
+	while ((ev = SessionManager_Client_HandleEvents()) != 0) // Process all pending events
 	{
-	case 2: // NBN_NEW_CONNECTION / NBN_CONNECTED
-	{
-		// New connection, send the incoming player data
-		//struct IncomingPlayer incomingPlayer;
-		//incomingPlayer.position = (struct SessionVec3){
-		//	playerList[0]->position.x,
-		//	playerList[0]->position.y,
-		//	playerList[0]->position.z
-		//};
-		//incomingPlayer.scale = (struct SessionVec3){
-		//	playerList[0]->size.x,
-		//	playerList[0]->size.y,
-		//	playerList[0]->size.z
-		//};
-		//incomingPlayer.r = playerColor.r;
-		//incomingPlayer.g = playerColor.g;
-		//incomingPlayer.b = playerColor.b;
-		//incomingPlayer.velocity = (struct SessionVec3){
-		//	playerList[0]->velocity.x,
-		//	playerList[0]->velocity.y,
-		//	playerList[0]->velocity.z
-		//};
-		//incomingPlayer.speed = playerList[0]->speed;
-		//incomingPlayer.yaw = playerList[0]->yaw;
-		//incomingPlayer.pitch = playerList[0]->pitch;
-		//incomingPlayer.isGrounded = playerList[0]->isGrounded;
-
-		//// Send IncomingPlayer packet
-		//uint8_t buffer[1 + sizeof(struct IncomingPlayer)];
-		//buffer[0] = IncomingPlayer; // Set message type
-		//memcpy(buffer + 1, &incomingPlayer, sizeof(struct IncomingPlayer));
-		//SendPlayerData(buffer, sizeof(buffer), isServer);
-
-		//break;
-	}
-	case 3: // NBN_CLIENT_DISCONNECTED / NBN_DISCONNECTED
-	{
-		printf("A player has disconnected.\n");
-		if (clientPlayerCount > 0)
+		switch (ev)
 		{
-			RL_FREE(playerList[clientPlayerCount]);
-			playerList[clientPlayerCount] = NULL;
-			clientPlayerCount--;
-		}
-		if (!isServer)
+		case 2: // NBN_NEW_CONNECTION / NBN_CONNECTED
+			break;
+		case 3: // NBN_CLIENT_DISCONNECTED / NBN_DISCONNECTED
 		{
-			SessionStateController_Init();
-			multiplayerSession = false;
-			return;
+			printf("A player has disconnected.\n");
+			if (clientPlayerCount > 0)
+			{
+				RL_FREE(playerList[clientPlayerCount]);
+				playerList[clientPlayerCount] = NULL;
+				clientPlayerCount--;
+			}/*
+			if (!isServer)
+			{
+				SessionStateController_Init();
+				multiplayerSession = false;
+				return;
+			}*/
+			break;
 		}
-		break;
-	}
-	default:
-		break;
+		default:
+			break;
+		}
 	}
 
 	struct MovementSnapshot movementSnapshot;
