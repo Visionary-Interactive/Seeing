@@ -1,4 +1,3 @@
-// render.c
 #include "render.h"
 #include "player.h"
 #include "prop.h"
@@ -11,14 +10,6 @@ static Impairment* tritanopia = NULL;
 static Impairment* convex = NULL;
 static Impairment* glaucoma = NULL;
 
-static void UpdateSceneImpairments(void)
-{
-	if (tritanopia) UpdateImpairment(tritanopia);
-	if (astigmatism) UpdateImpairment(astigmatism);
-	if (glaucoma) UpdateImpairment(glaucoma);
-	if (convex) UpdateImpairment(convex);
-}
-
 void InitSceneImpairments(int screenWidth, int screenHeight)
 {
 	if (astigmatism != NULL) return;
@@ -27,6 +18,14 @@ void InitSceneImpairments(int screenWidth, int screenHeight)
 	tritanopia = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	convex = LoadImpairment(Convex, screenWidth, screenHeight);
 	glaucoma = LoadImpairment(Glaucoma, screenWidth, screenHeight);
+}
+
+static void UpdateSceneImpairments(void)
+{
+	if (tritanopia) UpdateImpairment(tritanopia);
+	if (astigmatism) UpdateImpairment(astigmatism);
+	if (glaucoma) UpdateImpairment(glaucoma);
+	if (convex) UpdateImpairment(convex);
 }
 
 void DestroySceneImpairments(void)
