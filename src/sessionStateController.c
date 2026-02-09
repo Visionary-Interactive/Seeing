@@ -11,11 +11,17 @@ uint16_t lastPositionSequence = 0;
 void SessionStateController_Init()
 {
 	clientPlayerCount = 0;
+
+	// SessionManager Callbacks
 	CreatePlayer = CreateNewPlayer; // To be called when a new player connects
 	InitalizeRemotePlayer = InitRemotePlayer; // To be called to initialize remote player data
 	PlayerDesyncCorrection = UpdatePlayerPosition; // To be called to update player position
 	HostPlayerCallback = SendPlayerDataToRemote; // To be called to send player data
 	ClientPlayerCallback = SendPlayerDataToRemote;
+	PropInteractionCallback = PropInteractionRPC; // To be called when a prop interaction occurs
+
+	// Player Callback
+	SendPropInteractionToRemote = SendPropInteraction;
 
 	playerColor = RED;
 	remoteColor = BLACK;
@@ -38,9 +44,8 @@ void SessionStateController_Tick(bool isServer)
 		NetworkCorrectionTick(isServer);
 		localSequence++;
 	}
-	else if (elapsed_ms >= TICK_RATE_MS || forcePlayerTick)
+	else if (elapsed_ms >= TICK_RATE_MS)
 	{
-		forcePlayerTick = false;
 		lastNetworkTick = now;
 		NetworkTick(isServer);
 	}
@@ -83,6 +88,7 @@ void InitRemotePlayer()
 	playerList[clientPlayerCount]->isGrounded = incomingPlayerData.isGrounded;
 }
 
+// Sends player data to other connected client
 void SendPlayerDataToRemote()
 {
 	if (!lastLobbyQuery.isHost)
@@ -149,6 +155,26 @@ void UpdatePlayerPosition()
 	}
 }
 
+void PropInteractionRPC()
+{
+	PlayerPropInteraction(GetPropStructure(), lastPropInteraction.interactType,
+		&playerList[1]->inventory[lastPropInteraction.selectedSlot], lastPropInteraction.propID);
+}
+
+void SendPropInteraction(InteractionType interaction, int selectedSlot, int propID)
+{
+	struct PropInteraction propInteraction;
+	propInteraction.interactType = interaction;
+	propInteraction.propID = propID;
+	propInteraction.selectedSlot = selectedSlot;
+
+	// Send PropInteraction packet
+	uint8_t buffer[1 + sizeof(struct PropInteraction)];
+	buffer[0] = PropInteraction; // Set message type
+	memcpy(buffer + 1, &propInteraction, sizeof(struct PropInteraction));
+	SendPlayerData(buffer, sizeof(buffer), isServer);
+}
+
 // Network tick function - runs often
 void NetworkTick(bool isServer)
 {
@@ -183,13 +209,16 @@ void NetworkTick(bool isServer)
 
 	struct MovementSnapshot movementSnapshot;
 	movementSnapshot.sequence = localSequence;
-	movementSnapshot.forward = IsKeyDown(KEY_W);
-	movementSnapshot.backward = IsKeyDown(KEY_S);
-	movementSnapshot.left = IsKeyDown(KEY_A);
-	movementSnapshot.right = IsKeyDown(KEY_D);
-	movementSnapshot.interact = IsKeyDown(KEY_E);
-	movementSnapshot.place = IsKeyDown(KEY_R);
-	movementSnapshot.sprint = IsKeyDown(KEY_LEFT_SHIFT);
+	LocalInputUpdate(&(playerList[0]->input));
+	movementSnapshot.forward = playerList[0]->input.W;
+	movementSnapshot.backward = playerList[0]->input.S;
+	movementSnapshot.left = playerList[0]->input.A;
+	movementSnapshot.right = playerList[0]->input.D;
+	movementSnapshot.interact = playerList[0]->input.E;
+	movementSnapshot.place = playerList[0]->input.R;
+	movementSnapshot.sprint = playerList[0]->input.SHIFT;
+	movementSnapshot.selectedSlot = playerList[0]->selectedSlot;
+
 	movementSnapshot.y = QuantizeFloat(playerList[0]->position.y, MAX_BOUNDS);
 	movementSnapshot.pitch = QuantizeFloat(playerList[0]->pitch, MAX_BOUNDS);
 	movementSnapshot.yaw = QuantizeFloat(playerList[0]->yaw, MAX_BOUNDS);
@@ -206,6 +235,7 @@ void NetworkTick(bool isServer)
 		playerList[1]->input.E = lastMovementSnapshot.interact;
 		playerList[1]->input.R = lastMovementSnapshot.place;
 		playerList[1]->input.SHIFT = lastMovementSnapshot.sprint;
+		playerList[1]->selectedSlot = lastMovementSnapshot.selectedSlot;
 
 		playerList[1]->position.y = DequantizeFloat(lastMovementSnapshot.y, MAX_BOUNDS);
 		playerList[1]->pitch = DequantizeFloat(lastMovementSnapshot.pitch, MAX_BOUNDS);

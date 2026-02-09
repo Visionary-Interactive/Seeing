@@ -8,7 +8,8 @@ const float jumpStrength = 10.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
-bool forcePlayerTick = false;
+
+void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -67,6 +68,12 @@ void LocalInputUpdate(struct InputState* input)
 	player->input.THREE = IsKeyPressed(KEY_THREE);
 	player->input.FOUR = IsKeyPressed(KEY_FOUR);
 	player->input.FIVE = IsKeyPressed(KEY_FIVE);
+
+	if (player->input.ONE)   player->selectedSlot = 0;
+	else if (player->input.TWO)   player->selectedSlot = 1;
+	else if (player->input.THREE) player->selectedSlot = 2;
+	else if (player->input.FOUR)  player->selectedSlot = 3;
+	else if (player->input.FIVE)  player->selectedSlot = 4;
 
 }
 
@@ -203,21 +210,16 @@ void CheckGroundCollision(BoundingBox playerBox, BoundingBox platformBox)
 
 void UpdateInteractions(Props* obj)
 {
-	// Set input if local player
-	if (!player->remotePlayer) // Local player input
-	{
-		LocalInputUpdate(&player->input);
-		if (player->input.ONE)   player->selectedSlot = 0;
-		if (player->input.TWO)   player->selectedSlot = 1;
-		if (player->input.THREE) player->selectedSlot = 2;
-		if (player->input.FOUR)  player->selectedSlot = 3;
-		if (player->input.FIVE)  player->selectedSlot = 4;
-		if (player->input.ONE || player->input.TWO || player->input.THREE
-			|| player->input.FOUR || player->input.FIVE)
-			forcePlayerTick = true;
-	}
-
-	
+	//// Set input if local player
+	//if (!player->remotePlayer) // Local player input
+	//{
+	//	LocalInputUpdate(&player->input);
+	//	if (player->input.ONE)   player->selectedSlot = 0;
+	//	if (player->input.TWO)   player->selectedSlot = 1;
+	//	if (player->input.THREE) player->selectedSlot = 2;
+	//	if (player->input.FOUR)  player->selectedSlot = 3;
+	//	if (player->input.FIVE)  player->selectedSlot = 4;
+	//}
 
 	for (size_t i = 0; i < obj->count; i++)
 	{
@@ -237,7 +239,6 @@ void UpdateInteractions(Props* obj)
 
 			if (player->input.E)
 			{
-				if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
 				switch (obj->interactType[i])
 				{
 				case INTERACTABLE_DOOR:
@@ -250,56 +251,67 @@ void UpdateInteractions(Props* obj)
 				case INTERACTABLE_PICKUP:
 				{
 					InventoryItem* slot = &player->inventory[player->selectedSlot];
-
-					if (!slot->occupied)
+					if (!slot->occupied && !player->remotePlayer)
 					{
-						slot->propIndex = (int)i;
-						slot->position = obj->position[i];
-						slot->components = obj->components[i];
-						slot->occupied = true;
-
-						
-						obj->components[i] &= ~PROP_VISIBILE;
-						obj->components[i] &= ~PROP_COLLIDER;
-
-						printf("Picked up prop %d into slot %d\n", i, player->selectedSlot);
+						PlayerPropInteraction(obj, pickup, slot, i);
+						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
 					}
+					break;
 				}
-
+				default:
+					break;
 				}
 			}
-
 		}
 	}
 	//allows the player to replace the prop based on where they are looking
 	if (player->input.R)
 	{
-		if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
 		InventoryItem* slot = &player->inventory[player->selectedSlot];
 
 		if (slot->occupied)
 		{
-			Vector3 dir = {
-				sinf(player->yaw) * cosf(player->pitch),
-				sinf(player->pitch),
-				cosf(player->yaw) * cosf(player->pitch)
-			};
-
-			Vector3 placePos = Vector3Add(
-				player->position,
-				Vector3Scale(Vector3Normalize(dir), 2.0f)
-			);
-
-			int i = slot->propIndex;
-
-			obj->position[i] = placePos;
-			obj->collider[i] = ReBuildCollider(obj->model[i], placePos);
-			obj->components[i] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
-
-			slot->occupied = false;
-
-			printf("Placed prop %d from slot %d\n", i, player->selectedSlot);
+			PlayerPropInteraction(obj, placed, slot, slot->propIndex);
+			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
 		}
+	}
+}
+
+void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
+{
+	if (interaction == pickup)
+	{
+		slot->propIndex = propID;
+		slot->position = obj->position[propID];
+		slot->components = obj->components[propID];
+		slot->occupied = true;
+
+
+		obj->components[propID] &= ~PROP_VISIBILE;
+		obj->components[propID] &= ~PROP_COLLIDER;
+
+		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
+	}
+	else if (interaction == placed)
+	{
+		Vector3 dir = {
+			sinf(player->yaw) * cosf(player->pitch),
+			sinf(player->pitch),
+			cosf(player->yaw) * cosf(player->pitch)
+		};
+
+		Vector3 placePos = Vector3Add(
+			player->position,
+			Vector3Scale(Vector3Normalize(dir), 2.0f)
+		);
+
+		obj->position[propID] = placePos;
+		obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
+		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
+
+		slot->occupied = false;
+
+		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
 	}
 }
 

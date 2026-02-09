@@ -13,6 +13,7 @@ struct MovementSnapshot lastMovementSnapshot = { 0 };
 struct IncomingPlayer incomingPlayerData = { 0 };
 struct PositionSnapshot lastPositionSnapshot = { 0 };
 struct LobbyQuery lastLobbyQuery = { 0 };
+struct PropInteraction lastPropInteraction = { 0 };
 uint32_t peerIP = 0;
 uint16_t peerPort = 0;
 
@@ -21,6 +22,7 @@ void (*ClientPlayerCallback)() = NULL;
 void (*CreatePlayer)() = NULL;
 void (*InitalizeRemotePlayer)() = NULL;
 void (*PlayerDesyncCorrection)() = NULL;
+void (*PropInteractionCallback)() = NULL;
 
 void SessionManager_Init()
 {
@@ -32,6 +34,7 @@ void SessionManager_Init()
 	incomingPlayerData = (struct IncomingPlayer){ 0 };
 	lastPositionSnapshot = (struct PositionSnapshot){ 0 };
 	lastLobbyQuery = (struct LobbyQuery){ 0 };
+	lastPropInteraction = (struct PropInteraction){ 0 };
 	peerIP = 0;
 	peerPort = 0;
 }
@@ -302,6 +305,22 @@ int SessionManager_Client_HandleEvents()
 					lastPositionSnapshot = recv_pos;
 					// Update player position with received data
 					PlayerDesyncCorrection();
+				}
+				break;
+			case PropInteraction:
+				if (bmsg->length >= 1 + sizeof(struct PropInteraction)) {
+					struct PropInteraction recv_propInteraction;
+					memcpy(&recv_propInteraction, bmsg->bytes + 1, sizeof(struct PropInteraction));
+					#if DEBUG_LOGGING >= 1
+						printf("Received PropInteraction from client %u: type=%u propID=%u slot=%u\n",
+							info.sender,
+							recv_propInteraction.interactType,
+							recv_propInteraction.propID,
+							recv_propInteraction.selectedSlot);
+					#endif
+
+					lastPropInteraction = recv_propInteraction;
+					PropInteractionCallback();
 				}
 				break;
 			case LobbyQuery:
