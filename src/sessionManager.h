@@ -38,6 +38,7 @@ typedef enum {
 	MovementSnapshot,
 	PositionSnapshot,
 	IncomingPlayer,
+	PropInteraction,
 	LobbyQuery
 } MsgType;
 
@@ -56,6 +57,7 @@ struct MovementSnapshot { // Sent every tick
 	uint8_t sprint : 1;
 	uint8_t interact : 1;
 	uint8_t place : 1;
+	uint8_t selectedSlot : 4;
 	int16_t y;
 	int16_t pitch;
 	int16_t yaw;
@@ -79,6 +81,12 @@ struct IncomingPlayer { // Sent once upon connection
 	uint8_t isGrounded;
 };
 
+struct PropInteraction { // Sent when a prop/object is interacted with by the local player
+	uint8_t interactType;
+	uint8_t propID;
+	uint8_t selectedSlot;
+};
+
 struct LobbyQuery { // Sent upon joining lobby
 	uint8_t auth : 1;	// Authenticated by server
 	uint8_t isHost : 1;
@@ -95,6 +103,7 @@ extern struct MovementSnapshot lastMovementSnapshot;
 extern struct IncomingPlayer incomingPlayerData;
 extern struct PositionSnapshot lastPositionSnapshot;
 extern struct LobbyQuery lastLobbyQuery;
+extern struct PropInteraction lastPropInteraction;
 extern uint32_t peerIP;
 extern uint16_t peerPort;
 
@@ -128,5 +137,6 @@ extern void (*ClientPlayerCallback)();
 extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 extern void (*PlayerDesyncCorrection)();
+extern void (*PropInteractionCallback)();
 
 #endif // SESSIONMANAGER_H
