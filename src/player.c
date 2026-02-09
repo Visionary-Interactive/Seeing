@@ -1,10 +1,12 @@
 #include "player.h"
 #include "prop.h"
 
+
+
 Player* player;
 
 const float gravity = -16.0f; //gravity force
-const float jumpStrength = 10.0f; // Initial jump velocity
+const float jumpStrength = 8.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
@@ -58,7 +60,7 @@ void LocalInputUpdate(struct InputState* input)
 	player->input.A = IsKeyDown(KEY_A);
 	player->input.S = IsKeyDown(KEY_S);
 	player->input.D = IsKeyDown(KEY_D);
-	player->input.E = IsKeyDown(KEY_E);
+	player->input.E = IsKeyPressed(KEY_E);
 	player->input.R = IsKeyDown(KEY_R);
 	player->input.SHIFT = IsKeyDown(KEY_LEFT_SHIFT);
 	player->input.SPACE = IsKeyPressed(KEY_SPACE);
@@ -216,7 +218,6 @@ void UpdateInteractions(Props* obj)
 			|| player->input.FOUR || player->input.FIVE)
 			forcePlayerTick = true;
 	}
-
 	
 
 	for (size_t i = 0; i < obj->count; i++)
@@ -258,47 +259,62 @@ void UpdateInteractions(Props* obj)
 						slot->components = obj->components[i];
 						slot->occupied = true;
 
-						
+
 						obj->components[i] &= ~PROP_VISIBILE;
 						obj->components[i] &= ~PROP_COLLIDER;
 
 						printf("Picked up prop %d into slot %d\n", i, player->selectedSlot);
 					}
+					break;
+				}
+				case INTERACTABLE_TEXT:
+				{
+					printf("Interacted with text prop %d\n", i);
+					if (characterBox.active)
+					{
+						printf("Deactivating text box\n");
+						characterBox.active = false;
+						break;
+					}
+					if (!player->remotePlayer)
+						DrawText("You interacted with a text prop!", 10, 200, 24, BLUE);
+					characterBox.active = true;
+					printf("Activating text box with text: %s\n", characterBox.text);
+					break;
+				}
 				}
 
-				}
 			}
-
 		}
-	}
-	//allows the player to replace the prop based on where they are looking
-	if (player->input.R)
-	{
-		if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
-		InventoryItem* slot = &player->inventory[player->selectedSlot];
-
-		if (slot->occupied)
+		//allows the player to replace the prop based on where they are looking
+		if (player->input.R)
 		{
-			Vector3 dir = {
-				sinf(player->yaw) * cosf(player->pitch),
-				sinf(player->pitch),
-				cosf(player->yaw) * cosf(player->pitch)
-			};
+			if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
+			InventoryItem* slot = &player->inventory[player->selectedSlot];
 
-			Vector3 placePos = Vector3Add(
-				player->position,
-				Vector3Scale(Vector3Normalize(dir), 2.0f)
-			);
+			if (slot->occupied)
+			{
+				Vector3 dir = {
+					sinf(player->yaw) * cosf(player->pitch),
+					sinf(player->pitch),
+					cosf(player->yaw) * cosf(player->pitch)
+				};
 
-			int i = slot->propIndex;
+				Vector3 placePos = Vector3Add(
+					player->position,
+					Vector3Scale(Vector3Normalize(dir), 2.0f)
+				);
 
-			obj->position[i] = placePos;
-			obj->collider[i] = ReBuildCollider(obj->model[i], placePos);
-			obj->components[i] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
+				int i = slot->propIndex;
 
-			slot->occupied = false;
+				obj->position[i] = placePos;
+				obj->collider[i] = ReBuildCollider(obj->model[i], placePos);
+				obj->components[i] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
-			printf("Placed prop %d from slot %d\n", i, player->selectedSlot);
+				slot->occupied = false;
+
+				printf("Placed prop %d from slot %d\n", i, player->selectedSlot);
+			}
 		}
 	}
 }

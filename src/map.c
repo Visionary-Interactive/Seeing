@@ -86,7 +86,7 @@ void LoadPropTest(Props* props)
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
         (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
         BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
+	props->interactType[pickupID] = INTERACTABLE_TEXT; //this also sucks
 
     int pickupID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
         (Vector3) {
@@ -107,7 +107,10 @@ void LoadPropTest(Props* props)
     CreateLensProp(props, lensPos, lensSize);
 
 	Model wall = LoadModel("resources/assets/wall.glb");
-	int newWallID = CreateProp(props, wall, (Vector3) { -10.0f, 2.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+	int newWallID = CreateProp(props, wall, (Vector3) { -10.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+
+	Model Chair = LoadModel("resources/assets/chair.glb");
+	int chairID = CreateProp(props, Chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 }
 
 void DrawFloor()//const Map *map)

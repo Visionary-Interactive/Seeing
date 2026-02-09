@@ -62,6 +62,7 @@ int main(int argc, char** argv)
 		{
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
+				UpdateInteractTextBox();
 				if (playerList[i] == NULL) continue;
 				SetPlayer(playerList[i]);
 				UpdatePlayer(props);

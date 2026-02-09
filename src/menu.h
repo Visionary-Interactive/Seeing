@@ -28,10 +28,23 @@ typedef struct Button
 
 } Button;
 
+typedef struct TextBox
+{
+	bool active;
+	Rectangle bounds;
+	const char* text;
+} TextBox;
+
+TextBox characterBox;
+
 void DrawMenu();
 void DrawUI(struct InventoryItem item[INVENTORY_SIZE], int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
+
+void DrawInteractTextBox();
+
+void UpdateInteractTextBox();
 
 MenuScreen GetCurrentScreen();
 

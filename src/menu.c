@@ -15,6 +15,8 @@ Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
+
+TextBox characterBox = { false, { 400, 300, 200, 50 }, "" };
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
@@ -160,7 +162,10 @@ void DrawButton(Button button, Color color)
 //will draw interaction to the UI for the player
 void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
 {
-
+    if (characterBox.active)
+    {
+        DrawInteractTextBox();
+    }
 
     for (int i = 0; i < INVENTORY_SIZE; i++)
     {
@@ -171,6 +176,8 @@ void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
             DrawText("X", 540 + i * 100, 860, 20, BLACK);
     }
 }
+
+
 
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused)
 {
@@ -199,6 +206,57 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
         if ((IsKeyPressed(KEY_BACKSPACE) || IsKeyDown(KEY_BACKSPACE)) && currentSize > 0)
         {
             buffer[currentSize - 1] = '\0';
+        }
+    }
+}
+
+void DrawInteractTextBox()
+{
+    if (!characterBox.active) return;
+	printf("Drawing Interact TextBox: %s\n", characterBox.text);
+    // Dark background overlay
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+
+    // Box
+    DrawRectangleRec(characterBox.bounds, RAYWHITE);
+    DrawRectangleLinesEx(characterBox.bounds, 3, BLACK);
+
+    // Text
+    DrawText(
+        characterBox.text,
+        characterBox.bounds.x + 20,
+        characterBox.bounds.y + 20,
+        22,
+        BLACK
+    );
+
+    DrawText(
+        "Press E or click outside to close",
+        characterBox.bounds.x + 20,
+        characterBox.bounds.y + characterBox.bounds.height - 40,
+        18,
+        DARKGRAY
+    );
+}
+
+void UpdateInteractTextBox()
+{
+    if (!characterBox.active) return;
+	printf("Updating Interact TextBox: %s\n", characterBox.text);
+    // Toggle off with E
+    if (IsKeyPressed(KEY_E))
+    {
+        characterBox.active = false;
+        return;
+    }
+
+    // Click outside box
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        Vector2 mouse = GetMousePosition();
+        if (!CheckCollisionPointRec(mouse, characterBox.bounds))
+        {
+            characterBox.active = false;
         }
     }
 }
