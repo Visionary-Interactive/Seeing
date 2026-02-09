@@ -11,10 +11,9 @@ Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
 Button editorButton = { { 100, 400, 200, 50 }, "Level Editor" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
-Button exitButton = { { 100, 600, 200, 50 }, "Exit Game" };
+Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
-Button multiHostButton = { { 100, 100, 200, 50 }, "Host Game" };
-Button multiJoinButton = { { 100, 200, 200, 50 }, "Join Game" };
+Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
@@ -23,7 +22,7 @@ Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 Button saveSlots[SAVE_SLOT_COUNT];
 
 Rectangle ipAddressText = { 400, 200, 200, 50 };
-char ipAddress[32] = "127.0.0.1";
+char ipAddress[32] = HOME_SERVER_IP;
 bool ipBoxFocused = false;
 
 static MenuScreen currentScreen = menu_main;
@@ -48,7 +47,7 @@ void DrawMenu()
         break;
 
     case menu_game:
-        DrawUI();
+        DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
 
     case menu_options:
@@ -63,15 +62,30 @@ void DrawMenu()
 		break;
 
     case menu_editor:
-        DrawUI();
+        DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
 
     case menu_multi:
-        DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
-        DrawButton(multiHostButton, DARKGRAY);
-        DrawButton(multiJoinButton, DARKGRAY);
-        DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
+		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		DrawButton(multiConnectButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
+        break;
+
+    case menu_multi2:
+		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
+		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		DrawText("Connecting to Game Server...", 100, 340, 30, DARKGRAY);
+		if (SessionManager_Client_IsConnected())
+		{
+			DrawText("Connected to Game Server!", 100, 440, 30, GREEN);
+            DrawText("Waiting for Lobby to Fill...", 100, 540, 30, DARKGRAY);
+		}
+		if (AssignMultiplayerStatus()) // get multiplayer status from lobby query
+		{
+			multiplayerSession = true;
+			SetCurrentScreen(menu_game);
+		}
 		break;
 
     case menu_save:
@@ -116,61 +130,25 @@ void DrawButton(Button button, Color color)
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             // Buttons trigger screen changes:
-            if (strcmp(button.text, "Play" )== 0)
+            if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Level 1") == 0)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
-            else if (strcmp(button.text, "Level Editor") == 0) 
+            else if (strcmp(button.text, "Level Editor") == 0)
                 SetCurrentScreen(menu_editor);
             else if (strcmp(button.text, "Exit Game") == 0)
                 RequestExit();
             else if (strcmp(button.text, "Back to Menu") == 0)
                 SetCurrentScreen(menu_main);
             else if (strcmp(button.text, "Multiplayer") == 0)
+                SetCurrentScreen(menu_multi);
+            else if (strcmp(button.text, "Connect") == 0)
             {
-				ConnectToHomeServer();
-                //SessionManager_CreateClient("UDP", HOME_SERVER_IP, SERVER_PORT);
-                //multiplayerSession = true;
-                //SetCurrentScreen(menu_game);
-                //SetCurrentScreen(menu_multi);
-                lastNetworkTick = clock();
-                clock_t now;
-                int elapsed_ms = 0;
-                int ev;
-                while (true)
-                {
-                    now = clock();
-                    if ((int)(now - lastNetworkTick) > 100)
-                    {
-                        SessionManager_Client_HandleEvents();
-			            SessionManager_Client_SendPackets();
-
-						if (AssignMultiplayerStatus()) // wait for multiplayer status assignment
-                            break;
-						lastNetworkTick = now;
-                    }
-                }
-                multiplayerSession = true;
-                SetCurrentScreen(menu_game);
+                ConnectToHomeServer();
+                SetCurrentScreen(menu_multi2);
             }
-            else if (strcmp(button.text, "Host Game") == 0)
-            {
-                isServer = true;
-                SessionManager_CreateServer("UDP", SERVER_PORT);
-                multiplayerSession = true;
-                SetCurrentScreen(menu_game);
-            }
-            else if (strcmp(button.text, "Join Game") == 0)
-            {
-                playerColor = BLUE;
-                const char* host = ipAddress;
-                SessionManager_CreateClient("UDP", host, SERVER_PORT);
-                multiplayerSession = true;
-                SetCurrentScreen(menu_game);
-            }
-           
 			else if (strcmp(button.text, "Level Select") == 0)
 				SetCurrentScreen(menu_level_select);
             else if (strcmp(button.text, "Save/Load") == 0)
@@ -180,11 +158,17 @@ void DrawButton(Button button, Color color)
 }
 
 //will draw interaction to the UI for the player
-void DrawUI()
+void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
 {
-    if (uiInteraction == true)
+
+
+    for (int i = 0; i < INVENTORY_SIZE; i++)
     {
-        DrawRectangle(160, 840, 75, 75, BLUE);
+        Color c = (i == selectedSlot) ? YELLOW : GRAY;
+        DrawRectangle(500 + i * 100, 850, 80, 80, c);
+
+        if (item[i].occupied)
+            DrawText("X", 540 + i * 100, 860, 20, BLACK);
     }
 }
 

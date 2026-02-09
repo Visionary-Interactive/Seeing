@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
-
+  
 	InitSceneImpairments(screenWidth, screenHeight);
 
 	Map gameMap;
@@ -45,9 +45,7 @@ int main(int argc, char** argv)
 	/*Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
-	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);*/
-
-	
+	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);*/	
 
 	SessionManager_Init();
 	SessionStateController_Init();

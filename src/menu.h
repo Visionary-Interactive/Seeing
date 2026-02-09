@@ -4,6 +4,8 @@
 
 #include "includes.h"
 
+#include "player.h"
+
 static bool uiInteraction;
 
 typedef enum MenuScreen {
@@ -14,6 +16,7 @@ typedef enum MenuScreen {
 	menu_editor,
 	menu_level_select,
 	menu_multi,
+	menu_multi2,
 	menu_save
 
 } MenuScreen;
@@ -26,7 +29,7 @@ typedef struct Button
 } Button;
 
 void DrawMenu();
-void DrawUI();
+void DrawUI(struct InventoryItem item[INVENTORY_SIZE], int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 

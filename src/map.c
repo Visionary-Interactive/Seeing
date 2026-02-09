@@ -98,6 +98,20 @@ void LoadPropTest(Props* props)
         BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
 
+    int pickupID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -15, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID2] = INTERACTABLE_PICKUP; //this also sucks
+
+    int pickupID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+        (Vector3) {
+        -25, 4.0, 0
+    }, (Vector3) { 1.0, 1.0, 1.0 },
+            GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID3] = INTERACTABLE_PICKUP; //this also sucks
+
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
