@@ -5,6 +5,7 @@
 /Seeing.sln
 /build
 /bin/Debug
+/bin/Release
 /.vs
 /resources/maps/pz_1
 /resources/maps/pz_1/map.bin
