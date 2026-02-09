@@ -32,16 +32,20 @@ int main(int argc, char** argv)
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
+  
+	InitSceneImpairments(screenWidth, screenHeight);
+
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 	InitSaveSlots();
 	LoadPropTest(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
+	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
-	Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
+	/*Impairment* astig = LoadImpairment(Astigmatism, screenWidth, screenHeight);
 	Impairment* tritan = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	Impairment* convex = LoadImpairment(Convex, screenWidth, screenHeight);
-	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);
+	Impairment* glau = LoadImpairment(Glaucoma, screenWidth, screenHeight);*/	
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -73,7 +77,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
-	SaveMap(&gameMap, "resources/maps/pz_1");
+	//SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
 	

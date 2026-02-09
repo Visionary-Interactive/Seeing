@@ -4,6 +4,8 @@
 
 #include "includes.h"
 #include "prop.h"
+#include "player.h"
+#include "lens.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40
@@ -22,6 +24,15 @@ typedef struct Map {
     int blockCount;
 } Map;
 
+typedef struct PlayerRecord {
+    Vector3 position;
+    Vector3 velocity;
+    float pitch;
+    float yaw;
+    float speed;
+    bool isGrounded;
+} PlayerRecord;
+
 typedef struct PropRecord {
     PrimitiveModelId prim;
     Vector3 position;
@@ -39,10 +50,11 @@ typedef struct PropRecord {
 bool InitMap(Map *map, const char *mapPath);
 void DrawMap();//const Map *map);
 void DrawFloor();
-void SaveMap(Map *map, const char *mapPath);
+void SaveMapFile(Map *map, const char *mapPath);
+void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);
-void LoadMap(Props* props);//(Map *map, const char *mapPath); // really this should return bool/int
 void LoadMapFile(Map *map, const char *mapPath);
+void LoadMapProgress(Map *map, Player *player, const char *mapPath);
 void UnloadMap(Map *map);
 void BuildTransforms(Map *map);
 
