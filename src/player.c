@@ -8,6 +8,7 @@ const float jumpStrength = 10.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
+bool forcePlayerTick = false;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -211,6 +212,9 @@ void UpdateInteractions(Props* obj)
 		if (player->input.THREE) player->selectedSlot = 2;
 		if (player->input.FOUR)  player->selectedSlot = 3;
 		if (player->input.FIVE)  player->selectedSlot = 4;
+		if (player->input.ONE || player->input.TWO || player->input.THREE
+			|| player->input.FOUR || player->input.FIVE)
+			forcePlayerTick = true;
 	}
 
 	
@@ -233,6 +237,7 @@ void UpdateInteractions(Props* obj)
 
 			if (player->input.E)
 			{
+				if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
 				switch (obj->interactType[i])
 				{
 				case INTERACTABLE_DOOR:
@@ -267,8 +272,9 @@ void UpdateInteractions(Props* obj)
 		}
 	}
 	//allows the player to replace the prop based on where they are looking
-	if (player->input.R && !player->remotePlayer)
+	if (player->input.R)
 	{
+		if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
 		InventoryItem* slot = &player->inventory[player->selectedSlot];
 
 		if (slot->occupied)

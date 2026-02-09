@@ -5,6 +5,7 @@
 #include "includes.h"
 #include "prop.h"
 #include "player.h"
+#include "lens.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40

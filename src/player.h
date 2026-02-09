@@ -5,6 +5,7 @@
 #include "includes.h"
 #include "prop.h"
 #include "menu.h"
+#include "sessionManager.h"
 
 struct InputState {
     bool W;
@@ -51,8 +52,7 @@ typedef struct Player {
 
 } Player;
 
-
-
+extern bool forcePlayerTick;
 
 void InitPlayer();
 Player* GetPlayer();
