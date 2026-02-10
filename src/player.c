@@ -215,18 +215,16 @@ void UpdateInteractions(Props* obj)
 	// Set input if local player
 	if (!player->remotePlayer) // Local player input
 	{
-		LocalInputUpdate(&player->input);
-		if (player->input.ONE)   player->selectedSlot = 0;
-		if (player->input.TWO)   player->selectedSlot = 1;
-		if (player->input.THREE) player->selectedSlot = 2;
-		if (player->input.FOUR)  player->selectedSlot = 3;
-		if (player->input.FIVE)  player->selectedSlot = 4;
-		if (player->input.ONE || player->input.TWO || player->input.THREE
-			|| player->input.FOUR || player->input.FIVE)
-			forcePlayerTick = true;
+		//LocalInputUpdate(&player->input);
+		//if (player->input.ONE)   player->selectedSlot = 0;
+		//if (player->input.TWO)   player->selectedSlot = 1;
+		//if (player->input.THREE) player->selectedSlot = 2;
+		//if (player->input.FOUR)  player->selectedSlot = 3;
+		//if (player->input.FIVE)  player->selectedSlot = 4;
+		//if (player->input.ONE || player->input.TWO || player->input.THREE
+		//	|| player->input.FOUR || player->input.FIVE)
+		//	forcePlayerTick = true;
 	}
-	
-
 	for (size_t i = 0; i < obj->count; i++)
 	{
 		if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
@@ -259,69 +257,32 @@ void UpdateInteractions(Props* obj)
 					InventoryItem* slot = &player->inventory[player->selectedSlot];
 					if (!slot->occupied && !player->remotePlayer)
 					{
-						slot->propIndex = (int)i;
-						slot->position = obj->position[i];
-						slot->components = obj->components[i];
-						slot->occupied = true;
-
-
-						obj->components[i] &= ~PROP_VISIBILE;
-						obj->components[i] &= ~PROP_COLLIDER;
-
-						printf("Picked up prop %d into slot %d\n", i, player->selectedSlot);
+						PlayerPropInteraction(obj, pickup, slot, i);
+						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
 					}
 					break;
 				}
-				case INTERACTABLE_TEXT:
-				{
-					printf("Interacted with text prop %d\n", i);
-					if (characterBox.active)
-					{
-						printf("Deactivating text box\n");
-						characterBox.active = false;
-						break;
-					}
-					if (!player->remotePlayer)
-						DrawText("You interacted with a text prop!", 10, 200, 24, BLUE);
-					characterBox.active = true;
-					printf("Activating text box with text: %s\n", characterBox.text);
+				default:
 					break;
 				}
-				}
-
-			}
-		}
-		//allows the player to replace the prop based on where they are looking
-		if (player->input.R)
-		{
-			if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
-			InventoryItem* slot = &player->inventory[player->selectedSlot];
-
-			if (slot->occupied)
-			{
-				Vector3 dir = {
-					sinf(player->yaw) * cosf(player->pitch),
-					sinf(player->pitch),
-					cosf(player->yaw) * cosf(player->pitch)
-				};
-
-				Vector3 placePos = Vector3Add(
-					player->position,
-					Vector3Scale(Vector3Normalize(dir), 2.0f)
-				);
-
-				int i = slot->propIndex;
-
-				obj->position[i] = placePos;
-				obj->collider[i] = ReBuildCollider(obj->model[i], placePos);
-				obj->components[i] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
-
-				slot->occupied = false;
-
-				printf("Placed prop %d from slot %d\n", i, player->selectedSlot);
 			}
 		}
 	}
+	//allows the player to replace the prop based on where they are looking
+	if (player->input.R)
+	{
+		InventoryItem* slot = &player->inventory[player->selectedSlot];
+
+		if (slot->occupied)
+		{
+			PlayerPropInteraction(obj, placed, slot, slot->propIndex);
+			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
+		}
+	}
+}
+
+void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
+{
 }
 
 void DestroyPlayer()
