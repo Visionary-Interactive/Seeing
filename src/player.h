@@ -23,6 +23,11 @@ struct InputState {
     bool FIVE;
 };
 
+typedef enum {
+	pickup,
+	placed
+} InteractionType;
+
 typedef struct InventoryItem
 {
     int propIndex;
@@ -51,17 +56,17 @@ typedef struct Player {
 
 } Player;
 
-extern bool forcePlayerTick;
-
 void InitPlayer();
 Player* GetPlayer();
 void LocalInputUpdate(struct InputState *input);
 void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
+void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(float bottom, Vector3 position);
-
-
 void DestroyPlayer();
+
+// Function pointer to send prop interactions to remote player through the SessionStateController
+extern void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID);  
 
 #endif
