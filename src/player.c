@@ -283,6 +283,40 @@ void UpdateInteractions(Props* obj)
 
 void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
+	if (interaction == pickup)
+	{
+		slot->propIndex = propID;
+		slot->position = obj->position[propID];
+		slot->components = obj->components[propID];
+		slot->occupied = true;
+
+
+		obj->components[propID] &= ~PROP_VISIBILE;
+		obj->components[propID] &= ~PROP_COLLIDER;
+
+		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
+	}
+	else if (interaction == placed)
+	{
+		Vector3 dir = {
+			sinf(player->yaw) * cosf(player->pitch),
+			sinf(player->pitch),
+			cosf(player->yaw) * cosf(player->pitch)
+		};
+
+		Vector3 placePos = Vector3Add(
+			player->position,
+			Vector3Scale(Vector3Normalize(dir), 2.0f)
+		);
+
+		obj->position[propID] = placePos;
+		obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
+		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
+
+		slot->occupied = false;
+
+		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
+	}
 }
 
 void DestroyPlayer()
