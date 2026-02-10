@@ -3,10 +3,11 @@
 #define MENU_H
 
 #include "includes.h"
-
 #include "player.h"
 
 static bool uiInteraction;
+
+typedef struct InventoryItem InventoryItem;
 
 typedef enum MenuScreen {
 	menu_main,
@@ -29,7 +30,7 @@ typedef struct Button
 } Button;
 
 void DrawMenu();
-void DrawUI(struct InventoryItem item[INVENTORY_SIZE], int selectedSlot);
+void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 
@@ -42,5 +43,4 @@ void SetUIInteraction(bool interaction);
 bool IsExitRequested(void);
 void RequestExit(void);
 
-#endif // !MENU_H
-
+#endif

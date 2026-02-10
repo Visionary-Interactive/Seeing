@@ -1,8 +1,9 @@
-#include "menu.h"
 #include "includes.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
 #include "sessionLobbyController.h"
+#include "player.h"
+#include "menu.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -158,10 +159,8 @@ void DrawButton(Button button, Color color)
 }
 
 //will draw interaction to the UI for the player
-void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
+void DrawUI(InventoryItem *item, int selectedSlot)
 {
-
-
     for (int i = 0; i < INVENTORY_SIZE; i++)
     {
         Color c = (i == selectedSlot) ? YELLOW : GRAY;

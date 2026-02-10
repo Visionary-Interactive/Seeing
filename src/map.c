@@ -12,7 +12,10 @@ bool InitMap(Map *map, const char *mapPath)
 
 void LoadPropTest(Props* props)
 {
-    CreateProp(props, pillar, (Vector3){100.0, 0.0, 100.0}, (Vector3) {0.1, 0.1, 0.1}, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){-40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
     for (int i = 0; i < 5; i++)
     {
@@ -117,7 +120,7 @@ void LoadPropTest(Props* props)
     CreateLensProp(props, lensPos, lensSize);
 }
 
-void DrawFloor()//const Map *map)
+/*void DrawFloor()//const Map *map)
 {
     //creates a basic floor grid that we can multiply
     const int floorExtent = 25;
@@ -133,28 +136,7 @@ void DrawFloor()//const Map *map)
             else if (!(y & 1) && !(x & 1)) DrawPlane((Vector3) { x* tileSize, 0.0f, y* tileSize }, (Vector2) { tileSize, tileSize }, PURPLE);
         }
     }
-
-	// Towers at corners
-    const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = (Color){ 150, 200, 200, 255 };
-
-	//premade draws within the raylib library to draw cubes
-    Vector3 towerPos = (Vector3){ 32.0f, 16.0f, 32.0f };
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.z *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-}
+}*/
 
 void SaveMapFile(Map *map, const char *mapPath)
 {
