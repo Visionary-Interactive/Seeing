@@ -1,8 +1,9 @@
-#include "menu.h"
 #include "includes.h"
 #include "sessionManager.h"
 #include "sessionStateController.h"
 #include "sessionLobbyController.h"
+#include "player.h"
+#include "menu.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -160,7 +161,7 @@ void DrawButton(Button button, Color color)
 }
 
 //will draw interaction to the UI for the player
-void DrawUI(InventoryItem item[INVENTORY_SIZE], int selectedSlot)
+void DrawUI(InventoryItem *item, int selectedSlot)
 {
     if (characterBox.active)
     {
@@ -300,17 +301,28 @@ void InitSaveSlots()
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
     static MenuScreen lastScreen = menu_main;
+	static Vector2 currentMousePos = { 0, 0 };
+    currentMousePos = GetMousePosition();
 
     if (currentScreen != lastScreen)
     {
-        if (currentScreen == menu_game || currentScreen == menu_editor) DisableCursor();
-        else EnableCursor();
+        if (currentScreen == menu_game || currentScreen == menu_editor)
+        {
+            DisableCursor();
+        }
+        else
+        {
+            EnableCursor();
+        }
+
         if (currentScreen == menu_editor)
         {
             ResetProps();
         }
+
         lastScreen = currentScreen;
     }
+    SetMousePosition(currentMousePos.x, currentMousePos.y);
 }
 
 // Sets whether the UI is currently being interacted with

@@ -10,7 +10,8 @@ const float jumpStrength = 8.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
-bool forcePlayerTick = false;
+
+void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -69,6 +70,12 @@ void LocalInputUpdate(struct InputState* input)
 	player->input.THREE = IsKeyPressed(KEY_THREE);
 	player->input.FOUR = IsKeyPressed(KEY_FOUR);
 	player->input.FIVE = IsKeyPressed(KEY_FIVE);
+
+	if (player->input.ONE)   player->selectedSlot = 0;
+	else if (player->input.TWO)   player->selectedSlot = 1;
+	else if (player->input.THREE) player->selectedSlot = 2;
+	else if (player->input.FOUR)  player->selectedSlot = 3;
+	else if (player->input.FIVE)  player->selectedSlot = 4;
 
 }
 
@@ -238,7 +245,6 @@ void UpdateInteractions(Props* obj)
 
 			if (player->input.E)
 			{
-				if (!player->remotePlayer) forcePlayerTick = true; // Force tick to send interaction immediately
 				switch (obj->interactType[i])
 				{
 				case INTERACTABLE_DOOR:
@@ -251,8 +257,7 @@ void UpdateInteractions(Props* obj)
 				case INTERACTABLE_PICKUP:
 				{
 					InventoryItem* slot = &player->inventory[player->selectedSlot];
-
-					if (!slot->occupied)
+					if (!slot->occupied && !player->remotePlayer)
 					{
 						slot->propIndex = (int)i;
 						slot->position = obj->position[i];

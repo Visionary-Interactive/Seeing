@@ -5,6 +5,7 @@
 
 #include "sessionManager.h"
 #include "player.h"
+#include "prop.h"
 
 #define MAX_PLAYERS 2
 #define TICK_RATE_MS 25
@@ -23,6 +24,8 @@ void CreateNewPlayer();
 void InitRemotePlayer();
 void SendPlayerDataToRemote();
 void UpdatePlayerPosition();
+void PropInteractionRPC();
+void SendPropInteraction(InteractionType interaction, int selectedSlot, int propID);
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);
 

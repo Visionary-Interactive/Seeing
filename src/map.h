@@ -5,6 +5,8 @@
 #include "includes.h"
 #include "prop.h"
 #include "player.h"
+#include "lens.h"
+#include "floor.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40
@@ -47,8 +49,8 @@ typedef struct PropRecord {
 
 //something like this...
 bool InitMap(Map *map, const char *mapPath);
-void DrawMap();//const Map *map);
-void DrawFloor();
+void DrawMap(void);//const Map *map);
+//void DrawFloor(void);
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);

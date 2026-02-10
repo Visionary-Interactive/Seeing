@@ -1,14 +1,22 @@
 #include "map.h"
-#include "lens.h"
-#include "player.h"
+
+static Model pillar;
 
 bool InitMap(Map *map, const char *mapPath)
 {
+    pillar = LoadModel("resources/global/models/pillar/scene.gltf");
+    Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
+    pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
 }
 
 void LoadPropTest(Props* props)
 {
+    CreateProp(props, pillar, (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){-40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, pillar, (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 5; j++)
@@ -65,13 +73,18 @@ void LoadPropTest(Props* props)
     (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
+        (Vector3) {-2.0f, 1.0f, -5.0f}, 
+		(Vector3) {
+		1.0f, 1.0f, 1.0f
+	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
         0.0f, -1.0f, 0.0f
     },
         (Vector3) {
-        25.0f, 1.0f, 25.0f
+        1.0f, 1.0f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
@@ -80,7 +93,7 @@ void LoadPropTest(Props* props)
         5.0f, 4.0f, 3.0f
     },
         (Vector3) {
-        25.0f, 1.0f, 25.0f
+        1.0f, 1.0f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
@@ -113,7 +126,7 @@ void LoadPropTest(Props* props)
 	int chairID = CreateProp(props, Chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 }
 
-void DrawFloor()//const Map *map)
+/*void DrawFloor()//const Map *map)
 {
     //creates a basic floor grid that we can multiply
     const int floorExtent = 25;
@@ -129,28 +142,7 @@ void DrawFloor()//const Map *map)
             else if (!(y & 1) && !(x & 1)) DrawPlane((Vector3) { x* tileSize, 0.0f, y* tileSize }, (Vector2) { tileSize, tileSize }, PURPLE);
         }
     }
-
-	// Towers at corners
-    const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = (Color){ 150, 200, 200, 255 };
-
-	//premade draws within the raylib library to draw cubes
-    Vector3 towerPos = (Vector3){ 32.0f, 16.0f, 32.0f };
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.z *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-
-    towerPos.x *= -1;
-    DrawCubeV(towerPos, towerSize, towerColor);
-    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
-}
+}*/
 
 void SaveMapFile(Map *map, const char *mapPath)
 {

@@ -1,23 +1,15 @@
-// render.c
 #include "render.h"
 #include "player.h"
 #include "prop.h"
 #include "lens.h"
 #include "impairment.h"
 #include "menu.h"
+#include "skybox.h"
 
 static Impairment* astigmatism = NULL;
 static Impairment* tritanopia = NULL;
 static Impairment* convex = NULL;
 static Impairment* glaucoma = NULL;
-
-static void UpdateSceneImpairments(void)
-{
-	if (tritanopia) UpdateImpairment(tritanopia);
-	if (astigmatism) UpdateImpairment(astigmatism);
-	if (glaucoma) UpdateImpairment(glaucoma);
-	if (convex) UpdateImpairment(convex);
-}
 
 void InitSceneImpairments(int screenWidth, int screenHeight)
 {
@@ -27,6 +19,14 @@ void InitSceneImpairments(int screenWidth, int screenHeight)
 	tritanopia = LoadImpairment(Tritanopia, screenWidth, screenHeight);
 	convex = LoadImpairment(Convex, screenWidth, screenHeight);
 	glaucoma = LoadImpairment(Glaucoma, screenWidth, screenHeight);
+}
+
+static void UpdateSceneImpairments(void)
+{
+	if (tritanopia) UpdateImpairment(tritanopia);
+	if (astigmatism) UpdateImpairment(astigmatism);
+	if (glaucoma) UpdateImpairment(glaucoma);
+	if (convex) UpdateImpairment(convex);
 }
 
 void DestroySceneImpairments(void)
@@ -45,7 +45,12 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
         ClearBackground(RAYWHITE);
 
         BeginMode3D(*camera);
-            DrawFloor();
+			rlDisableBackfaceCulling();
+			rlDisableDepthMask();
+			DrawModel(GetSkybox()->model, camera->position, 1.0f, WHITE);
+			rlEnableBackfaceCulling();
+			rlEnableDepthMask();
+            DrawFloor((Vector3){0.0f, 0.0f, 0.0f}, WHITE);
             DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
             if (clientPlayerCount == 1)
                 DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);

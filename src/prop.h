@@ -24,6 +24,12 @@ typedef enum {
     PRIMITIVE_MODEL_LENS
 } PrimitiveModelId;
 
+typedef enum InteractableType {
+	INTERACTABLE_NONE = 0,
+	INTERACTABLE_DOOR,
+	INTERACTABLE_PICKUP,
+} InteractableType;
+
 typedef struct Props {
 	size_t count;
 
@@ -48,14 +54,6 @@ typedef struct Props {
 	PrimitiveModelId prim[MAX_PROPS];
 
 } Props;
-
-typedef enum InteractableType {
-	INTERACTABLE_NONE,
-	INTERACTABLE_DOOR,
-	INTERACTABLE_PICKUP,
-	INTERACTABLE_PUSHABLE,
-	INTERACTABLE_TEXT
-} InteractableType;
 
 void CreatePropStructure(void);
 Props* GetPropStructure(void);
