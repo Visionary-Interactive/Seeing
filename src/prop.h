@@ -28,6 +28,7 @@ typedef enum InteractableType {
 	INTERACTABLE_NONE = 0,
 	INTERACTABLE_DOOR,
 	INTERACTABLE_PICKUP,
+	INTERACTABLE_TEXT
 } InteractableType;
 
 typedef struct Props {
