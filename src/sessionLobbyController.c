@@ -7,10 +7,11 @@ void ConnectToHomeServer()
 	// Connect to home server
 	if (!SessionManager_CreateClient("UDP", HOME_SERVER_IP, SERVER_PORT))
 	{
-		printf("Failed to connect to home server. Retrying...\n");
+		printf("Failed to connect to home server.\n");
 	}
 	#if DEBUG_LOGGING >= 1
-		printf("Connected to home server at %s:%d\n", HOME_SERVER_IP, SERVER_PORT);
+		if (SessionManager_Client_IsConnected())
+			printf("Connected to home server at %s:%d\n", HOME_SERVER_IP, SERVER_PORT);
 	#endif
 }
 
@@ -19,7 +20,7 @@ void SendLobbyQuery()
 	if (SessionManager_Client_IsConnected())
 	{
 		#if DEBUG_LOGGING >= 1
-			printf("Sending Lobby Query");
+			printf("Sending Lobby Query\n");
 		#endif
 		// Send LobbyQuery to server
 		struct LobbyQuery lobbyQuery = { 0 };
@@ -32,33 +33,28 @@ void SendLobbyQuery()
 
 bool AssignMultiplayerStatus()
 {
-	if (SessionManager_Client_IsConnected())
+	clock_t now = clock();
+	int ev;
+	if ((int)(now - lastNetworkTick) > 100)
 	{
-		SendLobbyQuery();
+		ev = SessionManager_Client_HandleEvents();
+		SessionManager_Client_SendPackets();
 
-		#if DEBUG_LOGGING >= 1
-			printf("Waiting for response from server...");
-		#endif
-		// Wait for response from server
-		clock_t now;
-		while (true)
+		if (ev == 3) // NBN_DISCONNECTED
+			ConnectToHomeServer(); // try to reconnect to home server
+		else if (ev == 2) // NBN_CONNECTED
+			SendLobbyQuery();
+
+		if (SessionManager_Client_IsConnected() && lastLobbyQuery.auth) // Authenticated response by server
 		{
-			now = clock();
-			if ((int)(now - lastNetworkTick) > 100)
-			{
-				SessionManager_Client_HandleEvents();
-				SessionManager_Client_SendPackets();
+			#if DEBUG_LOGGING >= 1
+				printf("isHost = %d\n", lastLobbyQuery.isHost);
+			#endif
 
-				if (lastLobbyQuery.auth)
-					break;
-			}
+			isHost = lastLobbyQuery.isHost;
+			return true;
 		}
-		#if DEBUG_LOGGING >= 1
-			printf("isHost = %d", lastLobbyQuery.isHost);
-		#endif
-
-		isHost = lastLobbyQuery.isHost;
-		return true;
+		lastNetworkTick = now;
 	}
 	return false;
 }
@@ -76,7 +72,7 @@ bool CheckLobbyStatus()
 		{
 			isLobbyFull = lastLobbyQuery.isFull;
 			#if DEBUG_LOGGING >= 1
-				printf("isLobbyFully = %d", isLobbyFull);
+				printf("isLobbyFully = %d\n", isLobbyFull);
 			#endif
 			return isLobbyFull;
 		}

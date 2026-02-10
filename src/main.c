@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
-
+  
 	InitSceneImpairments(screenWidth, screenHeight);
 
 	Map gameMap;

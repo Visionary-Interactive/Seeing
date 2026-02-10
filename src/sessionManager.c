@@ -234,7 +234,7 @@ int SessionManager_Client_HandleEvents()
 	case NBN_DISCONNECTED:
 	{
 		printf("Disconnected from server\n");
-		SessionManager_StopClient();
+		//SessionManager_StopClient();
 		break;
 	}
 	case NBN_MESSAGE_RECEIVED:

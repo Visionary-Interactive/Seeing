@@ -20,6 +20,7 @@ typedef enum {
     PRIMITIVE_MODEL_DOOR,
 	PRIMITIVE_MODEL_PLATFORM,
 	PRIMITIVE_MODEL_WALL,
+	PRIMITIVE_MODEL_BUTTON,
     PRIMITIVE_MODEL_LENS
 } PrimitiveModelId;
 
@@ -60,6 +61,8 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components);
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
+//rebuilds the collider for a prop based on its model and position
+BoundingBox ReBuildCollider(Model model, Vector3 position);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);
