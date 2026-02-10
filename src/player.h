@@ -23,7 +23,6 @@ struct InputState {
     bool FIVE;
 };
 
-
 typedef struct InventoryItem
 {
     int propIndex;
