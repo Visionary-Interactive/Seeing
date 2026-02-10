@@ -1,12 +1,24 @@
 #include "map.h"
 
 static Model pillar;
+static Model book;
+static Model wall;
+static Model door;
+static Model chair;
 
 bool InitMap(Map *map, const char *mapPath)
 {
     pillar = LoadModel("resources/global/models/pillar/scene.gltf");
     Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
+    book = LoadModel("resources/global/models/book/scene.gltf");
+    Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
+	door = LoadModel("resources/global/models/door/scene.gltf");
+	Texture2D doorTexture = LoadTexture("resources/global/models/door/textures/Door_wood_baseColor");
+	chair = LoadModel("resources/assets/chair.glb");
+	wall = LoadModel("resources/assets/wall.glb");
     pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+	door.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = doorTexture;
     return true;
 }
 
@@ -59,71 +71,57 @@ void LoadPropTest(Props* props)
 */
 	//Create the door PROP to interact with
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, 
-        (Vector3) {-4.0f, 2.0f, -10.0f}, 
-        (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR,
+        (Vector3) {
+        -4.0f, 2.0f, -10.0f
+    },
+        (Vector3) {
+        1.0, 1.0, 1.0
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
-	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f},
-		(Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { -4.0f, 2.0f, -10.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {0.0f, 2.0f, -10.0f},
-    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 0.0f, 2.0f, -10.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
 
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {4.0f, 2.0f, -10.0f},
-    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
+    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 4.0f, 2.0f, -10.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
-        (Vector3) {-2.0f, 1.0f, -5.0f}, 
-		(Vector3) {
-		1.0f, 1.0f, 1.0f
-	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
-        (Vector3) {
-        0.0f, -1.0f, 0.0f
-    },
-        (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+	int pickupID = CreateProp(props, book, 
+        (Vector3) {-10, 1.0, 0}, (Vector3) {0.03, 0.03, 0.03}, 
+        WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
 
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+    int pickupID2 = CreateProp(props, book,
         (Vector3) {
-        5.0f, 4.0f, 3.0f
-    },
-        (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
-	int pickupID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, 
-        (Vector3) {-10, 4.0, 0}, (Vector3) {1.0, 1.0, 1.0}, 
-        BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_TEXT; //this also sucks
-
-    int pickupID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
-        (Vector3) {
-        -15, 4.0, 0
-    }, (Vector3) { 1.0, 1.0, 1.0 },
-            RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+        -15, 1.0, 0
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            RED, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID2] = INTERACTABLE_PICKUP;
 
-    int pickupID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+    int pickupID3 = CreateProp(props, book,
         (Vector3) {
-        -25, 4.0, 0
-    }, (Vector3) { 1.0, 1.0, 1.0 },
-            GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
+        -25, 1.0, 0
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            GREEN, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID3] = INTERACTABLE_PICKUP;
 
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -2.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
 
-	Model wall = LoadModel("resources/assets/wall.glb");
-	int newWallID = CreateProp(props, wall, (Vector3) { -10.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+	int newWallID = CreateProp(props, wall, (Vector3) { 0.0f, 0.0f, -12.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
 
-	Model Chair = LoadModel("resources/assets/chair.glb");
-	int chairID = CreateProp(props, Chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 }
 
 /*void DrawFloor()//const Map *map)

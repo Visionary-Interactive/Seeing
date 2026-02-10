@@ -249,6 +249,7 @@ void UpdateInteractions(Props* obj)
 					if (!player->remotePlayer)
 					{
 						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
+
 						RequestExit();
 					}
 					break;
@@ -260,6 +261,10 @@ void UpdateInteractions(Props* obj)
 						PlayerPropInteraction(obj, pickup, slot, i);
 						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
 					}
+					break;
+				}
+				case INTERACTABLE_TEXT:
+				{
 					break;
 				}
 				default:
@@ -310,7 +315,7 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		);
 
 		obj->position[propID] = placePos;
-		obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
+		obj->collider[propID] = ReBuildCollider(obj, placePos);
 		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
 		slot->occupied = false;
