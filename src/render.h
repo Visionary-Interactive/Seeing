@@ -13,7 +13,7 @@
 #include "sessionStateController.h"
 #include "lens.h"
 #include "render.h"
-
+#include "floor.h"
 
 static void UpdateSceneImpairments(void);
 void DestroySceneImpairments(void);

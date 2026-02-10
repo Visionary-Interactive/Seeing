@@ -4,6 +4,7 @@
 #include "lens.h"
 #include "impairment.h"
 #include "menu.h"
+#include "skybox.h"
 
 static Impairment* astigmatism = NULL;
 static Impairment* tritanopia = NULL;
@@ -44,7 +45,12 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
         ClearBackground(RAYWHITE);
 
         BeginMode3D(*camera);
-            DrawFloor();
+			rlDisableBackfaceCulling();
+			rlDisableDepthMask();
+			DrawModel(GetSkybox()->model, camera->position, 1.0f, WHITE);
+			rlEnableBackfaceCulling();
+			rlEnableDepthMask();
+            DrawFloor((Vector3){0.0f, 0.0f, 0.0f}, WHITE);
             DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
             if (clientPlayerCount == 1)
                 DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
