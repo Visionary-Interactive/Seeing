@@ -63,7 +63,8 @@ void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
 void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
-BoundingBox GetPlayerCollision(float bottom, Vector3 position);
+BoundingBox GetPlayerCollision(Vector3 position);
+bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
 void DestroyPlayer();
 
 // Function pointer to send prop interactions to remote player through the SessionStateController
