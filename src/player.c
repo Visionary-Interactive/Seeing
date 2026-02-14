@@ -315,7 +315,8 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		);
 
 		obj->position[propID] = placePos;
-		obj->collider[propID] = ReBuildCollider(obj, placePos);
+		ColliderSetup(obj, propID); // Update collider based on new position
+		//obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
 		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
 		slot->occupied = false;
