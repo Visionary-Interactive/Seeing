@@ -171,7 +171,7 @@ void UpdatePlayer(Props* obj)
 						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
 							break;
 					}
-					printf("Collision detected with prop %zu\n", i);
+
 					blocked = true;
 					break;
 				}
