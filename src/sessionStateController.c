@@ -163,16 +163,19 @@ void PropInteractionRPC()
 
 void SendPropInteraction(InteractionType interaction, int selectedSlot, int propID)
 {
-	struct PropInteraction propInteraction;
-	propInteraction.interactType = interaction;
-	propInteraction.propID = propID;
-	propInteraction.selectedSlot = selectedSlot;
+	if (multiplayerSession)
+	{
+		struct PropInteraction propInteraction;
+		propInteraction.interactType = interaction;
+		propInteraction.propID = propID;
+		propInteraction.selectedSlot = selectedSlot;
 
-	// Send PropInteraction packet
-	uint8_t buffer[1 + sizeof(struct PropInteraction)];
-	buffer[0] = PropInteraction; // Set message type
-	memcpy(buffer + 1, &propInteraction, sizeof(struct PropInteraction));
-	SendPlayerData(buffer, sizeof(buffer), isServer);
+		// Send PropInteraction packet
+		uint8_t buffer[1 + sizeof(struct PropInteraction)];
+		buffer[0] = PropInteraction; // Set message type
+		memcpy(buffer + 1, &propInteraction, sizeof(struct PropInteraction));
+		SendPlayerData(buffer, sizeof(buffer), isServer);
+	}
 }
 
 // Network tick function - runs often

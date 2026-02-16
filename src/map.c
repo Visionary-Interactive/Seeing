@@ -76,7 +76,7 @@ void LoadPropTest(Props* props)
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
         (Vector3) {-2.0f, 1.0f, -5.0f}, 
 		(Vector3) {
-		1.0f, 1.0f, 1.0f
+		1.0f, 1.5f, 1.0f
 	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,

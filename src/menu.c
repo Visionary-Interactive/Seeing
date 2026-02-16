@@ -241,17 +241,28 @@ void InitSaveSlots()
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
     static MenuScreen lastScreen = menu_main;
+	static Vector2 currentMousePos = { 0, 0 };
+    currentMousePos = GetMousePosition();
 
     if (currentScreen != lastScreen)
     {
-        if (currentScreen == menu_game || currentScreen == menu_editor) DisableCursor();
-        else EnableCursor();
+        if (currentScreen == menu_game || currentScreen == menu_editor)
+        {
+            DisableCursor();
+        }
+        else
+        {
+            EnableCursor();
+        }
+
         if (currentScreen == menu_editor)
         {
             ResetProps();
         }
+
         lastScreen = currentScreen;
     }
+    SetMousePosition(currentMousePos.x, currentMousePos.y);
 }
 
 // Sets whether the UI is currently being interacted with
