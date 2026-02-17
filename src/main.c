@@ -10,6 +10,7 @@
 #include "lens.h"
 #include "render.h"
 #include "skybox.h"
+#include "sound.h"
 
 int main(int argc, char** argv)
 {
@@ -21,6 +22,8 @@ int main(int argc, char** argv)
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
+
+	InitSoundSystem();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -92,9 +95,7 @@ int main(int argc, char** argv)
 		RL_FREE(playerList[i]);
 	}
 
-	// Stop Server/Client //ask alice about this
-	//if (isServer) SessionManager_StopServer();
-	//else SessionManager_StopClient();
+	DestroySoundSystem();
 
 	CloseWindow();
 	return 0;
