@@ -47,10 +47,12 @@ typedef struct PropRecord {
     int scriptID;
 } PropRecord;
 
+
 //something like this...
 bool InitMap(Map *map, const char *mapPath);
 void DrawMap(void);//const Map *map);
 //void DrawFloor(void);
+
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);

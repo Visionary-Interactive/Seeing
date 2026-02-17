@@ -16,6 +16,7 @@ Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
+Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
 
 TextBox characterBox = { false, { 400, 300, 200, 50 }, "" };
 #define SAVE_COLS 4
@@ -32,6 +33,14 @@ static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
 static bool gExitRequested = false;
 
+static void CenterButton(Button* button, float y)
+{
+    float screenWidth = (float)GetScreenWidth();
+
+    button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
+    button->bounds.y = y;
+}
+
 // Draws the current menu screen based on the current state
 void DrawMenu()
 {
@@ -40,15 +49,39 @@ void DrawMenu()
     switch (screen)
     {
     case menu_main:
-        DrawText("A Game about Seeing", 100, 40, 30, BLACK);
+    {
+        
+        float screenW = GetScreenWidth();
+        float screenH = GetScreenHeight();
+
+        float buttonHeight = 50;
+        float spacing = 20;
+        float totalHeight = (6 * buttonHeight) + (5 * spacing);
+
+        float startY = screenH * 0.5f - totalHeight * 0.5f;
+
+        // Center title
+        const char* title = "A Game about Seeing";
+        int titleWidth = MeasureText(title, 40);
+        DrawText(title, screenW * 0.5f - titleWidth * 0.5f, 80, 40, BLACK);
+
+        CenterButton(&levelButton, startY + 0 * (buttonHeight + spacing));
+        CenterButton(&saveButton, startY + 1 * (buttonHeight + spacing));
+        CenterButton(&editorButton, startY + 2 * (buttonHeight + spacing));
+        CenterButton(&multiMenuButton, startY + 3 * (buttonHeight + spacing));
+        CenterButton(&optionsButton, startY + 4 * (buttonHeight + spacing));
+        CenterButton(&exitButton, startY + 5 * (buttonHeight + spacing));
+
         DrawButton(levelButton, DARKGRAY);
-		DrawButton(saveButton, DARKGRAY);
-		DrawButton(editorButton, DARKGRAY);
-		DrawButton(multiMenuButton, DARKGRAY);
+        DrawButton(saveButton, DARKGRAY);
+        DrawButton(editorButton, DARKGRAY);
+        DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
-        break;
-
+        
+        
+    }
+    break;
     case menu_game:
         DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
@@ -105,12 +138,27 @@ void DrawMenu()
         break;
 
     case menu_game_paused:
-		DrawButton(playButton, DARKGRAY);
-		DrawButton(saveButton, DARKGRAY);
-		DrawButton(optionsButton, DARKGRAY);
-		DrawButton(menuButton, DARKGRAY);
+    {
+        float screenH = GetScreenHeight();
 
-        break;
+        float buttonHeight = 50;
+        float spacing = 20;
+        float totalHeight = (5 * buttonHeight) + (4 * spacing);
+        float startY = screenH * 0.5f - totalHeight * 0.5f;
+
+        CenterButton(&playButton, startY + 0 * (buttonHeight + spacing));
+        CenterButton(&retryButton, startY + 1 * (buttonHeight + spacing));
+        CenterButton(&saveButton, startY + 2 * (buttonHeight + spacing));
+        CenterButton(&optionsButton, startY + 3 * (buttonHeight + spacing));
+        CenterButton(&menuButton, startY + 4 * (buttonHeight + spacing));
+
+        DrawButton(playButton, DARKGRAY);
+        DrawButton(retryButton, DARKGRAY);
+        DrawButton(saveButton, DARKGRAY);
+        DrawButton(optionsButton, DARKGRAY);
+        DrawButton(menuButton, DARKGRAY);
+    }
+    break;
 
 
     default:
@@ -123,7 +171,14 @@ void DrawMenu()
 void DrawButton(Button button, Color color)
 {
     DrawRectangleRec(button.bounds, color);
-    DrawText(button.text, button.bounds.x + 10, button.bounds.y + 10, 20, WHITE);
+    int textWidth = MeasureText(button.text, 20);
+    DrawText(
+        button.text,
+        button.bounds.x + button.bounds.width * 0.5f - textWidth * 0.5f,
+        button.bounds.y + button.bounds.height * 0.5f - 10,
+        20,
+        WHITE
+    );
 
     // Button press logic:
     if (CheckCollisionPointRec(GetMousePosition(), button.bounds))
@@ -151,6 +206,11 @@ void DrawButton(Button button, Color color)
             {
                 ConnectToHomeServer();
                 SetCurrentScreen(menu_multi2);
+            }
+            else if (strcmp(button.text, "Retry") == 0)
+            {
+                ResetPlayerToSpawn(playerList[0]);
+                SetCurrentScreen(menu_game);
             }
 			else if (strcmp(button.text, "Level Select") == 0)
 				SetCurrentScreen(menu_level_select);

@@ -1,6 +1,6 @@
 #include "player.h"
 #include "prop.h"
-
+#include "map.h"
 
 
 Player* player;
@@ -28,6 +28,7 @@ void InitPlayer()
 	player->remotePlayer = false;
 	player->input = (struct InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
+	player->spawnPosition = player->position;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -102,7 +103,6 @@ void UpdatePlayer(Props* obj)
 	// Clamp pitch to avoid flipping
 	if (player->pitch > PI / 2.0f) player->pitch = PI / 2.0f;
 	if (player->pitch < -PI / 2.0f) player->pitch = -PI / 2.0f;
-
 	// Direction vectors to help with movement
 	Vector3 forward = {
 		sinf(player->yaw),
@@ -390,10 +390,25 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			printf("Cannot push prop %d, path is blocked!\n", propID);
 			return; // Collision detected, do not move
 		}
+
+		if (CheckCollisionBoxes(GetPlayerCollision(player->position), futureBox))
+		{
+			printf("Cannot push prop %d, player is in the way!\n", propID);
+			return; // Player is in the way, do not move
+		}
 		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
 		ColliderSetup(obj, propID); // Update collider based on new position
 		// Rebuild collider with scale
 	}
+}
+void ResetPlayerToSpawn(Player* p)
+{
+	player->position = player->spawnPosition;
+
+	// Rebuild collider
+	GetPlayerCollision(player->position);
+
+	player->velocity = (Vector3){ 0 };
 }
 void DestroyPlayer()
 {

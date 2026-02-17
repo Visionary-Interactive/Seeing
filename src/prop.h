@@ -32,6 +32,7 @@ typedef enum InteractableType {
 	INTERACTABLE_PUSH
 } InteractableType;
 
+
 typedef struct Props {
 	size_t count;
 

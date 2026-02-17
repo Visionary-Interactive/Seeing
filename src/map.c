@@ -22,6 +22,10 @@ bool InitMap(Map *map, const char *mapPath)
     return true;
 }
 
+void DrawMap(void)
+{
+}
+
 void LoadPropTest(Props* props)
 {
     CreateProp(props, pillar, (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
@@ -135,6 +139,8 @@ void LoadPropTest(Props* props)
 	int newWallID = CreateProp(props, wall, (Vector3) { 0.0f, 0.0f, -12.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
 
 	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+
+
 }
 
 /*void DrawFloor()//const Map *map)
@@ -263,6 +269,8 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
     return CreateProp(props, fallback, rec->position, rec->size,
                       rec->color, rec->components);
 }
+
+
 
 void LoadMapFile(Map *map, const char *mapPath)
 {

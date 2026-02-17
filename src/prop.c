@@ -2,10 +2,12 @@
 
 static Props* props;
 
+
 void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
 	memset(props, 0, sizeof(Props));
+
 }
 
 Props* GetPropStructure(void)
