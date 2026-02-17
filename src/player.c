@@ -1,5 +1,6 @@
 #include "player.h"
 #include "prop.h"
+#include "sound.h"
 
 Player* player;
 
@@ -304,6 +305,7 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 {
 	if (interaction == pickup)
 	{
+		PlaySound(pickupItem1);
 		slot->propIndex = propID;
 		slot->position = obj->position[propID];
 		slot->components = obj->components[propID];

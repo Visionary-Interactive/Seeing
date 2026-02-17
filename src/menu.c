@@ -3,6 +3,7 @@
 #include "sessionStateController.h"
 #include "sessionLobbyController.h"
 #include "player.h"
+#include "sound.h"
 #include "menu.h"
 
 // Define buttons for various menu options
@@ -38,6 +39,9 @@ void DrawMenu()
     switch (screen)
     {
     case menu_main:
+		// Play menu music if not already playing
+		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
+		StopSound(level1Music);
         DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
 		DrawButton(saveButton, DARKGRAY);
@@ -130,6 +134,9 @@ void DrawButton(Button button, Color color)
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
+			// Play click sound
+            PlaySound(btnClick);
+
             // Buttons trigger screen changes:
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
@@ -247,11 +254,13 @@ void SetCurrentScreen(MenuScreen newScreen) {
     if (currentScreen != lastScreen)
     {
         if (currentScreen == menu_game || currentScreen == menu_editor)
-        {
-            DisableCursor();
-        }
-        else
-        {
+		{
+			StopSound(menuMusic); // Stop menu music when entering game/editor
+			if (!IsSoundPlaying(level1Music)) PlaySound(level1Music);
+			DisableCursor();
+		}
+		else
+		{
             EnableCursor();
         }
 
