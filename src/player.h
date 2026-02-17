@@ -25,7 +25,8 @@ struct InputState {
 
 typedef enum {
 	pickup,
-	placed
+	placed,
+    push
 } InteractionType;
 
 typedef struct InventoryItem

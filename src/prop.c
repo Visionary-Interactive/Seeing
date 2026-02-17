@@ -22,7 +22,11 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	obj->size[id] = size;
 	obj->model[id] = model;
 	obj->color[id] = color;
-	obj->interactRange[id] = (Vector3){ 2.0f,2.0f,2.0f }; // Default interaction range
+    obj->interactRange[id] = (Vector3){
+    obj->size[id].x + 2.0f,
+    obj->size[id].y + 2.0f,
+    obj->size[id].z + 2.0f
+    };
 
 	//set up collider code based on model
 	ColliderSetup(obj, id);
@@ -105,6 +109,27 @@ BoundingBox ReBuildCollider(Model model, Vector3 position)
 	local.max = Vector3Add(local.max, position);
 
 	return local;
+}
+
+bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
+{
+
+    
+    for (int i = 0; i < obj->count; i++)
+    {
+        if (i == id) continue;
+
+        // Only check against objects that actually have colliders
+        if (!(obj->components[i] & PROP_COLLIDER)) continue;
+
+        if (CheckCollisionBoxes(other, obj->collider[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+ 
 }
 
 void AddPropComponent(Props* obj, int id, uint32_t componentMask)

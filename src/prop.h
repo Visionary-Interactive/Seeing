@@ -28,7 +28,8 @@ typedef enum InteractableType {
 	INTERACTABLE_NONE = 0,
 	INTERACTABLE_DOOR,
 	INTERACTABLE_PICKUP,
-	INTERACTABLE_TEXT
+	INTERACTABLE_TEXT,
+	INTERACTABLE_PUSH
 } InteractableType;
 
 typedef struct Props {
@@ -64,6 +65,8 @@ void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
 BoundingBox ReBuildCollider(Model model, Vector3 position);
+
+bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);

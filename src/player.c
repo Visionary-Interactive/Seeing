@@ -267,6 +267,12 @@ void UpdateInteractions(Props* obj)
 				{
 					break;
 				}
+				case INTERACTABLE_PUSH:
+				{
+					printf("Pushing prop %d\n", i);
+					PlayerPropInteraction(obj, push, NULL, i);
+					break;
+				}
 				default:
 					break;
 				}
@@ -284,6 +290,22 @@ void UpdateInteractions(Props* obj)
 			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
 		}
 	}
+}
+
+Vector3 GetCardinalDirection(Vector3 forward)
+{
+	Vector3 dir = { 0 };
+
+	if (fabsf(forward.x) > fabsf(forward.z))
+	{
+		dir.x = (forward.x > 0) ? 1 : -1;
+	}
+	else
+	{
+		dir.z = (forward.z > 0) ? 1 : -1;
+	}
+
+	return dir;
 }
 
 void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
@@ -323,8 +345,35 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
 	}
-}
+	if (interaction == push)
+	{
+		printf("Pushing prop %d\n", propID);
+		 Vector3 playerForward = (Vector3){
+			sinf(player->yaw),
+			0.0f,
+			cosf(player->yaw)
+		};
+		int pushDistance = 2.0f;
+		if (!(obj->components[propID] & PROP_PUSHABLE)) return;
 
+		// Get 4-direction movement
+		Vector3 moveDir = GetCardinalDirection(playerForward);
+
+		// Calculate new position
+		Vector3 moveAmount = Vector3Scale(moveDir, pushDistance);
+		Vector3 futurePosition = Vector3Add(obj->position[propID], moveAmount);
+		BoundingBox futureBox = ReBuildCollider(obj->model[propID], futurePosition);
+
+		if (CheckCollisionWithProp(obj, propID, futureBox))
+		{
+			printf("Cannot push prop %d, path is blocked!\n", propID);
+			return; // Collision detected, do not move
+		}
+		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
+		ColliderSetup(obj, propID); // Update collider based on new position
+		// Rebuild collider with scale
+	}
+}
 void DestroyPlayer()
 {
 	RL_FREE(player);
