@@ -92,6 +92,8 @@ void UpdatePlayer(Props* obj)
 	const float mouseSensitivity = 0.003f;
 	player->yaw -= mouseDelta.x * mouseSensitivity;
 	player->pitch -= mouseDelta.y * mouseSensitivity;
+	player->bottom = player->position.y - player->size.y;
+
 
 	const float pitchLimit = 89.0f * PI/180;
 	if (player->pitch > pitchLimit) player->pitch = pitchLimit;
@@ -143,36 +145,56 @@ void UpdatePlayer(Props* obj)
 	if (player->input.D) move = Vector3Subtract(move, right);
 
 	//checks if there is any movement input
-	if (Vector3Length(move) > 0.0f)
+	if (Vector3Length(move) > 0.0f || player->velocity.y != 0)
 	{
 		float prevFeetY = player->bottom;
 		move = Vector3Normalize(move);
-		move = Vector3Scale(move, player->speed * dt);
+		move.x *= player->speed; // Scale movement by speed
+		move.z *= player->speed;
+		move.y += player->velocity.y;
+		move = Vector3Scale(move, dt); // Scale movement by delta time
 
-		Vector3 newPos = Vector3Add(player->position, (Vector3) { move.x, 0, move.z }); // only horizontal
-		GetPlayerCollision(player->bottom, newPos); //update player bounding box
+		Vector3 newPos = Vector3Add(player->position, (Vector3) { move.x, move.y, move.z });
 		bool blocked = false;
-		BoundingBox playerBox = GetPlayerCollision(player->bottom, newPos);
-		for (size_t i = 0; i < obj->count; i++) {
+		BoundingBox playerBox = GetPlayerCollision(newPos); //update player bounding box
+
+		for (size_t i = 0; i < obj->count; i++)
+		{
 			// Assuming PROPs is a globally accessible variable
-			if (i < obj->count && (obj->components[i] & PROP_COLLIDER)) {
+			if (i < obj->count && (obj->components[i] & PROP_COLLIDER))
+			{
 				BoundingBox objBox = obj->collider[i];
 
-				if (CheckCollisionBoxes(playerBox, objBox)) {
+				if (CheckCollisionBoxes(playerBox, objBox)) 
+				{
+					// Platform collision check
+					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
+					{
+						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
+							break;
+					}
+
 					blocked = true;
 					break;
 				}
+				else
+				{
+					player->isGrounded = false; // Not colliding with platform, allow falling
+				}
 			}
 		}
+
 		if (!blocked)
 		{
 			player->position = newPos;
 		}
-
+		else
+		{
+			// Apply vertical movement if blocked
+			if (!player->isGrounded)
+				player->position.y += player->velocity.y * dt;
+		}
 	}
-
-	// Apply vertical velocity
-	player->position.y += player->velocity.y * dt;
 
 	//simple ground collision detection
 	if (player->position.y <= groundHeight)
@@ -185,46 +207,45 @@ void UpdatePlayer(Props* obj)
 }
 
 //Grabs the player's bounding box for collision detection & makes sure it up to date on where the player is.
-BoundingBox GetPlayerCollision(float bottom, Vector3 position)
+BoundingBox GetPlayerCollision(Vector3 position)
 {
-
 	BoundingBox playerbounding_box;
+	float epsilon = 0.1f; // Small value to prevent sticking to surfaces
+	Vector3 halfSize = Vector3Scale(player->size, 0.5f);
 
-	playerbounding_box.min = (Vector3){ position.x - player->size.x, position.y - player->size.y, position.z - player->size.z };
-	playerbounding_box.max = (Vector3){ position.x + player->size.x , position.y + bottom, position.z + player->size.z };
+	playerbounding_box.min = (Vector3){ position.x - halfSize.x, position.y - player->size.y, position.z - halfSize.z };
+	playerbounding_box.max = (Vector3){ position.x + halfSize.x , position.y + halfSize.y, position.z + halfSize.z };
+	playerbounding_box.min = Vector3Subtract(playerbounding_box.min, (Vector3) { epsilon, epsilon, epsilon });
+	playerbounding_box.max = Vector3Add(playerbounding_box.max, (Vector3) { epsilon, epsilon, epsilon });
+
 	return playerbounding_box;
 }
 
-
-void CheckGroundCollision(BoundingBox playerBox, BoundingBox platformBox)
+// Checks if the player is landing on a platform/cube or bonking their head on it, and updates velocity and grounded state accordingly
+// Returns true if landing on platform, false if bonking head or no collision
+bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox)
 {
-	if (CheckCollisionBoxes(playerBox, platformBox))
+	if (player->velocity.y <= 0 &&	// landing on platform
+		playerBox.min.y < platformBox.max.y && // player intersects platform
+		(prevFeetY + 0.5f) >= platformBox.max.y) // player was above platform last frame
 	{
-		// Simple ground collision response
-		if (player->position.y > platformBox.max.y)
-		{
-			player->position.y = platformBox.max.y + player->size.y / 2.0f;
-			player->velocity.y = 0;        // stop falling
-			player->isGrounded = true;     // allow jumping again
-		}
+		player->velocity.y = 0.0f;        // stop falling
+		player->isGrounded = true;     // allow jumping again
+		return true;
+	} 
+	else if (player->velocity.y > 0 &&	// bonking head on platform from below
+		playerBox.max.y > platformBox.min.y && // player intersects platform
+		(prevFeetY - 0.5f) <= platformBox.min.y) // player was below platform last frame
+	{
+		player->velocity.y = 0.0f;        // stop going up
+		return false;
 	}
+
+	return false;
 }
 
 void UpdateInteractions(Props* obj)
 {
-	// Set input if local player
-	if (!player->remotePlayer) // Local player input
-	{
-		//LocalInputUpdate(&player->input);
-		//if (player->input.ONE)   player->selectedSlot = 0;
-		//if (player->input.TWO)   player->selectedSlot = 1;
-		//if (player->input.THREE) player->selectedSlot = 2;
-		//if (player->input.FOUR)  player->selectedSlot = 3;
-		//if (player->input.FIVE)  player->selectedSlot = 4;
-		//if (player->input.ONE || player->input.TWO || player->input.THREE
-		//	|| player->input.FOUR || player->input.FIVE)
-		//	forcePlayerTick = true;
-	}
 	for (size_t i = 0; i < obj->count; i++)
 	{
 		if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
