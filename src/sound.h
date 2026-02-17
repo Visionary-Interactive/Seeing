@@ -6,6 +6,9 @@
 
 extern Sound btnClick;
 extern Sound pickupItem1;
+extern Sound placeItem1;
+extern Sound menuOpen;
+extern Sound menuClose;
 extern Sound menuMusic;
 extern Sound level1Music;
 

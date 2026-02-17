@@ -253,15 +253,25 @@ void SetCurrentScreen(MenuScreen newScreen) {
 
     if (currentScreen != lastScreen)
     {
+		// Mouse visibility logic
         if (currentScreen == menu_game || currentScreen == menu_editor)
-		{
-			StopSound(menuMusic); // Stop menu music when entering game/editor
-			if (!IsSoundPlaying(level1Music)) PlaySound(level1Music);
-			DisableCursor();
-		}
-		else
-		{
+            DisableCursor();
+        else
             EnableCursor();
+
+        // SFX
+        if (currentScreen == menu_game || currentScreen == menu_editor)
+        {
+            StopSound(menuMusic); // Stop menu music when entering game/editor
+            if (!IsSoundPlaying(level1Music)) PlaySound(level1Music);
+        }
+        if (lastScreen == menu_game_paused && (currentScreen == menu_game || currentScreen == menu_editor))
+        {
+			PlaySound(menuClose);
+        }
+        if (currentScreen == menu_game_paused)
+        {
+            PlaySound(menuOpen);
         }
 
         if (currentScreen == menu_editor)

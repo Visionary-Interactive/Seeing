@@ -319,6 +319,7 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == placed)
 	{
+		PlaySound(placeItem1);
 		Vector3 dir = {
 			sinf(player->yaw) * cosf(player->pitch),
 			sinf(player->pitch),
