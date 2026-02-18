@@ -10,6 +10,7 @@
 #include "lens.h"
 #include "render.h"
 #include "skybox.h"
+#include "particleEmitter.h"
 
 int main(int argc, char** argv)
 {
@@ -36,6 +37,10 @@ int main(int argc, char** argv)
 
 	CreatePropStructure();
 	Props* props = GetPropStructure();
+
+	ParticlePool* pool = InitParticlePool(128);
+	ParticleEmitter* emitter = GetParticleEmitter();
+	InitParticleEmitter(emitter, pool, 20.0f);
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
@@ -75,7 +80,7 @@ int main(int argc, char** argv)
 			RefreshCamera(playerList[0]);
 		}
 
-		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props);
+		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, pool);
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
@@ -84,7 +89,7 @@ int main(int argc, char** argv)
 	UnloadRenderTexture(sceneColorRT);
 	
 	DestroyCamera();
-
+	DestroyParticlePool(pool);
 	DestroyProps(props);
 
 	for (int i = 0; i < clientPlayerCount; i++) {
