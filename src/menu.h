@@ -29,23 +29,35 @@ typedef struct Button
 
 } Button;
 
+typedef enum {
+	TEXTBOX_NONE,
+	TEXTBOX_PLAYER,
+	TEXTBOX_BOOK
+} TextboxType;
+
 typedef struct TextBox
 {
+	TextboxType type;
 	bool active;
 	Rectangle bounds;
-	const char* text;
+	char text[512];
+	float timer;
+	float duration;
 } TextBox;
 
-TextBox characterBox;
 
 void DrawMenu();
 void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 
-void DrawInteractTextBox();
+void InitTextBox(TextboxType type, const char* text);
 
-void UpdateInteractTextBox();
+void UpdateTextBox(float deltaTime);
+
+void DrawCharacterbox();
+
+void DrawInteractTextBox();
 
 MenuScreen GetCurrentScreen();
 
@@ -54,6 +66,8 @@ void SetCurrentScreen(MenuScreen newScreen);
 void SetUIInteraction(bool interaction);
 
 bool IsExitRequested(void);
+
+bool IsTextboxStoppingPlayer();
 void RequestExit(void);
 
 #endif

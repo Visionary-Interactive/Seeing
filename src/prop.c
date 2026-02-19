@@ -113,6 +113,32 @@ BoundingBox ReBuildCollider(Model model, Vector3 position)
 	return local;
 }
 
+void AddDeadzone(Props* obj, Vector3 position, Vector3 size)
+{
+    int id = obj->count++;
+
+    obj->position[id] = position;
+    obj->size[id] = size;
+    obj->color[id] = RED;
+
+    obj->collider[id].min = (Vector3){
+        position.x - size.x / 2,
+        position.y - size.y / 2,
+        position.z - size.z / 2
+    };
+
+    obj->collider[id].max = (Vector3){
+        position.x + size.x / 2,
+        position.y + size.y / 2,
+        position.z + size.z / 2
+    };
+
+    obj->components[id] =
+        PROP_VISIBILE |
+        PROP_COLLIDER|
+        PROP_DEADZONE;
+}
+
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
 {
 
@@ -147,29 +173,53 @@ void RemovePropComponent(Props* obj, int id, uint32_t componentMask)
 }
 
 void RenderProps(const Props* obj) {
-	for (size_t i = 0; i < obj->count; i++) {
-		if ((obj->components[i] & PROP_LENS)) continue;
+    for (size_t i = 0; i < obj->count; i++) {
+        if ((obj->components[i] & PROP_LENS)) continue;
         if (!(obj->components[i] & PROP_VISIBILE)) continue;
 
-        Vector3 scale = obj->size[i];
-        if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f) {
-            scale = (Vector3){ 1.0f, 1.0f, 1.0f };
+        if (obj->components[i] & PROP_DEADZONE)
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                RED
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model
         }
 
-        DrawModelEx(
-            obj->model[i],
-            obj->position[i],
-            (Vector3){ 0.0f, 1.0f, 0.0f }, //rot axis
-            0.0f, //rot angle
-            scale,
-            obj->color[i]
-        );
-	}
+            Vector3 scale = obj->size[i];
+            if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f) {
+                scale = (Vector3){ 1.0f, 1.0f, 1.0f };
+            }
+
+            DrawModelEx(
+                obj->model[i],
+                obj->position[i],
+                (Vector3) {
+                0.0f, 1.0f, 0.0f
+            }, //rot axis
+                0.0f, //rot angle
+                scale,
+                obj->color[i]
+            );
+    }
 }
 
-void RenderLensProps(const Props* obj) {
-	for (size_t i = 0; i < obj->count; i++) {
-		if (!(obj->components[i] & PROP_LENS)) continue;
+void RenderLensProps(const Props * obj)
+{
+    for (size_t i = 0; i < obj->count; i++) {
+        if (!(obj->components[i] & PROP_LENS)) continue;
         if (!(obj->components[i] & PROP_VISIBILE)) continue;
 
         Vector3 scale = obj->size[i];
@@ -180,12 +230,14 @@ void RenderLensProps(const Props* obj) {
         DrawModelEx(
             obj->model[i],
             obj->position[i],
-            (Vector3){ 0.0f, 1.0f, 0.0f }, //rot axis
+            (Vector3) {
+            0.0f, 1.0f, 0.0f
+        }, //rot axis
             0.0f, //rot angle
             scale,
             obj->color[i]
         );
-	}
+    }
 }
 
 void ResetProps()

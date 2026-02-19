@@ -89,6 +89,7 @@ void UpdatePlayer(Props* obj)
 {
 	float dt = GetFrameTime();
 
+
 	Vector2 mouseDelta = GetMouseDelta();
 	const float mouseSensitivity = 0.003f;
 	player->yaw -= mouseDelta.x * mouseSensitivity;
@@ -135,6 +136,11 @@ void UpdatePlayer(Props* obj)
 	// Apply the gravity if the player isn't detected on the gorund
 	if (!player->isGrounded) player->velocity.y += gravity * dt;
 
+	if (IsTextboxStoppingPlayer())
+	{
+		return; // Skip movement update
+	}
+
 	// Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
 	//subtract move backwards/right and add to move forwards/left
 	//
@@ -164,6 +170,18 @@ void UpdatePlayer(Props* obj)
 			if (i < obj->count && (obj->components[i] & PROP_COLLIDER))
 			{
 				BoundingBox objBox = obj->collider[i];
+
+				if (obj->components[i] & PROP_DEADZONE)
+				{
+					if (CheckCollisionBoxes(playerBox, objBox))
+					{
+						printf("Player entered deadzone!\n");
+						ResetPlayerToSpawn(player);
+						return; // stop update immediately
+					}
+
+					continue; // deadzones do not block movement
+				}
 
 				if (CheckCollisionBoxes(playerBox, objBox)) 
 				{
@@ -244,6 +262,7 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 	return false;
 }
 
+//checks for interactions between all objects in the scene and the player
 void UpdateInteractions(Props* obj)
 {
 	for (size_t i = 0; i < obj->count; i++)
@@ -286,6 +305,7 @@ void UpdateInteractions(Props* obj)
 				}
 				case INTERACTABLE_TEXT:
 				{
+					InitTextBox(TEXTBOX_PLAYER, "Hello");
 					break;
 				}
 				case INTERACTABLE_PUSH:

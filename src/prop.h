@@ -13,6 +13,8 @@
 #define PROP_DOOR (1 << 6)
 #define PROP_PICKUP (1 << 7)
 #define PROP_LENS (1 << 8)
+#define PROP_BUTTON (1 << 9)
+#define PROP_DEADZONE (1 << 10)
 
 typedef enum {
 	NO_PRIM = 0,
@@ -66,6 +68,8 @@ void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
 BoundingBox ReBuildCollider(Model model, Vector3 position);
+
+void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);

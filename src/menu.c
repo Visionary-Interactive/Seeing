@@ -18,7 +18,6 @@ Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
 
-TextBox characterBox = { false, { 400, 300, 200, 50 }, "" };
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
@@ -32,6 +31,7 @@ bool ipBoxFocused = false;
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
 static bool gExitRequested = false;
+static TextBox currentTextbox = { 0 };
 
 static void CenterButton(Button* button, float y)
 {
@@ -93,6 +93,8 @@ void DrawMenu()
 
     case menu_level_select:
        DrawText("LEVEL SELECT", 100, 40, 30, GREEN);
+	   CenterButton(&level1Button, 200);
+	   CenterButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 		break;
@@ -223,9 +225,10 @@ void DrawButton(Button button, Color color)
 //will draw interaction to the UI for the player
 void DrawUI(InventoryItem *item, int selectedSlot)
 {
-    if (characterBox.active)
+    if (currentTextbox.active)
     {
-        DrawInteractTextBox();
+        DrawCharacterbox();
+		printf("Current TextBox Active: %s\n", currentTextbox.text);
     }
 
     for (int i = 0; i < INVENTORY_SIZE; i++)
@@ -273,52 +276,137 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
 
 void DrawInteractTextBox()
 {
-    if (!characterBox.active) return;
-	printf("Drawing Interact TextBox: %s\n", characterBox.text);
-    // Dark background overlay
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
 
-    // Box
-    DrawRectangleRec(characterBox.bounds, RAYWHITE);
-    DrawRectangleLinesEx(characterBox.bounds, 3, BLACK);
+    // Size of the book page (80% of screen)
+    int boxWidth = screenWidth * 0.8f;
+    int boxHeight = screenHeight * 0.8f;
 
-    // Text
+    // Centered position
+    int boxX = (screenWidth - boxWidth) / 2;
+    int boxY = (screenHeight - boxHeight) / 2;
+
+    // Optional: darken background behind book
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
+
+    // White page
+    DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
+
+    // Black border
+    DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
+
+    // Text padding inside page
+    int padding = 40;
+
     DrawText(
-        characterBox.text,
-        characterBox.bounds.x + 20,
-        characterBox.bounds.y + 20,
-        22,
+        currentTextbox.text,
+        boxX + padding,
+        boxY + padding,
+        24,
         BLACK
     );
 
+    // Close hint
     DrawText(
-        "Press E or click outside to close",
-        characterBox.bounds.x + 20,
-        characterBox.bounds.y + characterBox.bounds.height - 40,
+        "",
+        boxX + boxWidth - 200,
+        boxY + boxHeight - 40,
         18,
         DARKGRAY
     );
 }
 
-void UpdateInteractTextBox()
-{
-    if (!characterBox.active) return;
-	printf("Updating Interact TextBox: %s\n", characterBox.text);
-    // Toggle off with E
-    if (IsKeyPressed(KEY_E))
-    {
-        characterBox.active = false;
-        return;
-    }
 
-    // Click outside box
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+void InitTextBox(TextboxType type, const char* text)
+{
+	printf("Initializing TextBox of type %d with text: %s\n", type, text);
+    currentTextbox.type = type;
+    currentTextbox.active = true;
+    strncpy(currentTextbox.text, text, sizeof(currentTextbox.text));
+
+    if (type == TEXTBOX_PLAYER)
     {
-        Vector2 mouse = GetMousePosition();
-        if (!CheckCollisionPointRec(mouse, characterBox.bounds))
+        currentTextbox.timer = 0.0f;
+        currentTextbox.duration = 4.0f; // lasts 4 seconds
+    }
+}
+
+void UpdateTextBox(float deltaTime)
+{
+    if (!currentTextbox.active) return;
+
+    if (currentTextbox.type == TEXTBOX_PLAYER)
+    {
+        currentTextbox.timer += deltaTime;
+		printf("Updating Player TextBox: timer = %.2f / %.2f\n", currentTextbox.timer, currentTextbox.duration);
+
+        if (currentTextbox.timer >= currentTextbox.duration)
         {
-            characterBox.active = false;
+            currentTextbox.active = false;
         }
+    }
+    else if (currentTextbox.type == TEXTBOX_BOOK)
+    {
+        if (IsKeyPressed(KEY_R))
+        {
+            currentTextbox.active = false;
+        }
+    }
+}
+
+void DrawCharacterbox()
+{
+    if (!currentTextbox.active) return;
+
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+
+    if (currentTextbox.type == TEXTBOX_PLAYER)
+    {
+        // Bottom RPG style textbox
+        DrawRectangle(
+            50,
+            screenHeight - 180,
+            screenWidth - 100,
+            130,
+            Fade(BLACK, 0.85f)
+        );
+
+        DrawText(
+            currentTextbox.text,
+            80,
+            screenHeight - 150,
+            20,
+            RAYWHITE
+        );
+    }
+    else if (currentTextbox.type == TEXTBOX_BOOK)
+    {
+        // Full screen reading textbox
+        DrawRectangle(
+            50,
+            50,
+            screenWidth - 100,
+            screenHeight - 100,
+            Fade(BLACK, 0.95f)
+        );
+
+        DrawText(
+            currentTextbox.text,
+            100,
+            120,
+            24,
+            RAYWHITE
+        );
+
+        DrawText(
+            "Press R or ESC to close the page",
+            screenWidth - 250,
+            screenHeight - 80,
+            18,
+            GRAY
+        );
     }
 }
 
@@ -394,6 +482,13 @@ void SetUIInteraction(bool interaction)
 
 bool IsExitRequested(void) {
     return gExitRequested;
+}
+
+bool IsTextboxStoppingPlayer()
+{
+    if (!currentTextbox.active) return false;
+
+    return (currentTextbox.type == TEXTBOX_BOOK);
 }
 
 void RequestExit(void) {

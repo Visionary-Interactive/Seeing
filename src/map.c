@@ -12,13 +12,10 @@ bool InitMap(Map *map, const char *mapPath)
     Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
     book = LoadModel("resources/global/models/book/scene.gltf");
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
-	door = LoadModel("resources/global/models/door/scene.gltf");
-	Texture2D doorTexture = LoadTexture("resources/global/models/door/textures/Door_wood_baseColor");
 	chair = LoadModel("resources/assets/chair.glb");
 	wall = LoadModel("resources/assets/wall.glb");
     pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-	door.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = doorTexture;
     return true;
 }
 
@@ -116,7 +113,7 @@ void LoadPropTest(Props* props)
 	int pickupID = CreateProp(props, book, 
         (Vector3) {-10, 1.0, 0}, (Vector3) {0.03, 0.03, 0.03}, 
         WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_PICKUP; //this also sucks
+	props->interactType[pickupID] = INTERACTABLE_TEXT; //this also sucks
 
     int pickupID2 = CreateProp(props, book,
         (Vector3) {
@@ -139,6 +136,8 @@ void LoadPropTest(Props* props)
 	int newWallID = CreateProp(props, wall, (Vector3) { 0.0f, 0.0f, -12.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
 
 	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+
+	AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
 
 }
