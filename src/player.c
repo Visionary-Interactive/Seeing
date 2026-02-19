@@ -1,5 +1,6 @@
 #include "player.h"
 #include "prop.h"
+#include "sound.h"
 #include "map.h"
 
 
@@ -298,6 +299,7 @@ void UpdateInteractions(Props* obj)
 					InventoryItem* slot = &player->inventory[player->selectedSlot];
 					if (!slot->occupied && !player->remotePlayer)
 					{
+						PlaySound(pickupItem1);
 						PlayerPropInteraction(obj, pickup, slot, i);
 						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
 					}
@@ -327,6 +329,7 @@ void UpdateInteractions(Props* obj)
 
 		if (slot->occupied)
 		{
+			PlaySound(placeItem1);
 			PlayerPropInteraction(obj, placed, slot, slot->propIndex);
 			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
 		}

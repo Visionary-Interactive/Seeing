@@ -1,5 +1,6 @@
 #include "render.h"
 #include "player.h"
+#include "camera.h"
 #include "prop.h"
 #include "lens.h"
 #include "impairment.h"
@@ -37,8 +38,11 @@ void DestroySceneImpairments(void)
 	if (glaucoma) { DestroyImpairment(glaucoma); glaucoma = NULL; }
 }
 
-void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props)
+void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, ParticlePool* pool)
 {
+	float dt = GetFrameTime();
+	UpdateParticleEmitter(GetParticleEmitter(), GetParticleTemplate(), dt);
+
     if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
     {
         BeginTextureMode(sceneColorRT);
@@ -55,6 +59,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
             if (clientPlayerCount == 1)
                 DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
             RenderProps(props);
+			RenderParticlePool(pool, *camera, WHITE);
         EndMode3D();
         EndTextureMode();
 

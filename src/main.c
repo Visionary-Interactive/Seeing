@@ -10,6 +10,8 @@
 #include "lens.h"
 #include "render.h"
 #include "skybox.h"
+#include "particleEmitter.h"
+#include "sound.h"
 
 int main(int argc, char** argv)
 {
@@ -20,6 +22,8 @@ int main(int argc, char** argv)
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
+
+	InitSoundSystem();
 
 	InitPlayer();
 	playerList[0] = GetPlayer();
@@ -35,6 +39,10 @@ int main(int argc, char** argv)
 
 	CreatePropStructure();
 	Props* props = GetPropStructure();
+
+	ParticlePool* pool = InitParticlePool(128);
+	ParticleEmitter* emitter = GetParticleEmitter();
+	InitParticleEmitter(emitter, pool, 20.0f);
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
@@ -76,7 +84,7 @@ int main(int argc, char** argv)
 			RefreshCamera(playerList[0]);
 		}
 
-		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props);
+		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, pool);
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
@@ -85,7 +93,7 @@ int main(int argc, char** argv)
 	UnloadRenderTexture(sceneColorRT);
 	
 	DestroyCamera();
-
+	DestroyParticlePool(pool);
 	DestroyProps(props);
 
 	for (int i = 0; i < clientPlayerCount; i++) {
@@ -93,9 +101,7 @@ int main(int argc, char** argv)
 		RL_FREE(playerList[i]);
 	}
 
-	// Stop Server/Client //ask alice about this
-	//if (isServer) SessionManager_StopServer();
-	//else SessionManager_StopClient();
+	DestroySoundSystem();
 
 	CloseWindow();
 	return 0;

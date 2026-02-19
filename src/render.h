@@ -14,6 +14,8 @@
 #include "lens.h"
 #include "render.h"
 #include "floor.h"
+#include "particleEmitter.h"
+#include "particlePool.h"
 
 static void UpdateSceneImpairments(void);
 void DestroySceneImpairments(void);
@@ -21,6 +23,6 @@ void DestroySceneImpairments(void);
 void InitSceneImpairments(int screenWidth, int screenHeight);
 void DestroySceneImpairments(void);
 
-void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props);
+void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, ParticlePool* pool);
 void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, bool swap, int screenWidth, int screenHeight);
 #endif

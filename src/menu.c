@@ -3,6 +3,7 @@
 #include "sessionStateController.h"
 #include "sessionLobbyController.h"
 #include "player.h"
+#include "sound.h"
 #include "menu.h"
 
 // Define buttons for various menu options
@@ -72,6 +73,10 @@ void DrawMenu()
         CenterButton(&optionsButton, startY + 4 * (buttonHeight + spacing));
         CenterButton(&exitButton, startY + 5 * (buttonHeight + spacing));
 
+		// Play menu music if not already playing
+		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
+		StopSound(level1Music);
+        DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
         DrawButton(saveButton, DARKGRAY);
         DrawButton(editorButton, DARKGRAY);
@@ -189,6 +194,9 @@ void DrawButton(Button button, Color color)
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
+			// Play click sound
+            PlaySound(btnClick);
+
             // Buttons trigger screen changes:
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
@@ -454,13 +462,25 @@ void SetCurrentScreen(MenuScreen newScreen) {
 
     if (currentScreen != lastScreen)
     {
+		// Mouse visibility logic
+        if (currentScreen == menu_game || currentScreen == menu_editor)
+            DisableCursor();
+        else
+            EnableCursor();
+
+        // SFX
         if (currentScreen == menu_game || currentScreen == menu_editor)
         {
-            DisableCursor();
+            StopSound(menuMusic); // Stop menu music when entering game/editor
+            if (!IsSoundPlaying(level1Music)) PlaySound(level1Music);
         }
-        else
+        if (lastScreen == menu_game_paused && (currentScreen == menu_game || currentScreen == menu_editor))
         {
-            EnableCursor();
+			PlaySound(menuClose);
+        }
+        if (currentScreen == menu_game_paused)
+        {
+            PlaySound(menuOpen);
         }
 
         if (currentScreen == menu_editor)
