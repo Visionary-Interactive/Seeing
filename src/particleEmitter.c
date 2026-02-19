@@ -2,13 +2,9 @@
 
 static ParticleEmitter emitterStorage;
 static ParticleEmitter* emitter_t = &emitterStorage;
+static ParticleTemplate flameTemplate;
 
-ParticleTemplate flameTemplate = {
-    .position = (Vector3){ 10.0f, 3.0f, 10.0f },
-    .velocity = (Vector3){ 0.0f, 5.0f, 0.0f },
-    .size = (Vector3){ 5.0f, 5.0f, 1.0f },
-    .lifetime = 1.5f
-};
+
 
 ParticleEmitter* GetParticleEmitter(void) {
     return emitter_t;
@@ -18,8 +14,16 @@ ParticleTemplate* GetParticleTemplate(void) {
     return &flameTemplate;
 }
 
+void InitFlameTemplate(void) {
+    flameTemplate.position = (Vector3){ 10.0f, 3.0f, 10.0f };
+    flameTemplate.velocity = (Vector3){ 0.0f, 5.0f, 0.0f };
+    flameTemplate.size = (Vector3){ 5.0f, 5.0f, 1.0f };
+    flameTemplate.lifetime = 1.5f;
+}
+
 void InitParticleEmitter(ParticleEmitter* emitter, ParticlePool* pool, float emissionRate) {
     if (!emitter) return;
+    InitFlameTemplate();
     emitter->pool = pool;
     emitter->emissionRate = emissionRate;
     emitter->emissionAccumulator = 0.0f;

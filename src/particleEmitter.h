@@ -18,6 +18,8 @@ typedef struct {
 } ParticleTemplate;
 
 void InitParticleEmitter(ParticleEmitter* system, ParticlePool* pool, float emissionRate);
+
+void InitFlameTemplate(void);
 ParticleEmitter* GetParticleEmitter(void);
 ParticleTemplate* GetParticleTemplate(void);
 void UpdateParticleEmitter(ParticleEmitter* system, const ParticleTemplate* template, float dt);
