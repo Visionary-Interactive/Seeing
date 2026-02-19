@@ -57,6 +57,20 @@ void CreateNewPlayer()
 	// Create a new remote player and set its properties based on incoming data
 	InitPlayer();
 	playerList[clientPlayerCount + 1] = GetPlayer();
+
+	// Remote player model
+	playerList[clientPlayerCount + 1]->model = LoadModel("resources/characters/models/player/mech_drone.glb");
+	Texture2D external = LoadTexture("resources/characters/tex/player/player_D.jpg");
+	for (int i = 0; i < playerList[clientPlayerCount + 1]->model.materialCount; i++) {
+		Texture2D albedo = playerList[clientPlayerCount + 1]->model.materials[i].maps[MATERIAL_MAP_ALBEDO].texture;
+		if (albedo.id > 0 && albedo.width == 1 && albedo.height == 1) {
+			playerList[clientPlayerCount + 1]->model.materials[i].maps[MATERIAL_MAP_ALBEDO].texture = external;
+			playerList[clientPlayerCount + 1]->model.materials[i].maps[MATERIAL_MAP_DIFFUSE].texture = external;
+		}
+	}
+	playerList[clientPlayerCount + 1]->animations = 
+		LoadModelAnimations("resources/characters/models/player/mech_drone.glb", &playerList[clientPlayerCount + 1]->animsCount);
+
 	playerList[clientPlayerCount + 1]->remotePlayer = true;
 	clientPlayerCount++;
 }

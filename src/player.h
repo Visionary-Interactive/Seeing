@@ -42,8 +42,10 @@ typedef struct Player {
     Vector3 position;
     Vector3 size;
     Vector3 velocity;
-	Vector3 lookDirection;
 	Model model; // Player's 3D model to be seen by another player
+	ModelAnimation* animations; // Player's animations
+	int animsCount; // Number of animations
+	unsigned int animFrame; // Current animation frame
     float speed;
     float yaw;   // left/right rotation
     float pitch; // up/down rotation

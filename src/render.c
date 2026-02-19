@@ -56,8 +56,19 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 			rlEnableDepthMask();
             DrawFloor((Vector3){0.0f, 0.0f, 0.0f}, WHITE);
             DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-            if (clientPlayerCount == 1)
-                DrawModel(playerList[1]->model, playerList[1]->position, 1.0f, remoteColor);
+			if (clientPlayerCount == 1)
+			{
+				// Animate remote player
+				ModelAnimation anim = playerList[1]->animations[0];
+				playerList[1]->animFrame = ((playerList[1]->animFrame + 1) % anim.frameCount);
+				UpdateModelAnimation(playerList[1]->model, anim, playerList[1]->animFrame);
+
+				Vector3 modelPos = playerList[1]->position;
+				modelPos.y -= 1.9f; // Adjust model position to align with the player's actual position
+
+				DrawModelEx(playerList[1]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
+				, playerList[1]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, remoteColor);
+			}
             RenderProps(props);
 			RenderParticlePool(pool, *camera, WHITE);
         EndMode3D();

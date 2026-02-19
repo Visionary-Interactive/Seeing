@@ -20,6 +20,9 @@ void InitPlayer()
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f));
+	player->animations = NULL;
+	player->animsCount = 0;
+	player->animFrame = 0;
 	player->speed = 8.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
