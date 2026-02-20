@@ -267,7 +267,7 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 {
 	if (player->velocity.y <= 0 &&	// landing on platform
 		playerBox.min.y < platformBox.max.y && // player intersects platform
-		(prevFeetY + 0.5f) >= platformBox.max.y) // player was above platform last frame
+		(prevFeetY + 0.1f) >= platformBox.max.y) // player was above platform last frame
 	{
 		player->velocity.y = 0.0f;        // stop falling
 		player->isGrounded = true;     // allow jumping again
@@ -275,7 +275,7 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 	} 
 	else if (player->velocity.y > 0 &&	// bonking head on platform from below
 		playerBox.max.y > platformBox.min.y && // player intersects platform
-		(prevFeetY - 0.5f) <= platformBox.min.y) // player was below platform last frame
+		(prevFeetY - 0.1f) <= platformBox.min.y) // player was below platform last frame
 	{
 		player->velocity.y = 0.0f;        // stop going up
 		return false;
