@@ -149,7 +149,6 @@ void UpdatePlayer(Props* obj)
 	//checks if there is any movement input
 	if (Vector3Length(move) > 0.0f || player->velocity.y != 0)
 	{
-		float prevFeetY = player->bottom;
 		move = Vector3Normalize(move);
 		move.x *= player->speed; // Scale movement by speed
 		move.z *= player->speed;
@@ -167,13 +166,52 @@ void UpdatePlayer(Props* obj)
 			{
 				BoundingBox objBox = obj->collider[i];
 
-				if (CheckCollisionBoxes(playerBox, objBox)) 
+				// Collision Detection
+				if (CheckCollisionBoxes(playerBox, objBox))
 				{
+
+					float prevRight = player->position.x + player->size.x / 2.0f;
+					float prevLeft = player->position.x - player->size.x / 2.0f;
+					float prevFront = player->position.z + player->size.z / 2.0f;
+					float prevBack = player->position.z - player->size.z / 2.0f;
+					float prevFeetY = player->bottom;
+
 					// Platform collision check
 					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
 					{
 						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
 							break;
+					}
+
+					// Sliding along wall logic:
+					if (move.x > 0 && // moving toward +X
+						playerBox.max.x > objBox.min.x && // intersecting wall
+						prevRight <= objBox.min.x) // was outside before
+					{
+						// hit right wall
+						newPos.x = player->position.x; // stop horizontal movement
+						continue;
+					}
+					else if (move.x < 0 &&
+						playerBox.min.x < objBox.max.x &&
+						prevLeft >= objBox.max.x)
+					{
+						newPos.x = player->position.x;
+						continue;
+					}
+					else if (move.z > 0 &&
+						playerBox.max.z > objBox.min.z &&
+						prevFront <= objBox.min.z)
+					{
+						newPos.z = player->position.z;
+						continue;
+					}
+					else if (move.z < 0 &&
+						playerBox.min.z < objBox.max.z &&
+						prevBack >= objBox.max.z)
+					{
+						newPos.z = player->position.z;
+						continue;
 					}
 
 					blocked = true;
@@ -190,7 +228,7 @@ void UpdatePlayer(Props* obj)
 		{
 			player->position = newPos;
 		}
-		else
+		else // BLOCKED MOVEMENT
 		{
 			// Apply vertical movement if blocked
 			if (!player->isGrounded)
