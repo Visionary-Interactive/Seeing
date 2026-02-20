@@ -69,7 +69,7 @@ void LoadPropTest(Props* props)
     puzzle = CreateProp(props,(Vector3) {1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props,(Vector3) {-1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
     puzzle = CreateProp(props, (Vector3) {-3.0f, 2.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-*/
+
 	//Create the door PROP to interact with
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR,
@@ -132,12 +132,12 @@ void LoadPropTest(Props* props)
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -20.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
-
-	int newWallID = CreateProp(props, wall, (Vector3) { 0.0f, 0.0f, -12.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+*/
+	int newWallID = CreateProp(props, wall, (Vector3) { -11.0f, 0.0f, -2.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
 
 	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 
-	AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
+	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
 
 }

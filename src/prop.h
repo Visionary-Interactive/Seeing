@@ -2,8 +2,10 @@
 #ifndef PROP_H
 #define PROP_H
 #include "includes.h"
+#include "TextboxType.h"
 
 #define MAX_PROPS 128
+#define MAX_TEXT_LENGTH 512
 #define PROP_VISIBILE (1 << 0)
 #define PROP_LIGHT (1 << 1)
 #define PROP_COLLIDER (1 << 2)
@@ -44,6 +46,7 @@ typedef struct Props {
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
+	const char* text[MAX_PROPS];
 
 	//light data
 	Color lightColor[MAX_PROPS];
