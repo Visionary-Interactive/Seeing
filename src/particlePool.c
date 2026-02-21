@@ -44,7 +44,7 @@ void ResetParticle(Particle* particle) {
     particle->active = false;
 }
 
-int SpawnParticle(ParticlePool* pool, Vector3 position, Vector3 velocity, Vector3 size, float lifetime) {
+int SpawnParticle(ParticlePool* pool, Vector3 position, Color tint, Vector3 velocity, Vector3 size, float lifetime) {
     if (!pool || pool->freeCount == 0) return -1;
 
     int index = pool->freeList[--pool->freeCount];
@@ -59,6 +59,7 @@ int SpawnParticle(ParticlePool* pool, Vector3 position, Vector3 velocity, Vector
 
     particle->position = Vector3Add(position, randomOffset);
     particle->velocity = velocity;
+    particle->tint = tint;
     particle->lifetime = lifetime;
     particle->size = size;
     particle->age = 0.0;

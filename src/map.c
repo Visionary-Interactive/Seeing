@@ -115,7 +115,7 @@ void LoadPropTest(Props* props)
             GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID3] = INTERACTABLE_PICKUP; //this also sucks
 
-    Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -20.1f };
+    Vector3 lensPos  = (Vector3){ 30.0f, 2.0f, 40.0f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
 }

@@ -41,9 +41,13 @@ int main(int argc, char** argv)
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
-	ParticlePool* pool = InitParticlePool(128);
-	ParticleEmitter* emitter = GetParticleEmitter();
-	InitParticleEmitter(emitter, pool, 20.0f);
+	ParticlePool* pool = InitParticlePool(512);
+	ParticleTemplate* template = GetParticleTemplate();
+	InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
+	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
+	InitParticleEmitter(pool, 20.0f, (Vector3){20.0f, 0.0f, 0.0f}, template, YELLOW);
+	InitParticleEmitter(pool, 20.0f, (Vector3){30.0f, 0.0f, 0.0f}, template, GREEN);
+	InitParticleEmitter(pool, 20.0f, (Vector3){40.0f, 0.0f, 0.0f}, template, BLUE);
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
