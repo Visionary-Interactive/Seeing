@@ -54,20 +54,33 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 			DrawModel(GetSkybox()->model, camera->position, 1.0f, WHITE);
 			rlEnableBackfaceCulling();
 			rlEnableDepthMask();
-            DrawFloor((Vector3){0.0f, 0.0f, 0.0f}, WHITE);
-            DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
-			if (clientPlayerCount == 1)
+			DrawFloor((Vector3) { 0.0f, 0.0f, 0.0f }, WHITE);
+			//DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+			for (int i = 0; i < clientPlayerCount + 1; i++)
 			{
-				// Animate remote player
-				ModelAnimation anim = playerList[1]->animations[0];
-				playerList[1]->animFrame = ((playerList[1]->animFrame + 1) % anim.frameCount);
-				UpdateModelAnimation(playerList[1]->model, anim, playerList[1]->animFrame);
+				// Animations
+				ModelAnimation anim;
+				int animState = 0; // Default to idle
+				if (playerList[i]->input.E || playerList[i]->animData.animFrame[1] > 0) // animation is not finished
+					animState = 1; // Interact
+				else if (playerList[i]->input.R || playerList[i]->animData.animFrame[2] > 0)
+					animState = 2; // Place
 
-				Vector3 modelPos = playerList[1]->position;
-				modelPos.y -= 1.9f; // Adjust model position to align with the player's actual position
+				animState %= playerList[i]->animData.animsCount; // Ensure valid index
 
-				DrawModelEx(playerList[1]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
-				, playerList[1]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, remoteColor);
+				if (animState != 0)
+					playerList[i]->animData.animFrame[0] = 0; // Reset idle animation
+
+				anim = playerList[i]->animData.animations[animState];
+
+				playerList[i]->animData.animFrame[animState] = ((playerList[i]->animData.animFrame[animState] + 1) % anim.frameCount);
+				UpdateModelAnimation(playerList[i]->model, anim, playerList[i]->animData.animFrame[animState]);
+
+				Vector3 modelPos = playerList[i]->position;
+				modelPos.y -= i == 0 ? 1.0f : 1.9f; // Adjust model height
+
+				DrawModelEx(playerList[i]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
+				, playerList[i]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
 			}
             RenderProps(props);
 			RenderParticlePool(pool, *camera, WHITE);

@@ -19,18 +19,17 @@ void InitPlayer()
 	player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
-	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f));
-	player->animations = NULL;
-	player->animsCount = 0;
-	player->animFrame = 0;
+	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
+	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
+	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
 	player->speed = 8.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
 	player->remotePlayer = false;
-	player->input = (struct InputState){ 0 };
+	player->input = (InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
-;
+
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 
@@ -57,7 +56,7 @@ Player* GetPlayer()
 	return player;
 }
 
-void LocalInputUpdate(struct InputState* input)
+void LocalInputUpdate(InputState* input)
 {
 	player->input.W = IsKeyDown(KEY_W);
 	player->input.A = IsKeyDown(KEY_A);

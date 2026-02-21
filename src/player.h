@@ -2,12 +2,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #define INVENTORY_SIZE 5
+#define ANIMATION_STATES 5
+#define PLAYER_FP_MODEL_PATH "resources/characters/models/player/mechFP.glb"
+#define PLAYER_TP_MODEL_PATH "resources/characters/models/player/mechTP.glb"
+
 #include "includes.h"
 #include "prop.h"
 #include "menu.h"
 #include "sessionManager.h"
 
-struct InputState {
+typedef struct InputState {
     bool W;
     bool A;
     bool S;
@@ -21,7 +25,13 @@ struct InputState {
 	bool THREE;
 	bool FOUR;
     bool FIVE;
-};
+} InputState;
+
+typedef struct AnimationData {
+    ModelAnimation* animations; // Player's animations
+	int animsCount; // Number of animations
+    int animFrame[ANIMATION_STATES]; // Current animation frame for each state
+} AnimationData;
 
 typedef enum {
 	pickup,
@@ -43,16 +53,14 @@ typedef struct Player {
     Vector3 size;
     Vector3 velocity;
 	Model model; // Player's 3D model to be seen by another player
-	ModelAnimation* animations; // Player's animations
-	int animsCount; // Number of animations
-	unsigned int animFrame; // Current animation frame
+	AnimationData animData; // Player's animation data
     float speed;
     float yaw;   // left/right rotation
     float pitch; // up/down rotation
     float bottom;
 	bool isGrounded; //checks if the player is on the ground
 	bool remotePlayer; // Is this a remote player?
-	struct InputState input; // Current input state
+	InputState input; // Current input state
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
 
