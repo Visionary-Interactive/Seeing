@@ -4,6 +4,8 @@
 
 #include "includes.h"
 #include "player.h"
+#include "TextboxType.h"
+
 
 static bool uiInteraction;
 
@@ -29,11 +31,6 @@ typedef struct Button
 
 } Button;
 
-typedef enum {
-	TEXTBOX_NONE,
-	TEXTBOX_PLAYER,
-	TEXTBOX_BOOK
-} TextboxType;
 
 typedef struct TextBox
 {

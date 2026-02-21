@@ -24,6 +24,7 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	obj->size[id] = size;
 	obj->model[id] = model;
 	obj->color[id] = color;
+	obj->rotation[id] = (Vector3){ 0.0f, 0.0f, 0.0f }; // Default rotation
     obj->interactRange[id] = (Vector3){
     obj->size[id].x + 2.0f,
     obj->size[id].y + 2.0f,
@@ -34,6 +35,8 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	ColliderSetup(obj, id);
 	obj->components[id] = components; // Default components
 	obj->prim[id] = NO_PRIM;
+	obj->text[id] = NULL;
+	obj->textType[id] = TEXTBOX_NONE;
 
 	return id;
 }
@@ -102,13 +105,17 @@ void ColliderSetup(Props* obj, int id) {
     obj->collider[id].max = Vector3Add(worldCenter, scaledHalf);
 
 }
-
-BoundingBox ReBuildCollider(Model model, Vector3 position)
+//rebuild the collider for a prop based on its model and position, used for moving props and updating their colliders
+BoundingBox ReBuildCollider(Props* obj, int id)
 {
-	BoundingBox local = GetMeshBoundingBox(model.meshes[0]);
 
-	local.min = Vector3Add(local.min, position);
-	local.max = Vector3Add(local.max, position);
+	Vector3 pos = obj->position[id];
+	Vector3 scale = obj->size[id];
+
+    BoundingBox local = GetModelBoundingBox(obj->model[id]);
+
+	local.min = Vector3Add(local.min, pos);
+	local.max = Vector3Add(local.max, pos);
 
 	return local;
 }
@@ -177,6 +184,7 @@ void RenderProps(const Props* obj) {
         if ((obj->components[i] & PROP_LENS)) continue;
         if (!(obj->components[i] & PROP_VISIBILE)) continue;
 
+		// Special rendering for deadzones for debugging sake
         if (obj->components[i] & PROP_DEADZONE)
         {
             DrawCube(
@@ -209,7 +217,7 @@ void RenderProps(const Props* obj) {
                 (Vector3) {
                 0.0f, 1.0f, 0.0f
             }, //rot axis
-                0.0f, //rot angle
+                obj->rotation[i].y, //rot angle
                 scale,
                 obj->color[i]
             );
@@ -238,6 +246,14 @@ void RenderLensProps(const Props * obj)
             obj->color[i]
         );
     }
+}
+
+void RotateProp(Props* obj, int id, Vector3 rotation)
+{
+    if (id < 0 || id >= obj->count) return;
+	obj->rotation[id] = Vector3Add(obj->rotation[id], rotation);
+
+	ReBuildCollider(obj->model[id], obj->position[id]);
 }
 
 void ResetProps()

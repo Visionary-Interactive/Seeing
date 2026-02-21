@@ -307,12 +307,11 @@ void UpdateInteractions(Props* obj)
 				}
 				case INTERACTABLE_TEXT:
 				{
-					InitTextBox(TEXTBOX_PLAYER, "Hello");
+					PlayerPropInteraction(obj, text, NULL, i);
 					break;
 				}
 				case INTERACTABLE_PUSH:
 				{
-					printf("Pushing prop %d\n", i);
 					PlayerPropInteraction(obj, push, NULL, i);
 					break;
 				}
@@ -367,6 +366,11 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
 	}
+	else if (interaction == text)
+	{
+		InitTextBox(obj->textType[propID], obj->text[propID]);
+		
+	}
 	else if (interaction == placed)
 	{
 		Vector3 dir = {
@@ -382,7 +386,6 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		obj->position[propID] = placePos;
 		ColliderSetup(obj, propID); // Update collider based on new position
-		//obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
 		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
 		slot->occupied = false;
@@ -406,7 +409,7 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		// Calculate new position
 		Vector3 moveAmount = Vector3Scale(moveDir, pushDistance);
 		Vector3 futurePosition = Vector3Add(obj->position[propID], moveAmount);
-		BoundingBox futureBox = ReBuildCollider(obj->model[propID], futurePosition);
+		BoundingBox futureBox = ReBuildCollider(obj, propID,futurePosition);
 
 		if (CheckCollisionWithProp(obj, propID, futureBox))
 		{

@@ -134,8 +134,18 @@ void LoadPropTest(Props* props)
     CreateLensProp(props, lensPos, lensSize);
 */
 	int newWallID = CreateProp(props, wall, (Vector3) { -11.0f, 0.0f, -2.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
+	RotateProp(props, newWallID, (Vector3) { 0.0f, 90.0f, 0.0f });
 
 	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+
+    int pickupID = CreateProp(props, book,
+        (Vector3) {
+        -10, 1.0, 0
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[pickupID] = INTERACTABLE_TEXT;
+	props->textType[pickupID] = TEXTBOX_PLAYER;
+	props->text[pickupID] = "This is a book. It has some words in it. Neat!";
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 

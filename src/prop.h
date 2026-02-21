@@ -43,10 +43,12 @@ typedef struct Props {
 	//core features
 	Vector3 position[MAX_PROPS];
 	Vector3 size[MAX_PROPS];
+	Vector3 rotation[MAX_PROPS];
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
 	const char* text[MAX_PROPS];
+	TextboxType textType[MAX_PROPS];
 
 	//light data
 	Color lightColor[MAX_PROPS];
@@ -70,7 +72,7 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
-BoundingBox ReBuildCollider(Model model, Vector3 position);
+BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
 
 void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
 
@@ -79,6 +81,8 @@ void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);
 void RenderLensProps(const Props* obj);
+
+void RotateProp(Props* obj, int id, Vector3 rotation);
 void ResetProps();
 void DestroyProps(Props* obj);
 
