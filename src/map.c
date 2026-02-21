@@ -169,6 +169,17 @@ void SaveMapFile(Map *map, const char *mapPath)
             .scriptID = props->scriptID[i]
         };
 
+        if (props->prim[i] == NO_PRIM)
+        {
+            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/scene.gltf");
+            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/textures/Material_baseColor.png");
+        }
+        else 
+        {
+            rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
+            rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
+        }
+
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
 
@@ -231,20 +242,57 @@ void SaveMapProgress(Map *map, Player *player, const char *mapPath)
 
 static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 {
+    if (!props || !rec) return -1;
+
+    // 1) Serialized model (non-primitive)
+    if (rec->prim == NO_PRIM && rec->modelPath[0] != '\0')
+    {
+        Model model = LoadModel(rec->modelPath);
+        if (&model == NULL)
+        {
+            TraceLog(LOG_WARNING, "Failed to load model '%s'. Using fallback cube.", rec->modelPath);
+            model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+        }
+        else if (rec->texturePath[0] != '\0')
+        {
+            Texture2D tex = LoadTexture(rec->texturePath);
+            if (&tex == NULL)
+            {
+                model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
+            }
+            else
+            {
+                TraceLog(LOG_WARNING, "Failed to load texture '%s' for model '%s'.", rec->texturePath, rec->modelPath);
+            }
+        }
+
+        int id = CreateProp(props, model, rec->position, rec->size, rec->color, rec->components);
+        if (id >= 0)
+        {
+            props->prim[id] = NO_PRIM;
+            strncpy(props->modelPath[id], rec->modelPath, PROP_MODEL_PATH_MAX);
+            props->modelPath[id][PROP_MODEL_PATH_MAX - 1] = '\0';
+            strncpy(props->texPath[id], rec->texturePath, PROP_MODEL_PATH_MAX);
+            props->texPath[id][PROP_MODEL_PATH_MAX - 1] = '\0';
+        }
+        return id;
+    }
+
+    // 2) Lens special-case
     if (rec->prim == PRIMITIVE_MODEL_LENS)
     {
         return CreateLensProp(props, rec->position, rec->size);
     }
 
+    // 3) Primitive props (cubes, doors, etc.)
     if (rec->prim != NO_PRIM)
     {
         return CreatePropPrimitive(props, rec->prim, rec->position, rec->size, rec->color, rec->components);
     }
 
-    //non-primitive placeholder
+    // 4) Fallback (no prim, no model path)
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    return CreateProp(props, fallback, rec->position, rec->size,
-                      rec->color, rec->components);
+    return CreateProp(props, fallback, rec->position, rec->size, rec->color, rec->components);
 }
 
 void LoadMapFile(Map *map, const char *mapPath)
