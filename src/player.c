@@ -19,15 +19,17 @@ void InitPlayer()
 	player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
-	player->model = LoadModelFromMesh(GenMeshCube(0.5f, 1.8f, 0.5f));
+	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
+	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
+	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
 	player->speed = 8.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
 	player->remotePlayer = false;
-	player->input = (struct InputState){ 0 };
+	player->input = (InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
-;
+
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 
@@ -54,7 +56,7 @@ Player* GetPlayer()
 	return player;
 }
 
-void LocalInputUpdate(struct InputState* input)
+void LocalInputUpdate(InputState* input)
 {
 	player->input.W = IsKeyDown(KEY_W);
 	player->input.A = IsKeyDown(KEY_A);
@@ -146,7 +148,6 @@ void UpdatePlayer(Props* obj)
 	//checks if there is any movement input
 	if (Vector3Length(move) > 0.0f || player->velocity.y != 0)
 	{
-		float prevFeetY = player->bottom;
 		move = Vector3Normalize(move);
 		move.x *= player->speed; // Scale movement by speed
 		move.z *= player->speed;
@@ -164,13 +165,52 @@ void UpdatePlayer(Props* obj)
 			{
 				BoundingBox objBox = obj->collider[i];
 
-				if (CheckCollisionBoxes(playerBox, objBox)) 
+				// Collision Detection
+				if (CheckCollisionBoxes(playerBox, objBox))
 				{
+
+					float prevRight = player->position.x + player->size.x / 2.0f;
+					float prevLeft = player->position.x - player->size.x / 2.0f;
+					float prevFront = player->position.z + player->size.z / 2.0f;
+					float prevBack = player->position.z - player->size.z / 2.0f;
+					float prevFeetY = player->bottom;
+
 					// Platform collision check
 					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
 					{
 						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
 							break;
+					}
+
+					// Sliding along wall logic:
+					if (move.x > 0 && // moving toward +X
+						playerBox.max.x > objBox.min.x && // intersecting wall
+						prevRight <= objBox.min.x) // was outside before
+					{
+						// hit right wall
+						newPos.x = player->position.x; // stop horizontal movement
+						continue;
+					}
+					else if (move.x < 0 &&
+						playerBox.min.x < objBox.max.x &&
+						prevLeft >= objBox.max.x)
+					{
+						newPos.x = player->position.x;
+						continue;
+					}
+					else if (move.z > 0 &&
+						playerBox.max.z > objBox.min.z &&
+						prevFront <= objBox.min.z)
+					{
+						newPos.z = player->position.z;
+						continue;
+					}
+					else if (move.z < 0 &&
+						playerBox.min.z < objBox.max.z &&
+						prevBack >= objBox.max.z)
+					{
+						newPos.z = player->position.z;
+						continue;
 					}
 
 					blocked = true;
@@ -187,7 +227,7 @@ void UpdatePlayer(Props* obj)
 		{
 			player->position = newPos;
 		}
-		else
+		else // BLOCKED MOVEMENT
 		{
 			// Apply vertical movement if blocked
 			if (!player->isGrounded)
@@ -226,7 +266,7 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 {
 	if (player->velocity.y <= 0 &&	// landing on platform
 		playerBox.min.y < platformBox.max.y && // player intersects platform
-		(prevFeetY + 0.5f) >= platformBox.max.y) // player was above platform last frame
+		(prevFeetY + 0.1f) >= platformBox.max.y) // player was above platform last frame
 	{
 		player->velocity.y = 0.0f;        // stop falling
 		player->isGrounded = true;     // allow jumping again
@@ -234,7 +274,7 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 	} 
 	else if (player->velocity.y > 0 &&	// bonking head on platform from below
 		playerBox.max.y > platformBox.min.y && // player intersects platform
-		(prevFeetY - 0.5f) <= platformBox.min.y) // player was below platform last frame
+		(prevFeetY - 0.1f) <= platformBox.min.y) // player was below platform last frame
 	{
 		player->velocity.y = 0.0f;        // stop going up
 		return false;
