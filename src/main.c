@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 	Props* props = GetPropStructure();
 
 	ParticlePool* pool = InitParticlePool(512);
+	InitFlameTemplate();
 	ParticleTemplate* template = GetParticleTemplate();
 	InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
 	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
