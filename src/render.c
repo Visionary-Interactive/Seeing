@@ -41,7 +41,7 @@ void DestroySceneImpairments(void)
 void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, ParticlePool* pool)
 {
 	float dt = GetFrameTime();
-	UpdateParticleEmitter(GetParticleEmitter(), GetParticleTemplate(), dt);
+	UpdateParticleEmitter(dt);
 
     if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
     {
@@ -83,7 +83,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 				, playerList[i]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
 			}
             RenderProps(props);
-			RenderParticlePool(pool, *camera, WHITE);
+			RenderParticlePool(pool, *camera, PURPLE);
         EndMode3D();
         EndTextureMode();
 

@@ -10,6 +10,7 @@ typedef struct {
     float lifetime;
     float age;
     bool active;
+    Color tint;
 } Particle;
 
 #endif
