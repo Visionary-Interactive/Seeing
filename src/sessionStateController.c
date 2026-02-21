@@ -57,6 +57,12 @@ void CreateNewPlayer()
 	// Create a new remote player and set its properties based on incoming data
 	InitPlayer();
 	playerList[clientPlayerCount + 1] = GetPlayer();
+
+	// Remote player model
+	playerList[clientPlayerCount + 1]->model = LoadModel(PLAYER_TP_MODEL_PATH);
+	playerList[clientPlayerCount + 1]->animData.animations = 
+		LoadModelAnimations(PLAYER_TP_MODEL_PATH, &playerList[clientPlayerCount + 1]->animData.animsCount);
+
 	playerList[clientPlayerCount + 1]->remotePlayer = true;
 	clientPlayerCount++;
 }

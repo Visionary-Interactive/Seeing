@@ -3,11 +3,13 @@
 static ParticleEmitter gEmitters[MAX_EMITTERS] = { 0 };
 static size_t gEmitterCount = 0;
 
-ParticleTemplate flameTemplate = {
-    .velocity = (Vector3){ 0.0f, 5.0f, 0.0f },
-    .size = (Vector3){ 5.0f, 5.0f, 1.0f },
-    .lifetime = 1.5f
-};
+ParticleTemplate flameTemplate;
+
+void InitFlameTemplate(void) {
+    flameTemplate.velocity = (Vector3){ 0.0f, 5.0f, 0.0f };
+    flameTemplate.size = (Vector3){ 5.0f, 5.0f, 1.0f };
+    flameTemplate.lifetime = 1.5f;
+}
 
 ParticleEmitter* GetParticleEmitter(void) {
     return (gEmitterCount > 0) ? &gEmitters[0] : NULL;
