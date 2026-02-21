@@ -185,8 +185,6 @@ void UpdatePlayer(Props* obj)
 					continue; // deadzones do not block movement
 				}
 
-				if (CheckCollisionBoxes(playerBox, objBox)) 
-				{
 				// Collision Detection
 				if (CheckCollisionBoxes(playerBox, objBox))
 				{

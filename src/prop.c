@@ -248,13 +248,6 @@ void RenderLensProps(const Props * obj)
     }
 }
 
-void RotateProp(Props* obj, int id, Vector3 rotation)
-{
-    if (id < 0 || id >= obj->count) return;
-	obj->rotation[id] = Vector3Add(obj->rotation[id], rotation);
-
-	ReBuildCollider(obj->model[id], obj->position[id]);
-}
 
 void ResetProps()
 {

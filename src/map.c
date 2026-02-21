@@ -3,6 +3,7 @@
 static Model pillar;
 static Model book;
 static Model wall;
+static Model wall2;
 static Model door;
 static Model chair;
 
@@ -14,6 +15,7 @@ bool InitMap(Map *map, const char *mapPath)
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
 	chair = LoadModel("resources/assets/chair.glb");
 	wall = LoadModel("resources/assets/wall.glb");
+	wall2 = LoadModel("resources/assets/wall2.glb");
     pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
@@ -132,11 +134,70 @@ void LoadPropTest(Props* props)
     Vector3 lensPos  = (Vector3){ 3.25f, 2.0f, -20.1f };
     Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
     CreateLensProp(props, lensPos, lensSize);
-*/
-	int newWallID = CreateProp(props, wall, (Vector3) { -11.0f, 0.0f, -2.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GRAY, PROP_VISIBILE | PROP_COLLIDER);
-	RotateProp(props, newWallID, (Vector3) { 0.0f, 90.0f, 0.0f });
 
-	int chairID = CreateProp(props, chair, (Vector3) { 5.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+    
+*/
+
+
+	int newWallID = CreateProp(props, wall, (Vector3) { 0.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	//big room back wall leftside
+    CreateProp(props, wall, (Vector3) { -9.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall, (Vector3) { -19.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall, (Vector3) { -29.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	//big room back wall rightside
+	CreateProp(props, wall, (Vector3) { 10.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+	int newWallID2 = CreateProp(props, wall2, (Vector3) { -4.0f, 0.0f, 0.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    //hallway leftside
+	CreateProp(props, wall2, (Vector3) { -4.0f, 0.0f, -9.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreateProp(props, wall2, (Vector3) { -4.0f, 0.0f, -18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { -4.0f, 0.0f, -27.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+	//big room leftside
+    CreateProp(props, wall2, (Vector3) { -33.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { -33.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { -33.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { -33.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { -33.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    //hallway rightside
+    CreateProp(props, wall2, (Vector3) { 5.0f, 0.0f, 0.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreateProp(props, wall2, (Vector3) { 5.0f, 0.0f, -9.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 5.0f, 0.0f, -18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 5.0f, 0.0f, -27.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    //big room rightside
+    CreateProp(props, wall2, (Vector3) { 30.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 30.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 30.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreateProp(props, wall2, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        -15.0f, 1.5f, -40.0f
+    },
+        (Vector3) {
+        1.0f, 1.5f, 1.0f
+    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        -20.0f, 1.8f, -40.0f
+    },
+        (Vector3) {
+        1.0f, 1.5f, 1.0f
+    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    props->interactType[pushCubeID] = INTERACTABLE_PUSH;
+
+
+	//int chairID = CreateProp(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 
     int pickupID = CreateProp(props, book,
         (Vector3) {
