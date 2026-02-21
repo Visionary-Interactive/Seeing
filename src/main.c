@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 	Props* props = GetPropStructure();
 
 	ParticlePool* pool = InitParticlePool(512);
+	InitFlameTemplate();
 	ParticleTemplate* template = GetParticleTemplate();
 	InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
 	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
@@ -57,8 +58,8 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 	InitSaveSlots();
-	LoadPropTest(props);
-	//LoadMapFile(&gameMap, "resources/maps/pz_1");
+	//LoadPropTest(props);
+	LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	SessionManager_Init();
@@ -91,6 +92,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
+	SaveMapFile(&gameMap, "resources/maps/pz_1");
 	//SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);

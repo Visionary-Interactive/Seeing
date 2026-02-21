@@ -23,6 +23,7 @@ typedef struct {
 
 ParticleEmitter* InitParticleEmitter(ParticlePool* pool, float emissionRate, 
     Vector3 position, ParticleTemplate* prefab, Color tint);
+void InitFlameTemplate(void);
 ParticleEmitter* GetParticleEmitter(void);
 ParticleTemplate* GetParticleTemplate(void);
 void UpdateParticleEmitter(float dt);

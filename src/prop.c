@@ -62,6 +62,19 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
     return id;
 }
 
+int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, Vector3 position, Vector3 size, Color color, uint32_t components)
+{
+    Model model = LoadModel(modelPath);
+    int id = CreateProp(obj, model, position, size, color, components);
+    if (id >= 0) {
+        strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
+        strncpy(obj->texPath[id], texPath, PROP_MODEL_PATH_MAX);
+        obj->modelPath[id][PROP_MODEL_PATH_MAX - 1] = '\0';
+        obj->texPath[id][PROP_MODEL_PATH_MAX - 1] = '\0';
+    }
+    return id;
+}
+
 void CreateLight(Props* obj, int id, Color color, float intensity) {
 	if (id < 0 || id >= obj->count) return;
 	obj->lightColor[id] = color;
