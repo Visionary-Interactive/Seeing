@@ -215,8 +215,6 @@ void LoadPropTest(Props* props)
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
 
-
-
     props->interactType[pushCubeID] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID3] = INTERACTABLE_PUSH;
