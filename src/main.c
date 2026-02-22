@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
-	//SaveMapFile(&gameMap, "resources/maps/pz_1");
+	SaveMapFile(&gameMap, "resources/maps/pz_1");
 	//SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
