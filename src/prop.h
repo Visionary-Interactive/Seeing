@@ -14,6 +14,8 @@
 #define PROP_PICKUP (1 << 7)
 #define PROP_LENS (1 << 8)
 
+#define PROP_MODEL_PATH_MAX 128
+
 typedef enum {
 	NO_PRIM = 0,
     PRIMITIVE_MODEL_CUBE,
@@ -52,6 +54,8 @@ typedef struct Props {
 
 	Shader shader[MAX_PROPS];
 	PrimitiveModelId prim[MAX_PROPS];
+	char modelPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
+	char texPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
 
 } Props;
 

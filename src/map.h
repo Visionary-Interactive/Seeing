@@ -45,6 +45,8 @@ typedef struct PropRecord {
     float lightIntensity;
     int interactType;
     int scriptID;
+    char modelPath[PROP_MODEL_PATH_MAX];
+    char texturePath[PROP_MODEL_PATH_MAX];
 } PropRecord;
 
 //something like this...
