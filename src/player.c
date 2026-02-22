@@ -1,11 +1,13 @@
 #include "player.h"
 #include "prop.h"
 #include "sound.h"
+#include "map.h"
+
 
 Player* player;
 
 const float gravity = -16.0f; //gravity force
-const float jumpStrength = 10.0f; // Initial jump velocity
+const float jumpStrength = 8.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
@@ -29,7 +31,8 @@ void InitPlayer()
 	player->remotePlayer = false;
 	player->input = (InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
-
+	player->spawnPosition = player->position;
+;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 
@@ -62,7 +65,7 @@ void LocalInputUpdate(InputState* input)
 	player->input.A = IsKeyDown(KEY_A);
 	player->input.S = IsKeyDown(KEY_S);
 	player->input.D = IsKeyDown(KEY_D);
-	player->input.E = IsKeyDown(KEY_E);
+	player->input.E = IsKeyPressed(KEY_E);
 	player->input.R = IsKeyDown(KEY_R);
 	player->input.SHIFT = IsKeyDown(KEY_LEFT_SHIFT);
 	player->input.SPACE = IsKeyPressed(KEY_SPACE);
@@ -89,6 +92,7 @@ void UpdatePlayer(Props* obj)
 {
 	float dt = GetFrameTime();
 
+
 	Vector2 mouseDelta = GetMouseDelta();
 	const float mouseSensitivity = 0.003f;
 	player->yaw -= mouseDelta.x * mouseSensitivity;
@@ -103,7 +107,6 @@ void UpdatePlayer(Props* obj)
 	// Clamp pitch to avoid flipping
 	if (player->pitch > PI / 2.0f) player->pitch = PI / 2.0f;
 	if (player->pitch < -PI / 2.0f) player->pitch = -PI / 2.0f;
-
 	// Direction vectors to help with movement
 	Vector3 forward = {
 		sinf(player->yaw),
@@ -136,6 +139,11 @@ void UpdatePlayer(Props* obj)
 	// Apply the gravity if the player isn't detected on the gorund
 	if (!player->isGrounded) player->velocity.y += gravity * dt;
 
+	if (IsTextboxStoppingPlayer())
+	{
+		return; // Skip movement update
+	}
+
 	// Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
 	//subtract move backwards/right and add to move forwards/left
 	//
@@ -164,6 +172,18 @@ void UpdatePlayer(Props* obj)
 			if (i < obj->count && (obj->components[i] & PROP_COLLIDER))
 			{
 				BoundingBox objBox = obj->collider[i];
+
+				if (obj->components[i] & PROP_DEADZONE)
+				{
+					if (CheckCollisionBoxes(playerBox, objBox))
+					{
+						printf("Player entered deadzone!\n");
+						ResetPlayerToSpawn(player);
+						return; // stop update immediately
+					}
+
+					continue; // deadzones do not block movement
+				}
 
 				// Collision Detection
 				if (CheckCollisionBoxes(playerBox, objBox))
@@ -283,52 +303,70 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 	return false;
 }
 
+//checks for interactions between all objects in the scene and the player
 void UpdateInteractions(Props* obj)
 {
+	int closestID = -1;
+	float closestDist = 99999.0f;
+
+	Vector3 p = player->position;
+
 	for (size_t i = 0; i < obj->count; i++)
 	{
-		if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
+		if (!(obj->components[i] & PROP_VISIBILE &&
+			obj->components[i] & PROP_INTERACTABLE))
+			continue;
 
-		Vector3 p = player->position;
 		Vector3 o = obj->position[i];
-
 		float dist = Vector3Distance(p, o);
-		float range = obj->interactRange[i].x; // use X as range radius
+		float range = obj->interactRange[i].x;
 
-		if (dist < range)
+		if (dist < range && dist < closestDist)
 		{
-			// Show prompt
-			if (!player->remotePlayer)
-				DrawText("Press E to interact:", 10, 200, 30, BLACK);
+			closestDist = dist;
+			closestID = i;
+		}
+	}
+	if (closestID != -1)
+	{
+		if (!player->remotePlayer)
+			DrawText("Press E to interact:", 10, 200, 30, BLACK);
 
-			if (player->input.E)
+		if (player->input.E)
+		{
+			switch (obj->interactType[closestID])
 			{
-				switch (obj->interactType[i])
+			case INTERACTABLE_DOOR:
+				RequestExit();
+				break;
+
+			case INTERACTABLE_PICKUP:
+			{
+				InventoryItem* slot =
+					&player->inventory[player->selectedSlot];
+
+				if (!slot->occupied)
 				{
-				case INTERACTABLE_DOOR:
-					if (!player->remotePlayer)
-					{
-						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
-						RequestExit();
-					}
-					break;
-				case INTERACTABLE_PICKUP:
-				{
-					InventoryItem* slot = &player->inventory[player->selectedSlot];
-					if (!slot->occupied && !player->remotePlayer)
-					{
-						PlaySound(pickupItem1);
-						PlayerPropInteraction(obj, pickup, slot, i);
-						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
-					}
-					break;
+					PlaySound(pickupItem1);
+					PlayerPropInteraction(obj, pickup, slot, closestID);
+					SendPropInteractionToRemote(pickup,
+						player->selectedSlot,
+						closestID);
 				}
-				default:
-					break;
-				}
+				break;
+			}
+
+			case INTERACTABLE_TEXT:
+				PlayerPropInteraction(obj, text, NULL, closestID);
+				break;
+
+			case INTERACTABLE_PUSH:
+				PlayerPropInteraction(obj, push, NULL, closestID);
+				break;
 			}
 		}
 	}
+
 	//allows the player to replace the prop based on where they are looking
 	if (player->input.R)
 	{
@@ -341,6 +379,22 @@ void UpdateInteractions(Props* obj)
 			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
 		}
 	}
+}
+
+Vector3 GetCardinalDirection(Vector3 forward)
+{
+	Vector3 dir = { 0 };
+
+	if (fabsf(forward.x) > fabsf(forward.z))
+	{
+		dir.x = (forward.x > 0) ? 1 : -1;
+	}
+	else
+	{
+		dir.z = (forward.z > 0) ? 1 : -1;
+	}
+
+	return dir;
 }
 
 void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
@@ -358,6 +412,11 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
 	}
+	else if (interaction == text)
+	{
+		InitTextBox(obj->textType[propID], obj->text[propID]);
+		
+	}
 	else if (interaction == placed)
 	{
 		Vector3 dir = {
@@ -372,15 +431,57 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		);
 
 		obj->position[propID] = placePos;
-		obj->collider[propID] = ReBuildCollider(obj->model[propID], placePos);
+		ColliderSetup(obj, propID); // Update collider based on new position
 		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
 		slot->occupied = false;
 
 		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
 	}
-}
+	if (interaction == push)
+	{
+		printf("Pushing prop %d\n", propID);
+		 Vector3 playerForward = (Vector3){
+			sinf(player->yaw),
+			0.0f,
+			cosf(player->yaw)
+		};
+		int pushDistance = 2.0f;
+		if (!(obj->components[propID] & PROP_PUSHABLE)) return;
 
+		// Get 4-direction movement
+		Vector3 moveDir = GetCardinalDirection(playerForward);
+
+		// Calculate new position
+		Vector3 moveAmount = Vector3Scale(moveDir, pushDistance);
+		Vector3 futurePosition = Vector3Add(obj->position[propID], moveAmount);
+		BoundingBox futureBox = ReBuildCollider(obj, propID,futurePosition);
+
+		if (CheckCollisionWithProp(obj, propID, futureBox))
+		{
+			printf("Cannot push prop %d, path is blocked!\n", propID);
+			return; // Collision detected, do not move
+		}
+
+		if (CheckCollisionBoxes(GetPlayerCollision(player->position), futureBox))
+		{
+			printf("Cannot push prop %d, player is in the way!\n", propID);
+			return; // Player is in the way, do not move
+		}
+		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
+		ColliderSetup(obj, propID); // Update collider based on new position
+		// Rebuild collider with scale
+	}
+}
+void ResetPlayerToSpawn(Player* p)
+{
+	player->position = player->spawnPosition;
+
+	// Rebuild collider
+	GetPlayerCollision(player->position);
+
+	player->velocity = (Vector3){ 0 };
+}
 void DestroyPlayer()
 {
 	RL_FREE(player);

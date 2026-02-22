@@ -2,8 +2,10 @@
 #ifndef PROP_H
 #define PROP_H
 #include "includes.h"
+#include "TextboxType.h"
 
 #define MAX_PROPS 128
+#define MAX_TEXT_LENGTH 512
 #define PROP_VISIBILE (1 << 0)
 #define PROP_LIGHT (1 << 1)
 #define PROP_COLLIDER (1 << 2)
@@ -13,6 +15,8 @@
 #define PROP_DOOR (1 << 6)
 #define PROP_PICKUP (1 << 7)
 #define PROP_LENS (1 << 8)
+#define PROP_BUTTON (1 << 9)
+#define PROP_DEADZONE (1 << 10)
 
 #define PROP_MODEL_PATH_MAX 128
 
@@ -30,7 +34,10 @@ typedef enum InteractableType {
 	INTERACTABLE_NONE = 0,
 	INTERACTABLE_DOOR,
 	INTERACTABLE_PICKUP,
+	INTERACTABLE_TEXT,
+	INTERACTABLE_PUSH
 } InteractableType;
+
 
 typedef struct Props {
 	size_t count;
@@ -38,9 +45,12 @@ typedef struct Props {
 	//core features
 	Vector3 position[MAX_PROPS];
 	Vector3 size[MAX_PROPS];
+	Vector3 rotation[MAX_PROPS];
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
+	const char* text[MAX_PROPS];
+	TextboxType textType[MAX_PROPS];
 
 	//light data
 	Color lightColor[MAX_PROPS];
@@ -67,11 +77,17 @@ int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, V
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
-BoundingBox ReBuildCollider(Model model, Vector3 position);
+BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
+
+void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
+
+bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(const Props* obj);
 void RenderLensProps(const Props* obj);
+
+void RotateProp(Props* obj, int id, Vector3 rotation);
 void ResetProps();
 void DestroyProps(Props* obj);
 

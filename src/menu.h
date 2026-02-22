@@ -4,6 +4,8 @@
 
 #include "includes.h"
 #include "player.h"
+#include "TextboxType.h"
+
 
 static bool uiInteraction;
 
@@ -29,10 +31,30 @@ typedef struct Button
 
 } Button;
 
+
+typedef struct TextBox
+{
+	TextboxType type;
+	bool active;
+	Rectangle bounds;
+	char text[512];
+	float timer;
+	float duration;
+} TextBox;
+
+
 void DrawMenu();
 void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
+
+void InitTextBox(TextboxType type, const char* text);
+
+void UpdateTextBox(float deltaTime);
+
+void DrawCharacterbox();
+
+void DrawInteractTextBox();
 
 MenuScreen GetCurrentScreen();
 
@@ -41,6 +63,8 @@ void SetCurrentScreen(MenuScreen newScreen);
 void SetUIInteraction(bool interaction);
 
 bool IsExitRequested(void);
+
+bool IsTextboxStoppingPlayer();
 void RequestExit(void);
 
 #endif

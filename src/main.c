@@ -19,7 +19,6 @@ int main(int argc, char** argv)
 	const int screenHeight = 900;
 
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
-
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
@@ -69,6 +68,7 @@ int main(int argc, char** argv)
 
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
+		float dt = GetFrameTime();
 		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = false;
         if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = true;
 
@@ -80,6 +80,7 @@ int main(int argc, char** argv)
 		{
 			for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 			{
+				UpdateTextBox(dt);
 				if (playerList[i] == NULL) continue;
 				SetPlayer(playerList[i]);
 				UpdatePlayer(props);

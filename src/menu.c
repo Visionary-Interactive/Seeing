@@ -17,6 +17,8 @@ Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
 Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
+Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
+
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
@@ -30,6 +32,15 @@ bool ipBoxFocused = false;
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
 static bool gExitRequested = false;
+static TextBox currentTextbox = { 0 };
+
+static void CenterButton(Button* button, float y)
+{
+    float screenWidth = (float)GetScreenWidth();
+
+    button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
+    button->bounds.y = y;
+}
 
 // Draws the current menu screen based on the current state
 void DrawMenu()
@@ -39,18 +50,43 @@ void DrawMenu()
     switch (screen)
     {
     case menu_main:
+    {
+        
+        float screenW = GetScreenWidth();
+        float screenH = GetScreenHeight();
+
+        float buttonHeight = 50;
+        float spacing = 20;
+        float totalHeight = (6 * buttonHeight) + (5 * spacing);
+
+        float startY = screenH * 0.5f - totalHeight * 0.5f;
+
+        // Center title
+        const char* title = "A Game about Seeing";
+        int titleWidth = MeasureText(title, 40);
+        DrawText(title, screenW * 0.5f - titleWidth * 0.5f, 80, 40, BLACK);
+
+        CenterButton(&levelButton, startY + 0 * (buttonHeight + spacing));
+        CenterButton(&saveButton, startY + 1 * (buttonHeight + spacing));
+        CenterButton(&editorButton, startY + 2 * (buttonHeight + spacing));
+        CenterButton(&multiMenuButton, startY + 3 * (buttonHeight + spacing));
+        CenterButton(&optionsButton, startY + 4 * (buttonHeight + spacing));
+        CenterButton(&exitButton, startY + 5 * (buttonHeight + spacing));
+
 		// Play menu music if not already playing
 		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
 		StopSound(level1Music);
         DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
-		DrawButton(saveButton, DARKGRAY);
-		DrawButton(editorButton, DARKGRAY);
-		DrawButton(multiMenuButton, DARKGRAY);
+        DrawButton(saveButton, DARKGRAY);
+        DrawButton(editorButton, DARKGRAY);
+        DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
-        break;
-
+        
+        
+    }
+    break;
     case menu_game:
         DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
         break;
@@ -62,6 +98,8 @@ void DrawMenu()
 
     case menu_level_select:
        DrawText("LEVEL SELECT", 100, 40, 30, GREEN);
+	   CenterButton(&level1Button, 200);
+	   CenterButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 		break;
@@ -107,12 +145,27 @@ void DrawMenu()
         break;
 
     case menu_game_paused:
-		DrawButton(playButton, DARKGRAY);
-		DrawButton(saveButton, DARKGRAY);
-		DrawButton(optionsButton, DARKGRAY);
-		DrawButton(menuButton, DARKGRAY);
+    {
+        float screenH = GetScreenHeight();
 
-        break;
+        float buttonHeight = 50;
+        float spacing = 20;
+        float totalHeight = (5 * buttonHeight) + (4 * spacing);
+        float startY = screenH * 0.5f - totalHeight * 0.5f;
+
+        CenterButton(&playButton, startY + 0 * (buttonHeight + spacing));
+        CenterButton(&retryButton, startY + 1 * (buttonHeight + spacing));
+        CenterButton(&saveButton, startY + 2 * (buttonHeight + spacing));
+        CenterButton(&optionsButton, startY + 3 * (buttonHeight + spacing));
+        CenterButton(&menuButton, startY + 4 * (buttonHeight + spacing));
+
+        DrawButton(playButton, DARKGRAY);
+        DrawButton(retryButton, DARKGRAY);
+        DrawButton(saveButton, DARKGRAY);
+        DrawButton(optionsButton, DARKGRAY);
+        DrawButton(menuButton, DARKGRAY);
+    }
+    break;
 
 
     default:
@@ -125,7 +178,14 @@ void DrawMenu()
 void DrawButton(Button button, Color color)
 {
     DrawRectangleRec(button.bounds, color);
-    DrawText(button.text, button.bounds.x + 10, button.bounds.y + 10, 20, WHITE);
+    int textWidth = MeasureText(button.text, 20);
+    DrawText(
+        button.text,
+        button.bounds.x + button.bounds.width * 0.5f - textWidth * 0.5f,
+        button.bounds.y + button.bounds.height * 0.5f - 10,
+        20,
+        WHITE
+    );
 
     // Button press logic:
     if (CheckCollisionPointRec(GetMousePosition(), button.bounds))
@@ -157,6 +217,11 @@ void DrawButton(Button button, Color color)
                 ConnectToHomeServer();
                 SetCurrentScreen(menu_multi2);
             }
+            else if (strcmp(button.text, "Retry") == 0)
+            {
+                ResetPlayerToSpawn(playerList[0]);
+                SetCurrentScreen(menu_game);
+            }
 			else if (strcmp(button.text, "Level Select") == 0)
 				SetCurrentScreen(menu_level_select);
             else if (strcmp(button.text, "Save/Load") == 0)
@@ -168,6 +233,12 @@ void DrawButton(Button button, Color color)
 //will draw interaction to the UI for the player
 void DrawUI(InventoryItem *item, int selectedSlot)
 {
+    if (currentTextbox.active)
+    {
+        DrawCharacterbox();
+		printf("Current TextBox Active: %s\n", currentTextbox.text);
+    }
+
     for (int i = 0; i < INVENTORY_SIZE; i++)
     {
         Color c = (i == selectedSlot) ? YELLOW : GRAY;
@@ -177,6 +248,8 @@ void DrawUI(InventoryItem *item, int selectedSlot)
             DrawText("X", 540 + i * 100, 860, 20, BLACK);
     }
 }
+
+
 
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused)
 {
@@ -206,6 +279,141 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
         {
             buffer[currentSize - 1] = '\0';
         }
+    }
+}
+
+void DrawInteractTextBox()
+{
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+
+    // Size of the book page (80% of screen)
+    int boxWidth = screenWidth * 0.8f;
+    int boxHeight = screenHeight * 0.8f;
+
+    // Centered position
+    int boxX = (screenWidth - boxWidth) / 2;
+    int boxY = (screenHeight - boxHeight) / 2;
+
+    // Optional: darken background behind book
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
+
+    // White page
+    DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
+
+    // Black border
+    DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
+
+    // Text padding inside page
+    int padding = 40;
+
+    DrawText(
+        currentTextbox.text,
+        boxX + padding,
+        boxY + padding,
+        24,
+        BLACK
+    );
+
+    // Close hint
+    DrawText(
+        "",
+        boxX + boxWidth - 200,
+        boxY + boxHeight - 40,
+        18,
+        DARKGRAY
+    );
+}
+
+
+void InitTextBox(TextboxType type, const char* text)
+{
+	printf("Initializing TextBox of type %d with text: %s\n", type, text);
+    currentTextbox.type = type;
+    currentTextbox.active = true;
+    strncpy(currentTextbox.text, text, sizeof(currentTextbox.text));
+
+    if (type == TEXTBOX_PLAYER)
+    {
+        currentTextbox.timer = 0.0f;
+        currentTextbox.duration = 4.0f; // lasts 4 seconds
+    }
+}
+
+void UpdateTextBox(float deltaTime)
+{
+    if (!currentTextbox.active) return;
+
+    if (currentTextbox.type == TEXTBOX_PLAYER)
+    {
+        currentTextbox.timer += deltaTime;
+
+        if (currentTextbox.timer >= currentTextbox.duration)
+        {
+            currentTextbox.active = false;
+        }
+    }
+    else if (currentTextbox.type == TEXTBOX_BOOK)
+    {
+        if (IsKeyPressed(KEY_R))
+        {
+            currentTextbox.active = false;
+        }
+    }
+}
+
+void DrawCharacterbox()
+{
+    if (!currentTextbox.active) return;
+
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+
+    if (currentTextbox.type == TEXTBOX_PLAYER)
+    {
+        // Bottom RPG style textbox
+        DrawRectangle(
+            50,
+            screenHeight - 180,
+            screenWidth - 100,
+            130,
+            Fade(BLACK, 0.85f)
+        );
+
+        DrawText(
+            currentTextbox.text,
+            80,
+            screenHeight - 150,
+            20,
+            RAYWHITE
+        );
+    }
+    else if (currentTextbox.type == TEXTBOX_BOOK)
+    {
+        // Full screen reading textbox
+        DrawRectangle(
+            50,
+            50,
+            screenWidth - 100,
+            screenHeight - 100,
+            Fade(BLACK, 0.95f)
+        );
+
+        DrawText(
+            currentTextbox.text,
+            100,
+            120,
+            24,
+            RAYWHITE
+        );
+
+        DrawText(
+            "Press R to close the page",
+            screenWidth - 250,
+            screenHeight - 80,
+            18,
+            GRAY
+        );
     }
 }
 
@@ -293,6 +501,13 @@ void SetUIInteraction(bool interaction)
 
 bool IsExitRequested(void) {
     return gExitRequested;
+}
+
+bool IsTextboxStoppingPlayer()
+{
+    if (!currentTextbox.active) return false;
+
+    return (currentTextbox.type == TEXTBOX_BOOK);
 }
 
 void RequestExit(void) {
