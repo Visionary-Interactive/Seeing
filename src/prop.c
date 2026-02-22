@@ -66,6 +66,8 @@ int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, V
 {
     Model model = LoadModel(modelPath);
     int id = CreateProp(obj, model, position, size, color, components);
+    Texture2D texture = LoadTexture(texPath);
+    obj->model[id].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     if (id >= 0) {
         strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
         strncpy(obj->texPath[id], texPath, PROP_MODEL_PATH_MAX);
