@@ -223,6 +223,17 @@ void SaveMapProgress(Map *map, Player *player, const char *mapPath)
             .scriptID = props->scriptID[i]
         };
 
+        if (props->prim[i] == NO_PRIM)
+        {
+            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/scene.gltf");
+            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/textures/Material_baseColor.png");
+        }
+        else 
+        {
+            rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
+            rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
+        }
+
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
 
