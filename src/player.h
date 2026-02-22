@@ -35,7 +35,9 @@ typedef struct AnimationData {
 
 typedef enum {
 	pickup,
-	placed
+	placed,
+    push,
+    text
 } InteractionType;
 
 typedef struct InventoryItem
@@ -58,6 +60,7 @@ typedef struct Player {
     float yaw;   // left/right rotation
     float pitch; // up/down rotation
     float bottom;
+	Vector3 spawnPosition;
 	bool isGrounded; //checks if the player is on the ground
 	bool remotePlayer; // Is this a remote player?
 	InputState input; // Current input state
@@ -75,6 +78,8 @@ void UpdateInteractions(Props* obj);
 void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
+
+void ResetPlayerToSpawn(Player* p);
 void DestroyPlayer();
 
 // Function pointer to send prop interactions to remote player through the SessionStateController
