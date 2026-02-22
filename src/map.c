@@ -196,6 +196,23 @@ void LoadPropTest(Props* props)
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        29.0f, 3.5f, -57.0f
+    },
+        (Vector3) {
+        1.0f, 1.5f, 1.0f
+    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 6.0f, -57.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
+    props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
+
+
+
+
     props->interactType[pushCubeID] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID3] = INTERACTABLE_PUSH;
