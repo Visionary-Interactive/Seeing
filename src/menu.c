@@ -347,7 +347,6 @@ void UpdateTextBox(float deltaTime)
     if (currentTextbox.type == TEXTBOX_PLAYER)
     {
         currentTextbox.timer += deltaTime;
-		printf("Updating Player TextBox: timer = %.2f / %.2f\n", currentTextbox.timer, currentTextbox.duration);
 
         if (currentTextbox.timer >= currentTextbox.duration)
         {
@@ -409,7 +408,7 @@ void DrawCharacterbox()
         );
 
         DrawText(
-            "Press R or ESC to close the page",
+            "Press R to close the page",
             screenWidth - 250,
             screenHeight - 80,
             18,

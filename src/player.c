@@ -306,61 +306,67 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 //checks for interactions between all objects in the scene and the player
 void UpdateInteractions(Props* obj)
 {
+	int closestID = -1;
+	float closestDist = 99999.0f;
+
+	Vector3 p = player->position;
+
 	for (size_t i = 0; i < obj->count; i++)
 	{
-		if (!(obj->components[i] & PROP_VISIBILE && obj->components[i] & PROP_INTERACTABLE)) continue;
+		if (!(obj->components[i] & PROP_VISIBILE &&
+			obj->components[i] & PROP_INTERACTABLE))
+			continue;
 
-		Vector3 p = player->position;
 		Vector3 o = obj->position[i];
-
 		float dist = Vector3Distance(p, o);
-		float range = obj->interactRange[i].x; // use X as range radius
+		float range = obj->interactRange[i].x;
 
-		if (dist < range)
+		if (dist < range && dist < closestDist)
 		{
-			// Show prompt
-			if (!player->remotePlayer)
-				DrawText("Press E to interact:", 10, 200, 30, BLACK);
+			closestDist = dist;
+			closestID = i;
+		}
+	}
+	if (closestID != -1)
+	{
+		if (!player->remotePlayer)
+			DrawText("Press E to interact:", 10, 200, 30, BLACK);
 
-			if (player->input.E)
+		if (player->input.E)
+		{
+			switch (obj->interactType[closestID])
 			{
-				switch (obj->interactType[i])
-				{
-				case INTERACTABLE_DOOR:
-					if (!player->remotePlayer)
-					{
-						DrawText("You interacted with a door!", 10, 200, 24, GREEN);
+			case INTERACTABLE_DOOR:
+				RequestExit();
+				break;
 
-						RequestExit();
-					}
-					break;
-				case INTERACTABLE_PICKUP:
+			case INTERACTABLE_PICKUP:
+			{
+				InventoryItem* slot =
+					&player->inventory[player->selectedSlot];
+
+				if (!slot->occupied)
 				{
-					InventoryItem* slot = &player->inventory[player->selectedSlot];
-					if (!slot->occupied && !player->remotePlayer)
-					{
-						PlaySound(pickupItem1);
-						PlayerPropInteraction(obj, pickup, slot, i);
-						SendPropInteractionToRemote(pickup, player->selectedSlot, i);
-					}
-					break;
+					PlaySound(pickupItem1);
+					PlayerPropInteraction(obj, pickup, slot, closestID);
+					SendPropInteractionToRemote(pickup,
+						player->selectedSlot,
+						closestID);
 				}
-				case INTERACTABLE_TEXT:
-				{
-					PlayerPropInteraction(obj, text, NULL, i);
-					break;
-				}
-				case INTERACTABLE_PUSH:
-				{
-					PlayerPropInteraction(obj, push, NULL, i);
-					break;
-				}
-				default:
-					break;
-				}
+				break;
+			}
+
+			case INTERACTABLE_TEXT:
+				PlayerPropInteraction(obj, text, NULL, closestID);
+				break;
+
+			case INTERACTABLE_PUSH:
+				PlayerPropInteraction(obj, push, NULL, closestID);
+				break;
 			}
 		}
 	}
+
 	//allows the player to replace the prop based on where they are looking
 	if (player->input.R)
 	{

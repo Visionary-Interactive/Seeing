@@ -2,7 +2,7 @@
 
 static ParticleEmitter gEmitters[MAX_EMITTERS] = { 0 };
 static size_t gEmitterCount = 0;
-
+ParticleTemplate flameTemplate;
 
 void InitFlameTemplate(void) {
     flameTemplate.velocity = (Vector3){ 0.0f, 5.0f, 0.0f };

@@ -119,18 +119,27 @@ void ColliderSetup(Props* obj, int id) {
 
 }
 //rebuild the collider for a prop based on its model and position, used for moving props and updating their colliders
-BoundingBox ReBuildCollider(Props* obj, int id)
+BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 {
 
-	Vector3 pos = obj->position[id];
-	Vector3 scale = obj->size[id];
+    BoundingBox bb = GetModelBoundingBox(obj->model[id]);
+    Vector3 scale = obj->size[id];
 
-    BoundingBox local = GetModelBoundingBox(obj->model[id]);
+    BoundingBox result;
 
-	local.min = Vector3Add(local.min, pos);
-	local.max = Vector3Add(local.max, pos);
+    result.min = (Vector3){
+        futurepos.x + bb.min.x * scale.x,
+        futurepos.y + bb.min.y * scale.y,
+        futurepos.z + bb.min.z * scale.z
+    };
 
-	return local;
+    result.max = (Vector3){
+        futurepos.x + bb.max.x * scale.x,
+        futurepos.y + bb.max.y * scale.y,
+        futurepos.z + bb.max.z * scale.z
+    };
+
+    return result;
 }
 
 void AddDeadzone(Props* obj, Vector3 position, Vector3 size)
