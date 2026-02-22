@@ -27,10 +27,14 @@ void DrawMap(void)
 
 void LoadPropTest(Props* props)
 {
-    CreateProp(props, pillar, (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreateProp(props, pillar, (Vector3){-40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreateProp(props, pillar, (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreateProp(props, pillar, (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3){-40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
     for (int i = 0; i < 5; i++)
     {
@@ -273,9 +277,11 @@ void SaveMapFile(Map *map, const char *mapPath)
         }
         else 
         {
-            rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
-            rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
+            rec.modelPath[i] = '\0';
+            rec.texturePath[i] = '\0';
         }
+        rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
+        rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
 
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
@@ -327,10 +333,12 @@ void SaveMapProgress(Map *map, Player *player, const char *mapPath)
         }
         else 
         {
-            rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
-            rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
+            rec.modelPath[i] = '\0';
+            rec.texturePath[i] = '\0';
         }
 
+        rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
+        rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
 
@@ -352,10 +360,9 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 {
     if (!props || !rec) return -1;
 
-    // 1) Serialized model (non-primitive)
     if (rec->prim == NO_PRIM && rec->modelPath[0] != '\0')
     {
-        Model model = LoadModel(rec->modelPath);
+        /*Model model = LoadModel(rec->modelPath);
         if (&model == NULL)
         {
             TraceLog(LOG_WARNING, "Failed to load model '%s'. Using fallback cube.", rec->modelPath);
@@ -374,7 +381,8 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
             }
         }
 
-        int id = CreateProp(props, model, rec->position, rec->size, rec->color, rec->components);
+        props->model[props->count] = model;*/
+        int id = CreatePropFromPath(props, rec->modelPath, rec->texturePath, rec->position, rec->size, rec->color, rec->components);
         if (id >= 0)
         {
             props->prim[id] = NO_PRIM;
@@ -386,19 +394,16 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
         return id;
     }
 
-    // 2) Lens special-case
     if (rec->prim == PRIMITIVE_MODEL_LENS)
     {
         return CreateLensProp(props, rec->position, rec->size);
     }
 
-    // 3) Primitive props (cubes, doors, etc.)
     if (rec->prim != NO_PRIM)
     {
         return CreatePropPrimitive(props, rec->prim, rec->position, rec->size, rec->color, rec->components);
     }
 
-    // 4) Fallback (no prim, no model path)
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     return CreateProp(props, fallback, rec->position, rec->size, rec->color, rec->components);
 }
