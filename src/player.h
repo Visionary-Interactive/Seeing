@@ -5,6 +5,7 @@
 #define ANIMATION_STATES 5
 #define PLAYER_FP_MODEL_PATH "resources/characters/models/player/mechFP.glb"
 #define PLAYER_TP_MODEL_PATH "resources/characters/models/player/mechTP.glb"
+#define MAX_PLAYERS 2
 
 #include "includes.h"
 #include "prop.h"
@@ -69,13 +70,15 @@ typedef struct Player {
 
 } Player;
 
+extern Player* playerList[MAX_PLAYERS];
+
 void InitPlayer();
 Player* GetPlayer();
 void LocalInputUpdate(struct InputState *input);
 void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
-void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
+bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
 
