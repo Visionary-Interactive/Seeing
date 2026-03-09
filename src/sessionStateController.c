@@ -1,7 +1,6 @@
 #include "sessionStateController.h"
 
 bool multiplayerSession = false;
-Player* playerList[MAX_PLAYERS];
 uint8_t clientPlayerCount = 0;
 Color playerColor;
 Color remoteColor;

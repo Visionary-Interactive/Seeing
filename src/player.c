@@ -11,6 +11,7 @@ const float jumpStrength = 8.0f; // Initial jump velocity
 const float groundHeight = 1.8f; // Player’s standing height from floor
 InventoryItem inventory[INVENTORY_SIZE] = { 0 };
 int selectedSlot = 0;
+Player* playerList[MAX_PLAYERS];
 
 void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
 
@@ -361,7 +362,13 @@ void UpdateInteractions(Props* obj)
 				break;
 
 			case INTERACTABLE_PUSH:
-				PlayerPropInteraction(obj, push, NULL, closestID);
+				if (!player->remotePlayer)
+				{
+					if (PlayerPropInteraction(obj, push, NULL, closestID))
+						SendPropInteractionToRemote(push,
+							NULL,
+							closestID);
+				}
 				break;
 			}
 		}
@@ -397,7 +404,7 @@ Vector3 GetCardinalDirection(Vector3 forward)
 	return dir;
 }
 
-void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
+bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)
 	{
@@ -460,18 +467,20 @@ void PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		if (CheckCollisionWithProp(obj, propID, futureBox))
 		{
 			printf("Cannot push prop %d, path is blocked!\n", propID);
-			return; // Collision detected, do not move
+			return false; // Collision detected, do not move
 		}
 
-		if (CheckCollisionBoxes(GetPlayerCollision(player->position), futureBox))
+		if (playerList[1] != NULL && CheckCollisionBoxes(GetPlayerCollision(playerList[1]->position), futureBox))
 		{
 			printf("Cannot push prop %d, player is in the way!\n", propID);
-			return; // Player is in the way, do not move
+			return false; // Player is in the way, do not move
 		}
 		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
 		ColliderSetup(obj, propID); // Update collider based on new position
 		// Rebuild collider with scale
 	}
+
+	return true;
 }
 void ResetPlayerToSpawn(Player* p)
 {
