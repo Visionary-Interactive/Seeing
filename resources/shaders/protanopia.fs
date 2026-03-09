@@ -33,7 +33,6 @@ void main()
 
     vec3 linear = srgbToLinear(tex.rgb);
 
-    // Protanopia simulation transform
     mat3 protanopiaMat = mat3(
         0.567, 0.433, 0.000,
         0.558, 0.442, 0.000,

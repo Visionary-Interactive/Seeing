@@ -33,7 +33,6 @@ void main()
 
     vec3 linear = srgbToLinear(tex.rgb);
 
-    // Deuteranopia simulation transform
     mat3 deuteranopiaMat = mat3(
         0.625, 0.375, 0.000,
         0.700, 0.300, 0.000,
