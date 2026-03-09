@@ -11,7 +11,7 @@
 #include <time.h>
 
 #define SERVER_PORT 1337
-#define HOME_SERVER_IP "142.189.221.121"
+#define HOME_SERVER_IP "76.64.212.254"
 
 #ifndef DEBUG_LOGGING
 #define DEBUG_LOGGING 2

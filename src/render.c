@@ -55,7 +55,8 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 			rlEnableBackfaceCulling();
 			rlEnableDepthMask();
 			DrawFloor((Vector3) { 0.0f, 0.0f, 0.0f }, WHITE);
-			//DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+			
+			// Draw players
 			for (int i = 0; i < clientPlayerCount + 1; i++)
 			{
 				// Animations
@@ -76,11 +77,76 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 				playerList[i]->animData.animFrame[animState] = ((playerList[i]->animData.animFrame[animState] + 1) % anim.frameCount);
 				UpdateModelAnimation(playerList[i]->model, anim, playerList[i]->animData.animFrame[animState]);
 
-				Vector3 modelPos = playerList[i]->position;
-				modelPos.y -= i == 0 ? 1.0f : 1.9f; // Adjust model height
+				// Draw player model with proper transformations
+				if (i == 0) // First person view for local player
+				{
+					Vector3 forward = {
+						sinf(playerList[i]->yaw) * cosf(playerList[i]->pitch),
+						sinf(playerList[i]->pitch),
+						cosf(playerList[i]->yaw) * cosf(playerList[i]->pitch)
+					};
 
-				DrawModelEx(playerList[i]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
-				, playerList[i]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
+					Matrix rotYaw = MatrixRotateY(playerList[i]->yaw + PI);
+					Matrix rotPitch = MatrixRotateX(playerList[i]->pitch);
+
+					Matrix rotation = MatrixMultiply(rotPitch, rotYaw);
+					Matrix scale = MatrixScale(5.0f, 5.0f, 5.0f);
+					Matrix translation = MatrixTranslate(
+						playerList[i]->position.x,
+						playerList[i]->position.y,
+						playerList[i]->position.z
+					);
+
+					Matrix localOffset = MatrixTranslate(0.03f, -0.175f, -0.03f);
+
+					Matrix transform = MatrixMultiply(
+						localOffset,
+						MatrixMultiply(scale, MatrixMultiply(rotation, translation))
+					);
+
+					// Player
+					playerList[i]->model.transform = transform;
+					DrawModel(playerList[i]->model, (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f, WHITE);
+					playerList[i]->model.transform = MatrixIdentity();
+
+					// Item in hand
+					InventoryItem* slot = &playerList[i]->inventory[playerList[i]->selectedSlot];
+
+					if (slot->occupied)
+					{
+						Matrix itemLocalOffset = MatrixTranslate(0.8f, 0.0f, -3.0f);
+						Matrix itemScale = MatrixScale(0.5f, 0.5f, 0.5f);
+						Matrix itemTransform = MatrixMultiply(
+							itemLocalOffset,
+							MatrixMultiply(itemScale, MatrixMultiply(rotation, translation))
+						);
+
+						props->model[slot->propIndex].transform = itemTransform;
+						DrawModel(props->model[slot->propIndex], (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f,
+							props->color[slot->propIndex]);
+						props->model[slot->propIndex].transform = MatrixIdentity();
+					}
+				}
+				else
+				{
+					Vector3 modelPos = playerList[i]->position;
+					modelPos.y -= 1.9f; // Adjust model height
+
+					DrawModelEx(playerList[i]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
+					, playerList[i]->yaw* RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
+				}
+
+				//// Draw held prop in first person
+				//if (i == 0)
+				//{
+				//	modelPos = playerList[i]->position;
+				//	modelPos.x += 1.0f;
+				//	modelPos.z += 1.0f;
+				//	InventoryItem* slot = &playerList[i]->inventory[playerList[i]->selectedSlot];
+				//	if (slot->occupied)
+				//		DrawModelEx(props->model[slot->propIndex], modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
+				//		, playerList[i]->yaw* RAD2DEG, (Vector3) { 0.5f, 0.5f, 0.5f }, RED);
+				//}
 			}
             RenderProps(props);
 			RenderParticlePool(pool, *camera, PURPLE);

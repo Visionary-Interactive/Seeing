@@ -370,6 +370,14 @@ void UpdateInteractions(Props* obj)
 							closestID);
 				}
 				break;
+
+			case INTERACTABLE_PUZZLE_ROTATATION_BLOCK:
+				if (!player->remotePlayer)
+				{
+					PlayerPropInteraction(obj, rotate_puzzle_block, NULL, closestID);
+					SendPropInteractionToRemote(rotate_puzzle_block, NULL, closestID);
+				}
+				break;
 			}
 		}
 	}
@@ -445,7 +453,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
 	}
-	if (interaction == push)
+	else if (interaction == push)
 	{
 		printf("Pushing prop %d\n", propID);
 		 Vector3 playerForward = (Vector3){
@@ -478,6 +486,14 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
 		ColliderSetup(obj, propID); // Update collider based on new position
 		// Rebuild collider with scale
+	}
+	else if (interaction == rotate_puzzle_block)
+	{
+		obj->rotation[propID].y += 5.0f;
+		int blockNum = obj->text[propID];
+		blockNum = (blockNum + 1) % 4;
+		obj->text[propID] = blockNum;
+		printf("Rotated puzzle block %d to orientation %d\n", propID, blockNum);
 	}
 
 	return true;

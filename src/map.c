@@ -6,16 +6,26 @@ static Model wall;
 static Model wall2;
 static Model door;
 static Model chair;
+static Model puzzleBlock;
+static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
 {
+    // Pillar
     pillar = LoadModel("resources/global/models/pillar/scene.gltf");
     Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
+
+    // Book
     book = LoadModel("resources/global/models/book/scene.gltf");
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
+
+    // Misc
 	chair = LoadModel("resources/assets/chair.glb");
 	wall = LoadModel("resources/assets/wall.glb");
 	wall2 = LoadModel("resources/assets/wall2.glb");
+	wall2 = LoadModel("resources/assets/wall2.glb");
+    puzzleBlock = LoadModel("resources/global/models/puzzleBlock/PuzzleBlock1.glb");
+
     pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
@@ -223,17 +233,50 @@ void LoadPropTest(Props* props)
 	//int chairID = CreateProp(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 
     int pickupID = CreateProp(props, book,
-        (Vector3) {
-        -0.8, 1.0, 3.5f
-    }, (Vector3) { 0.03, 0.03, 0.03 },
-            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+        (Vector3) {-0.8f, 1.0f, 3.5f}, 
+        (Vector3) { 0.03f, 0.03f, 0.03f },
+        WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
+    // Spawning rotating puzzle blocks for testing
+    for (int i = 0; i < 3; i++)
+    {
+        int puzzleBlock1 = CreateProp(props, puzzleBlock,
+            (Vector3) {
+			4.75f, 1.8f, -19.0f + i
+        },
+            (Vector3) {
+            0.5f, 0.5f, 0.5f
+        },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+        props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
+        props->text[puzzleBlock1] = 1 + i; // Set this so we can tell where the block is facing.
+		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
+		puzzle1BlockIDs[i] = puzzleBlock1;
+	}
 
+	// Pickup blocks for testing
+	int testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+		(Vector3) {
+		4.75f, 1.8f, -10.0f
+	},
+		(Vector3) {
+		0.5f, 0.5f, 0.5f
+	}, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
+
+	testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+		(Vector3) {
+		4.75f, 1.8f, -9.0f
+	},
+		(Vector3) {
+		0.5f, 0.5f, 0.5f
+	}, PURPLE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
 }
 
 /*void DrawFloor()//const Map *map)

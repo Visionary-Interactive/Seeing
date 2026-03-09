@@ -38,7 +38,8 @@ typedef enum {
 	pickup,
 	placed,
     push,
-    text
+    text,
+	rotate_puzzle_block
 } InteractionType;
 
 typedef struct InventoryItem
