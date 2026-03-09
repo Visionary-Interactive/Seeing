@@ -17,6 +17,7 @@
 #define PROP_LENS (1 << 8)
 #define PROP_BUTTON (1 << 9)
 #define PROP_DEADZONE (1 << 10)
+#define PROP_CHECKPOINT (1 << 10)
 
 #define PROP_MODEL_PATH_MAX 128
 
