@@ -122,6 +122,7 @@ int SessionManager_Server_SendPackets();
 bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_t port);
 bool SessionManager_Client_IsConnected();
 void SessionManager_StopClient();
+bool SessionManager_Client_Disonnect();
 int SessionManager_Client_HandleEvents();
 bool SessionManager_Client_SendReliableByteArray(uint8_t* data, unsigned int length);
 bool SessionManager_Client_SendUnreliableByteArray(uint8_t* data, unsigned int length);
