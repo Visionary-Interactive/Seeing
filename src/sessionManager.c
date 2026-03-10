@@ -220,10 +220,14 @@ void SessionManager_StopClient()
 
 bool SessionManager_Client_Disonnect()
 {
-	bool ret = NBN_GameClient_SendMessage(NBN_DISCONNECTION_MESSAGE_TYPE, NBN_CHANNEL_RESERVED_LIBRARY_MESSAGES, NULL) < 0;
-	SessionManager_Client_HandleEvents();
-	SessionManager_Client_SendPackets();
-	lastLobbyQuery.auth = 0; // Reset lobby query state
+	bool ret = true;
+	if (NBN_GameClient_IsConnected())
+	{
+		ret = NBN_GameClient_SendMessage(NBN_DISCONNECTION_MESSAGE_TYPE, NBN_CHANNEL_RESERVED_LIBRARY_MESSAGES, NULL) < 0;
+		SessionManager_Client_HandleEvents();
+		SessionManager_Client_SendPackets();
+		lastLobbyQuery.auth = 0; // Reset lobby query state
+	}
 	return !ret;
 }
 

@@ -114,11 +114,17 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 
 					if (slot->occupied)
 					{
-						Matrix itemLocalOffset = MatrixTranslate(0.8f, 0.0f, -3.0f);
+						// Spin the item in the hand
+						float spinAngle = (float)GetTime() * 1.5f;
+						Matrix itemSpin = MatrixRotateY(spinAngle);
+
+						Matrix itemLocalOffset = MatrixTranslate(0.3f, 0.0f, -1.3f);
 						Matrix itemScale = MatrixScale(0.5f, 0.5f, 0.5f);
 						Matrix itemTransform = MatrixMultiply(
-							itemLocalOffset,
-							MatrixMultiply(itemScale, MatrixMultiply(rotation, translation))
+							itemSpin,                          
+							MatrixMultiply(itemScale,               
+								MatrixMultiply(itemLocalOffset,             
+									MatrixMultiply(rotation, translation))) 
 						);
 
 						props->model[slot->propIndex].transform = itemTransform;
