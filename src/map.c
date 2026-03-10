@@ -6,7 +6,6 @@ static Model wall;
 static Model wall2;
 static Model door;
 static Model chair;
-static Model puzzleBlock;
 static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
@@ -24,7 +23,6 @@ bool InitMap(Map *map, const char *mapPath)
 	wall = LoadModel("resources/assets/wall.glb");
 	wall2 = LoadModel("resources/assets/wall2.glb");
 	wall2 = LoadModel("resources/assets/wall2.glb");
-    puzzleBlock = LoadModel("resources/global/models/puzzleBlock/PuzzleBlock1.glb");
 
     pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -245,7 +243,9 @@ void LoadPropTest(Props* props)
     // Spawning rotating puzzle blocks for testing
     for (int i = 0; i < 3; i++)
     {
-        int puzzleBlock1 = CreateProp(props, puzzleBlock,
+        int puzzleBlock1 = CreatePropFromPath(props, 
+            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
             (Vector3) {
 			4.75f, 1.8f, -19.0f + i
         },
