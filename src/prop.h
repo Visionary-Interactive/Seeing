@@ -26,6 +26,7 @@ typedef enum {
     PRIMITIVE_MODEL_DOOR,
 	PRIMITIVE_MODEL_PLATFORM,
 	PRIMITIVE_MODEL_WALL,
+	PRIMITIVE_MODEL_WALL2,
 	PRIMITIVE_MODEL_BUTTON,
     PRIMITIVE_MODEL_LENS
 } PrimitiveModelId;
@@ -35,7 +36,8 @@ typedef enum InteractableType {
 	INTERACTABLE_DOOR,
 	INTERACTABLE_PICKUP,
 	INTERACTABLE_TEXT,
-	INTERACTABLE_PUSH
+	INTERACTABLE_PUSH,
+	INTERACTABLE_BUTTON
 } InteractableType;
 
 
@@ -49,6 +51,8 @@ typedef struct Props {
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
+
+	//text data for objects if needed
 	const char* text[MAX_PROPS];
 	TextboxType textType[MAX_PROPS];
 

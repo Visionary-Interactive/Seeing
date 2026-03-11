@@ -38,6 +38,7 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	obj->text[id] = NULL;
 	obj->textType[id] = TEXTBOX_NONE;
 
+
 	return id;
 }
 
@@ -58,8 +59,11 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 			model = LoadModelFromMesh(GenMeshCube(4.0f, 0.5f, 4.0f));
 			break;
 		case PRIMITIVE_MODEL_WALL:
-			model = LoadModelFromMesh(GenMeshCube(0.5f, 4.0f, 4.0f));
+			model = LoadModel("resources/assets/wall.glb");
 			break;
+        case PRIMITIVE_MODEL_WALL2:
+            model = LoadModel("resources/assets/wall2.glb");
+            break;
 		case PRIMITIVE_MODEL_BUTTON:
 			model = LoadModelFromMesh(GenMeshCube(1.0f, 0, 1.0f));
 			break;
@@ -228,6 +232,11 @@ void RenderProps(const Props* obj) {
             );
 
             continue; // don't try to draw a model
+        }
+
+        if (obj->components[i] & PROP_DOOR)
+        {
+
         }
 
             Vector3 scale = obj->size[i];

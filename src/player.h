@@ -38,7 +38,9 @@ typedef enum {
 	pickup,
 	placed,
     push,
-    text
+    text,
+    button,
+    door
 } InteractionType;
 
 typedef struct InventoryItem

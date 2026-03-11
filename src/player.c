@@ -19,13 +19,13 @@ void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlo
 void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
-	player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
+	player->position = (Vector3){ 0.0f, 1.8f, 45.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
 	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
-	player->speed = 8.0f;
+	player->speed = 7.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
@@ -128,8 +128,8 @@ void UpdatePlayer(Props* obj)
 	}
 
 	// Sprint
-	if (player->input.SHIFT) player->speed = 16.0f;
-	else player->speed = 8.0f; // Normal speed
+	if (player->input.SHIFT) player->speed = 10.0f;
+	else player->speed = 7.0f; // Normal speed
 
 	if (player->input.SPACE && player->isGrounded)
 	{
@@ -197,7 +197,7 @@ void UpdatePlayer(Props* obj)
 					float prevFeetY = player->bottom;
 
 					// Platform collision check
-					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
+					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE || obj->components[i] & PROP_COLLIDER)
 					{
 						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
 							break;
@@ -338,7 +338,7 @@ void UpdateInteractions(Props* obj)
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
-				RequestExit();
+				PlayerPropInteraction(obj, door, NULL, closestID);
 				break;
 
 			case INTERACTABLE_PICKUP:
@@ -354,6 +354,11 @@ void UpdateInteractions(Props* obj)
 						player->selectedSlot,
 						closestID);
 				}
+				break;
+			}
+			case INTERACTABLE_BUTTON:
+			{
+				PlayerPropInteraction(obj, button, NULL, closestID);
 				break;
 			}
 
@@ -419,6 +424,11 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
 	}
+	if (interaction == door)
+	{
+		RequestExit();
+
+	}
 	else if (interaction == text)
 	{
 		InitTextBox(obj->textType[propID], obj->text[propID]);
@@ -478,6 +488,12 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
 		ColliderSetup(obj, propID); // Update collider based on new position
 		// Rebuild collider with scale
+	}
+	if (interaction == button)
+	{
+		printf("Pressed button %d\n", propID);
+		
+
 	}
 
 	return true;
