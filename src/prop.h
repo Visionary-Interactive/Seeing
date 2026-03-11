@@ -36,7 +36,8 @@ typedef enum InteractableType {
 	INTERACTABLE_DOOR,
 	INTERACTABLE_PICKUP,
 	INTERACTABLE_TEXT,
-	INTERACTABLE_PUSH
+	INTERACTABLE_PUSH,
+	INTERACTABLE_PUZZLE_ROTATATION_BLOCK
 } InteractableType;
 
 
@@ -50,7 +51,7 @@ typedef struct Props {
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
-	const char* text[MAX_PROPS];
+	char* text[MAX_PROPS];
 	TextboxType textType[MAX_PROPS];
 
 	//light data

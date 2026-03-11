@@ -203,7 +203,7 @@ void RemovePropComponent(Props* obj, int id, uint32_t componentMask)
     obj->components[id] &= ~componentMask;
 }
 
-void RenderProps(const Props* obj) {
+void RenderProps(Props* obj) {
     for (size_t i = 0; i < obj->count; i++) {
         if ((obj->components[i] & PROP_LENS)) continue;
         if (!(obj->components[i] & PROP_VISIBILE)) continue;
@@ -234,6 +234,21 @@ void RenderProps(const Props* obj) {
             if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f) {
                 scale = (Vector3){ 1.0f, 1.0f, 1.0f };
             }
+
+            // Rotate blocks that need to be rotated. ex. if the block is not already at 90deg increment
+            if (obj->interactType[i] == INTERACTABLE_PUZZLE_ROTATATION_BLOCK)
+            {
+                if ((int)obj->rotation[i].y % 90 != 0)
+                {
+                    obj->rotation[i].y += 1.0f;
+                    obj->components[i] &= ~PROP_INTERACTABLE; // disable interaction while rotating
+                }
+                else 
+                {
+                    obj->components[i] |= PROP_INTERACTABLE; // re-enable interaction when done rotating
+				}
+            }
+                
 
             DrawModelEx(
                 obj->model[i],

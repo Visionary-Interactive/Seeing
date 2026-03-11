@@ -110,14 +110,15 @@ void DrawMenu()
 
     case menu_multi:
 		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
-		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
 		DrawButton(multiConnectButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
         break;
 
     case menu_multi2:
 		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
-		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+        DrawButton(menuButton, DARKGRAY);
 		DrawText("Connecting to Game Server...", 100, 340, 30, DARKGRAY);
 		if (SessionManager_Client_IsConnected())
 		{
@@ -205,11 +206,15 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Level Editor") == 0)
-                SetCurrentScreen(menu_editor);
-            else if (strcmp(button.text, "Exit Game") == 0)
-                RequestExit();
-            else if (strcmp(button.text, "Back to Menu") == 0)
-                SetCurrentScreen(menu_main);
+				SetCurrentScreen(menu_editor);
+			else if (strcmp(button.text, "Exit Game") == 0)
+				RequestExit();
+			else if (strcmp(button.text, "Back to Menu") == 0)
+			{
+				SessionManager_Client_Disonnect();
+				multiplayerSession = false;
+				SetCurrentScreen(menu_main);
+            }
             else if (strcmp(button.text, "Multiplayer") == 0)
                 SetCurrentScreen(menu_multi);
             else if (strcmp(button.text, "Connect") == 0)

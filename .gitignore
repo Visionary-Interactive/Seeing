@@ -7,4 +7,4 @@
 /bin/Debug
 /bin/Release
 /.vs
-/resources/maps/*.bin
+/resources/maps/*/*.bin

@@ -38,7 +38,8 @@ typedef enum {
 	pickup,
 	placed,
     push,
-    text
+    text,
+	rotate_puzzle_block
 } InteractionType;
 
 typedef struct InventoryItem
@@ -88,6 +89,7 @@ void UpdateInteractions(Props* obj);
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
+void RenderPlayer(Player* p, Props* props);
 
 void ResetPlayerToSpawn(Player* p);
 void DestroyPlayer();
