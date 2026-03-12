@@ -62,7 +62,7 @@ void DrawMenu()
         float startY = screenH * 0.5f - totalHeight * 0.5f;
 
         // Center title
-        const char* title = "A Game about Seeing";
+        const char* title = "The Delian Problem";
         int titleWidth = MeasureText(title, 40);
         DrawText(title, screenW * 0.5f - titleWidth * 0.5f, 80, 40, BLACK);
 
@@ -76,7 +76,6 @@ void DrawMenu()
 		// Play menu music if not already playing
 		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
 		StopSound(level1Music);
-        DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
         DrawButton(saveButton, DARKGRAY);
         DrawButton(editorButton, DARKGRAY);
