@@ -17,6 +17,7 @@
 #define PROP_LENS (1 << 8)
 #define PROP_BUTTON (1 << 9)
 #define PROP_DEADZONE (1 << 10)
+#define PROP_CHECKPOINT (1 << 10)
 
 #define PROP_MODEL_PATH_MAX 128
 
@@ -37,7 +38,7 @@ typedef enum InteractableType {
 	INTERACTABLE_PICKUP,
 	INTERACTABLE_TEXT,
 	INTERACTABLE_PUSH,
-	INTERACTABLE_BUTTON
+	INTERACTABLE_PUZZLE_ROTATATION_BLOCK
 } InteractableType;
 
 
@@ -51,9 +52,7 @@ typedef struct Props {
 	Model model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
-
-	//text data for objects if needed
-	const char* text[MAX_PROPS];
+	char* text[MAX_PROPS];
 	TextboxType textType[MAX_PROPS];
 
 	//light data
@@ -88,7 +87,7 @@ void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
-void RenderProps(const Props* obj);
+void RenderProps(Props* obj);
 void RenderLensProps(const Props* obj);
 
 void RotateProp(Props* obj, int id, Vector3 rotation);

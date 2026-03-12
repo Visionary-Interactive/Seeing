@@ -33,6 +33,10 @@ void InitPlayer()
 	player->input = (InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
 	player->spawnPosition = player->position;
+	player->checkpoint.active = false;
+	player->checkpoint.position = player->spawnPosition;
+	player->checkpoint.yaw = player->yaw;
+	player->checkpoint.pitch = player->pitch;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -53,6 +57,27 @@ void ManualInitPlayer(Vector3 position, Vector3 velocity, float yaw, float pitch
     player->isGrounded = grounded;
     player->speed = grounded ? 8.0f : player->speed; // optional default
     player->bottom = player->position.y - player->size.y;
+}
+
+static void ActivateCheckpoint(const Vector3 pos, float yaw, float pitch)
+{
+    player->checkpoint.active = true;
+    player->checkpoint.position = pos;
+    player->checkpoint.yaw = yaw;
+    player->checkpoint.pitch = pitch;
+}
+
+static void RespawnAtCheckpoint(Player* p)
+{
+    const Checkpoint* cp = &p->checkpoint;
+    if (!cp->active) return;
+
+    p->position = cp->position;
+    p->yaw = cp->yaw;
+    p->pitch = cp->pitch;
+    p->velocity = (Vector3){ 0 };
+    p->isGrounded = true;
+    p->bottom = p->position.y - p->size.y;
 }
 
 Player* GetPlayer()
@@ -203,6 +228,16 @@ void UpdatePlayer(Props* obj)
 							break;
 					}
 
+					if (obj->components[i] & PROP_CHECKPOINT)
+					{
+						if (CheckCollisionBoxes(playerBox, objBox))
+						{
+							ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
+							printf("Checkpoint reached!\n");
+						}
+						continue;
+					}
+
 					// Sliding along wall logic:
 					if (move.x > 0 && // moving toward +X
 						playerBox.max.x > objBox.min.x && // intersecting wall
@@ -304,6 +339,92 @@ bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox 
 	return false;
 }
 
+void RenderPlayer(Player* p, Props* props)
+{
+	// Animations
+	ModelAnimation anim;
+	int animState = 0; // Default to idle
+	if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+		animState = 1; // Interact
+	else if (p->input.R || p->animData.animFrame[2] > 0)
+		animState = 2; // Place
+
+	animState %= p->animData.animsCount; // Ensure valid index
+
+	if (animState != 0)
+		p->animData.animFrame[0] = 0; // Reset idle animation
+
+	anim = p->animData.animations[animState];
+
+	p->animData.animFrame[animState] = ((p->animData.animFrame[animState] + 1) % anim.frameCount);
+	UpdateModelAnimation(p->model, anim, p->animData.animFrame[animState]);
+
+	// Draw player model with proper transformations
+	if (!p->remotePlayer) // First person view for local player
+	{
+		Vector3 forward = {
+			sinf(p->yaw) * cosf(p->pitch),
+			sinf(p->pitch),
+			cosf(p->yaw) * cosf(p->pitch)
+		};
+
+		Matrix rotYaw = MatrixRotateY(p->yaw + PI);
+		Matrix rotPitch = MatrixRotateX(p->pitch);
+
+		Matrix rotation = MatrixMultiply(rotPitch, rotYaw);
+		Matrix scale = MatrixScale(5.0f, 5.0f, 5.0f);
+		Matrix translation = MatrixTranslate(
+			p->position.x,
+			p->position.y,
+			p->position.z
+		);
+
+		Matrix localOffset = MatrixTranslate(0.03f, -0.175f, -0.03f);
+
+		Matrix transform = MatrixMultiply(
+			localOffset,
+			MatrixMultiply(scale, MatrixMultiply(rotation, translation))
+		);
+
+		// Player
+		p->model.transform = transform;
+		DrawModel(p->model, (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f, WHITE);
+		p->model.transform = MatrixIdentity();
+
+		// Item in hand
+		InventoryItem* slot = &p->inventory[p->selectedSlot];
+
+		if (slot->occupied)
+		{
+			// Spin the item in the hand
+			float spinAngle = (float)GetTime() * 1.5f;
+			Matrix itemSpin = MatrixRotateY(spinAngle);
+
+			Matrix itemLocalOffset = MatrixTranslate(0.3f, 0.0f, -1.3f);
+			Matrix itemScale = MatrixScale(0.5f, 0.5f, 0.5f);
+			Matrix itemTransform = MatrixMultiply(
+				itemSpin,
+				MatrixMultiply(itemScale,
+					MatrixMultiply(itemLocalOffset,
+						MatrixMultiply(rotation, translation)))
+			);
+
+			props->model[slot->propIndex].transform = itemTransform;
+			DrawModel(props->model[slot->propIndex], (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f,
+				props->color[slot->propIndex]);
+			props->model[slot->propIndex].transform = MatrixIdentity();
+		}
+	}
+	else // Remote Player
+	{
+		Vector3 modelPos = p->position;
+		modelPos.y -= 1.9f; // Adjust model height
+
+		DrawModelEx(p->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
+		, p->yaw* RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
+	}
+}
+
 //checks for interactions between all objects in the scene and the player
 void UpdateInteractions(Props* obj)
 {
@@ -371,8 +492,16 @@ void UpdateInteractions(Props* obj)
 				{
 					if (PlayerPropInteraction(obj, push, NULL, closestID))
 						SendPropInteractionToRemote(push,
-							NULL,
+							-1,
 							closestID);
+				}
+				break;
+
+			case INTERACTABLE_PUZZLE_ROTATATION_BLOCK:
+				if (!player->remotePlayer)
+				{
+					PlayerPropInteraction(obj, rotate_puzzle_block, NULL, closestID);
+					SendPropInteractionToRemote(rotate_puzzle_block, -1, closestID);
 				}
 				break;
 			}
@@ -455,7 +584,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 		printf("Placed prop %d from slot %d\n", propID, player->selectedSlot);
 	}
-	if (interaction == push)
+	else if (interaction == push)
 	{
 		printf("Pushing prop %d\n", propID);
 		 Vector3 playerForward = (Vector3){
@@ -464,7 +593,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			cosf(player->yaw)
 		};
 		int pushDistance = 2.0f;
-		if (!(obj->components[propID] & PROP_PUSHABLE)) return;
+		if (!(obj->components[propID] & PROP_PUSHABLE)) return false;
 
 		// Get 4-direction movement
 		Vector3 moveDir = GetCardinalDirection(playerForward);
@@ -489,11 +618,15 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		ColliderSetup(obj, propID); // Update collider based on new position
 		// Rebuild collider with scale
 	}
-	if (interaction == button)
+	else if (interaction == rotate_puzzle_block)
 	{
-		printf("Pressed button %d\n", propID);
-		
+		int blockNum = atoi(obj->text[propID]);
+		blockNum = (blockNum + 1) % 4;
 
+		char buf[2];
+		sprintf(buf, "%d", blockNum);
+		obj->text[propID] = strdup(buf);
+		printf("Rotated puzzle block %d to orientation %d\n", propID, blockNum);
 	}
 
 	return true;

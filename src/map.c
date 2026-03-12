@@ -1,22 +1,44 @@
 #include "map.h"
 
-static Model pillar;
-static Model book;
-static Model wall;
-static Model wall2;
-static Model chair;
+static char* pillar;
+static char* book;
+static char* wall;
+static char* wall2;
+static char* door;
+static char* chair;
+static char* wTexP;
+static char* bTexP;
+static char* pTexP;
+static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
 {
-    pillar = LoadModel("resources/global/models/pillar/scene.gltf");
+    // Pillar
+    /*pillar = LoadModel("resources/global/models/pillar/scene.gltf");
     Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
+
+    // Book
     book = LoadModel("resources/global/models/book/scene.gltf");
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
-	chair = LoadModel("resources/assets/chair.glb");
-	wall = LoadModel("resources/assets/wall.glb");
-	wall2 = LoadModel("resources/assets/wall2.glb");
-    pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-	book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+
+    // Misc
+	chair = LoadModel("resources/assets/chair.glb");*/
+
+    pillar = "resources/global/models/pillar/scene.gltf";
+    wTexP = "resources/global/models/pillar/textures/Material_baseColor.png";
+
+    // Book
+    book = "resources/global/models/book/scene.gltf";
+    Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
+    bTexP = "resources/global/models/book/textures/01_-_Default_baseColor.png";
+
+	chair = "resources/assets/chair.glb";
+
+    wall = "resources/global/models/wall/wall.glb";
+    wall2 = "resources/global/models/wall2/wall2.glb";
+
+    //pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+	//book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
 }
 
@@ -26,13 +48,13 @@ void DrawMap(void)
 
 void LoadPropTest(Props* props)
 {
-    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+    CreatePropFromPath(props, pillar, wTexP,
         (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+    CreatePropFromPath(props, pillar, wTexP,
         (Vector3){-40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+    CreatePropFromPath(props, pillar, wTexP,
         (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+    CreatePropFromPath(props, pillar, wTexP,
         (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     /*
     for (int i = 0; i < 5; i++)
@@ -273,7 +295,7 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
 	props->interactType[pushCubeID3] = INTERACTABLE_PUSH;
 
 
-	//int chairID = CreateProp(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+	//int chairID = CreatePropFromPath(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 
     int pickupID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {
@@ -286,9 +308,46 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
+    // Spawning rotating puzzle blocks for testing
+    for (int i = 0; i < 3; i++)
+    {
+        int puzzleBlock1 = CreatePropFromPath(props, 
+            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+            (Vector3) {
+			4.75f, 1.8f, -19.0f + i
+        },
+            (Vector3) {
+            0.5f, 0.5f, 0.5f
+        },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+        props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
+        //pre-compiler
+        char funnyLetter = (char)(1+i);
+        props->text[puzzleBlock1] = &funnyLetter; // Set this so we can tell where the block is facing.
+		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
+		puzzle1BlockIDs[i] = puzzleBlock1;
+	}
 
+	// Pickup blocks for testing
+	int testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+		(Vector3) {
+		4.75f, 1.8f, -10.0f
+	},
+		(Vector3) {
+		0.5f, 0.5f, 0.5f
+	}, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
+
+	testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
+		(Vector3) {
+		4.75f, 1.8f, -9.0f
+	},
+		(Vector3) {
+		0.5f, 0.5f, 0.5f
+	}, PURPLE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
 }
-
 
 void SaveMapFile(Map *map, const char *mapPath)
 {
@@ -323,8 +382,8 @@ void SaveMapFile(Map *map, const char *mapPath)
 
         if (props->prim[i] == NO_PRIM)
         {
-            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/scene.gltf");
-            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/textures/Material_baseColor.png");
+            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, props->modelPath[i]);
+            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, props->texPath[i]);
         }
         else 
         {
@@ -333,7 +392,6 @@ void SaveMapFile(Map *map, const char *mapPath)
         }
         rec.modelPath[PROP_MODEL_PATH_MAX - 1] = '\0';
         rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
-
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
 
@@ -379,8 +437,8 @@ void SaveMapProgress(Map *map, Player *player, const char *mapPath)
 
         if (props->prim[i] == NO_PRIM)
         {
-            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/scene.gltf");
-            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, "resources/global/models/pillar/textures/Material_baseColor.png");
+            snprintf(rec.modelPath, PROP_MODEL_PATH_MAX, props->modelPath[i]);
+            snprintf(rec.texturePath, PROP_MODEL_PATH_MAX, props->texPath[i]);
         }
         else 
         {
