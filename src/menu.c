@@ -62,7 +62,7 @@ void DrawMenu()
         float startY = screenH * 0.5f - totalHeight * 0.5f;
 
         // Center title
-        const char* title = "A Game about Seeing";
+        const char* title = "The Delian Problem";
         int titleWidth = MeasureText(title, 40);
         DrawText(title, screenW * 0.5f - titleWidth * 0.5f, 80, 40, BLACK);
 
@@ -76,7 +76,6 @@ void DrawMenu()
 		// Play menu music if not already playing
 		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
 		StopSound(level1Music);
-        DrawText("A Game about Seeing", 100, 40, 30, BLACK);
         DrawButton(levelButton, DARKGRAY);
         DrawButton(saveButton, DARKGRAY);
         DrawButton(editorButton, DARKGRAY);
@@ -110,14 +109,15 @@ void DrawMenu()
 
     case menu_multi:
 		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
-		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
 		DrawButton(multiConnectButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
         break;
 
     case menu_multi2:
 		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
-		DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
+        DrawButton(menuButton, DARKGRAY);
 		DrawText("Connecting to Game Server...", 100, 340, 30, DARKGRAY);
 		if (SessionManager_Client_IsConnected())
 		{
@@ -205,11 +205,15 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Level Editor") == 0)
-                SetCurrentScreen(menu_editor);
-            else if (strcmp(button.text, "Exit Game") == 0)
-                RequestExit();
-            else if (strcmp(button.text, "Back to Menu") == 0)
-                SetCurrentScreen(menu_main);
+				SetCurrentScreen(menu_editor);
+			else if (strcmp(button.text, "Exit Game") == 0)
+				RequestExit();
+			else if (strcmp(button.text, "Back to Menu") == 0)
+			{
+				SessionManager_Client_Disonnect();
+				multiplayerSession = false;
+				SetCurrentScreen(menu_main);
+            }
             else if (strcmp(button.text, "Multiplayer") == 0)
                 SetCurrentScreen(menu_multi);
             else if (strcmp(button.text, "Connect") == 0)

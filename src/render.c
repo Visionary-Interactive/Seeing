@@ -55,33 +55,11 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 			rlEnableBackfaceCulling();
 			rlEnableDepthMask();
 			DrawFloor((Vector3) { 0.0f, 0.0f, 0.0f }, WHITE);
-			//DrawModel(playerList[0]->model, playerList[0]->position, 1.0f, playerColor);
+			
+			// Draw players
 			for (int i = 0; i < clientPlayerCount + 1; i++)
-			{
-				// Animations
-				ModelAnimation anim;
-				int animState = 0; // Default to idle
-				if (playerList[i]->input.E || playerList[i]->animData.animFrame[1] > 0) // animation is not finished
-					animState = 1; // Interact
-				else if (playerList[i]->input.R || playerList[i]->animData.animFrame[2] > 0)
-					animState = 2; // Place
+				RenderPlayer(playerList[i], props);
 
-				animState %= playerList[i]->animData.animsCount; // Ensure valid index
-
-				if (animState != 0)
-					playerList[i]->animData.animFrame[0] = 0; // Reset idle animation
-
-				anim = playerList[i]->animData.animations[animState];
-
-				playerList[i]->animData.animFrame[animState] = ((playerList[i]->animData.animFrame[animState] + 1) % anim.frameCount);
-				UpdateModelAnimation(playerList[i]->model, anim, playerList[i]->animData.animFrame[animState]);
-
-				Vector3 modelPos = playerList[i]->position;
-				modelPos.y -= i == 0 ? 1.0f : 1.9f; // Adjust model height
-
-				DrawModelEx(playerList[i]->model, modelPos, (Vector3) { 0.0f, 1.0f, 0.0f }
-				, playerList[i]->yaw * RAD2DEG + 180.0f, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE);
-			}
             RenderProps(props);
 			RenderParticlePool(pool, *camera, PURPLE);
         EndMode3D();
@@ -96,7 +74,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
     EndTextureMode();
 }
 
-void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, bool swap, int screenWidth, int screenHeight)
+void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, int screenWidth, int screenHeight)
 {
 	BeginDrawing();
 	ClearBackground(WHITE);
@@ -105,8 +83,9 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 	{
 		UpdateSceneImpairments();
 
-		if (swap && tritanopia) BeginImpairment(tritanopia);
-		else if (!swap && glaucoma) BeginImpairment(glaucoma);
+		if (swap == 0 && tritanopia) BeginImpairment(tritanopia);
+		else if (swap == 1 && glaucoma) BeginImpairment(glaucoma);
+		else if (swap == 2 && astigmatism) BeginImpairment(astigmatism);
 
 		Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
 		Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
@@ -119,8 +98,9 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 		EndMode3D();
 		rlEnableDepthMask();
 
-		if (swap && tritanopia) EndImpairment(tritanopia);
-		else if (!swap && glaucoma) EndImpairment(glaucoma);
+		if (swap == 0 && tritanopia) EndImpairment(tritanopia);
+		else if (swap == 1 && glaucoma) EndImpairment(glaucoma);
+		else if (swap == 2 && astigmatism) EndImpairment(astigmatism);
 
 		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 		{

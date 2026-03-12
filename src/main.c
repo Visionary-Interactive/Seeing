@@ -64,13 +64,14 @@ int main(int argc, char** argv)
 	SessionManager_Init();
 	SessionStateController_Init();
 
-	bool swap = false;
+	int swap = 0;
 
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
 		float dt = GetFrameTime();
-		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = false;
-        if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = true;
+		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = 0;
+        if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = 1;
+		if (IsKeyDown(KEY_APOSTROPHE)) swap = 2;
 
 		MenuScreen currentScreen = GetCurrentScreen();
 		if (multiplayerSession) SessionStateController_Tick(isServer); // Networking tick
