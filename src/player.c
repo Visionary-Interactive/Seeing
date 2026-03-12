@@ -452,7 +452,7 @@ void UpdateInteractions(Props* obj)
 				{
 					if (PlayerPropInteraction(obj, push, NULL, closestID))
 						SendPropInteractionToRemote(push,
-							NULL,
+							-1,
 							closestID);
 				}
 				break;
@@ -461,7 +461,7 @@ void UpdateInteractions(Props* obj)
 				if (!player->remotePlayer)
 				{
 					PlayerPropInteraction(obj, rotate_puzzle_block, NULL, closestID);
-					SendPropInteractionToRemote(rotate_puzzle_block, NULL, closestID);
+					SendPropInteractionToRemote(rotate_puzzle_block, -1, closestID);
 				}
 				break;
 			}
@@ -548,7 +548,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			cosf(player->yaw)
 		};
 		int pushDistance = 2.0f;
-		if (!(obj->components[propID] & PROP_PUSHABLE)) return;
+		if (!(obj->components[propID] & PROP_PUSHABLE)) return false;
 
 		// Get 4-direction movement
 		Vector3 moveDir = GetCardinalDirection(playerForward);
@@ -575,10 +575,12 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == rotate_puzzle_block)
 	{
-		obj->rotation[propID].y += 5.0f;
-		int blockNum = obj->text[propID];
+		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
-		obj->text[propID] = blockNum;
+
+		char buf[2];
+		sprintf(buf, "%d", blockNum);
+		obj->text[propID] = strdup(buf);
 		printf("Rotated puzzle block %d to orientation %d\n", propID, blockNum);
 	}
 

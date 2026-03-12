@@ -85,7 +85,7 @@ void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
-void RenderProps(const Props* obj);
+void RenderProps(Props* obj);
 void RenderLensProps(const Props* obj);
 
 void RotateProp(Props* obj, int id, Vector3 rotation);

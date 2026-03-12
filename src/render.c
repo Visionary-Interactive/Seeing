@@ -74,7 +74,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
     EndTextureMode();
 }
 
-void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, bool swap, int screenWidth, int screenHeight)
+void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, int screenWidth, int screenHeight)
 {
 	BeginDrawing();
 	ClearBackground(WHITE);
@@ -83,8 +83,9 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 	{
 		UpdateSceneImpairments();
 
-		if (swap && tritanopia) BeginImpairment(tritanopia);
-		else if (!swap && glaucoma) BeginImpairment(glaucoma);
+		if (swap == 0 && tritanopia) BeginImpairment(tritanopia);
+		else if (swap == 1 && glaucoma) BeginImpairment(glaucoma);
+		else if (swap == 2 && astigmatism) BeginImpairment(astigmatism);
 
 		Rectangle src = { 0, 0, (float)sceneColorRT.texture.width, -(float)sceneColorRT.texture.height };
 		Rectangle dst = { 0, 0, (float)screenWidth, (float)screenHeight };
@@ -97,8 +98,9 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 		EndMode3D();
 		rlEnableDepthMask();
 
-		if (swap && tritanopia) EndImpairment(tritanopia);
-		else if (!swap && glaucoma) EndImpairment(glaucoma);
+		if (swap == 0 && tritanopia) EndImpairment(tritanopia);
+		else if (swap == 1 && glaucoma) EndImpairment(glaucoma);
+		else if (swap == 2 && astigmatism) EndImpairment(astigmatism);
 
 		for (int i = 0; i < clientPlayerCount + 1; i++) // Update for all players
 		{
