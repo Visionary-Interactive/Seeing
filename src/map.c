@@ -4,7 +4,6 @@ static char* pillar;
 static char* book;
 static char* wall;
 static char* wall2;
-static char* door;
 static char* chair;
 static char* wTexP;
 static char* bTexP;
@@ -294,8 +293,6 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID3] = INTERACTABLE_PUSH;
 
-
-	//int chairID = CreatePropFromPath(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 
     int pickupID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {

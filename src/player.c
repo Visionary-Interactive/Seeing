@@ -477,12 +477,6 @@ void UpdateInteractions(Props* obj)
 				}
 				break;
 			}
-			case INTERACTABLE_BUTTON:
-			{
-				PlayerPropInteraction(obj, button, NULL, closestID);
-				break;
-			}
-
 			case INTERACTABLE_TEXT:
 				PlayerPropInteraction(obj, text, NULL, closestID);
 				break;

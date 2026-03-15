@@ -39,6 +39,7 @@ typedef enum {
 	placed,
     push,
     text,
+    door,
 	rotate_puzzle_block
 } InteractionType;
 

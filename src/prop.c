@@ -59,10 +59,10 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 			model = LoadModelFromMesh(GenMeshCube(4.0f, 0.5f, 4.0f));
 			break;
 		case PRIMITIVE_MODEL_WALL:
-			model = LoadModel("resources/assets/wall.glb");
+			model = LoadModel("resources/global/models/wall/wall.glb");
 			break;
         case PRIMITIVE_MODEL_WALL2:
-            model = LoadModel("resources/assets/wall2.glb");
+            model = LoadModel("resources/global/models/wall2/wall2.glb");
             break;
 		case PRIMITIVE_MODEL_BUTTON:
 			model = LoadModelFromMesh(GenMeshCube(1.0f, 0, 1.0f));
