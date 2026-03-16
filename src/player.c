@@ -33,6 +33,10 @@ void InitPlayer()
 	player->input = (InputState){ 0 };
 	player->bottom = player->position.y - player->size.y;
 	player->spawnPosition = player->position;
+	player->checkpoint.active = false;
+	player->checkpoint.position = player->spawnPosition;
+	player->checkpoint.yaw = player->yaw;
+	player->checkpoint.pitch = player->pitch;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -53,6 +57,27 @@ void ManualInitPlayer(Vector3 position, Vector3 velocity, float yaw, float pitch
     player->isGrounded = grounded;
     player->speed = grounded ? 8.0f : player->speed; // optional default
     player->bottom = player->position.y - player->size.y;
+}
+
+static void ActivateCheckpoint(const Vector3 pos, float yaw, float pitch)
+{
+    player->checkpoint.active = true;
+    player->checkpoint.position = pos;
+    player->checkpoint.yaw = yaw;
+    player->checkpoint.pitch = pitch;
+}
+
+static void RespawnAtCheckpoint(Player* p)
+{
+    const Checkpoint* cp = &p->checkpoint;
+    if (!cp->active) return;
+
+    p->position = cp->position;
+    p->yaw = cp->yaw;
+    p->pitch = cp->pitch;
+    p->velocity = (Vector3){ 0 };
+    p->isGrounded = true;
+    p->bottom = p->position.y - p->size.y;
 }
 
 Player* GetPlayer()
@@ -201,6 +226,16 @@ void UpdatePlayer(Props* obj)
 					{
 						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
 							break;
+					}
+
+					if (obj->components[i] & PROP_CHECKPOINT)
+					{
+						if (CheckCollisionBoxes(playerBox, objBox))
+						{
+							ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
+							printf("Checkpoint reached!\n");
+						}
+						continue;
 					}
 
 					// Sliding along wall logic:

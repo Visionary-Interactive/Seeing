@@ -52,6 +52,13 @@ typedef struct InventoryItem
     bool occupied;
 } InventoryItem;
 
+typedef struct Checkpoint {
+    bool active;
+    Vector3 position;
+    float yaw;
+    float pitch;
+} Checkpoint;
+
 typedef struct Player {
     Vector3 position;
     Vector3 size;
@@ -68,7 +75,7 @@ typedef struct Player {
 	InputState input; // Current input state
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
-
+    Checkpoint checkpoint;
 } Player;
 
 extern Player* playerList[MAX_PLAYERS];
