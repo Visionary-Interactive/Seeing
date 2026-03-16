@@ -1,18 +1,32 @@
 #include "prop.h"
 
 static Props* props;
-
+static ParticlePool* pool;
+static ParticleTemplate* template;
 
 void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
 	memset(props, 0, sizeof(Props));
+    pool = InitParticlePool(512);
+	InitFlameTemplate();
+	template = GetParticleTemplate();
 
+    /*InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
+	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
+	InitParticleEmitter(pool, 20.0f, (Vector3){20.0f, 0.0f, 0.0f}, template, YELLOW);
+	InitParticleEmitter(pool, 20.0f, (Vector3){30.0f, 0.0f, 0.0f}, template, GREEN);
+	InitParticleEmitter(pool, 20.0f, (Vector3){40.0f, 0.0f, 0.0f}, template, BLUE);*/
 }
 
 Props* GetPropStructure(void)
 {
 	return props;
+}
+
+ParticlePool* GetParticlePool(void)
+{
+    return pool;
 }
 
 int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components) {
@@ -168,6 +182,16 @@ void AddDeadzone(Props* obj, Vector3 position, Vector3 size)
         PROP_VISIBILE |
         PROP_COLLIDER|
         PROP_DEADZONE;
+}
+
+int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
+{
+    if (deadly == true) 
+    {
+        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE);
+        InitParticleEmitter(pool, 20.0f, position, template, BLUE);
+    }
+    else InitParticleEmitter(pool, 20.0f, position, template, WHITE);
 }
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
