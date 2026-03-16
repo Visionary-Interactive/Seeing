@@ -40,14 +40,8 @@ int main(int argc, char** argv)
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
-	ParticlePool* pool = InitParticlePool(512);
-	InitFlameTemplate();
-	ParticleTemplate* template = GetParticleTemplate();
-	InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
-	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
-	InitParticleEmitter(pool, 20.0f, (Vector3){20.0f, 0.0f, 0.0f}, template, YELLOW);
-	InitParticleEmitter(pool, 20.0f, (Vector3){30.0f, 0.0f, 0.0f}, template, GREEN);
-	InitParticleEmitter(pool, 20.0f, (Vector3){40.0f, 0.0f, 0.0f}, template, BLUE);
+	AddKillFlame((Vector3){20.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, true);
+	AddKillFlame((Vector3){30.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, false);
 
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
@@ -56,6 +50,7 @@ int main(int argc, char** argv)
 
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
+
 	InitSaveSlots();
 	LoadPropTest(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
@@ -90,7 +85,7 @@ int main(int argc, char** argv)
 			RefreshCamera(playerList[0]);
 		}
 
-		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, pool);
+		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, GetParticlePool());
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
 	}
 
@@ -100,7 +95,7 @@ int main(int argc, char** argv)
 	UnloadRenderTexture(sceneColorRT);
 	
 	DestroyCamera();
-	DestroyParticlePool(pool);
+	DestroyParticlePool(GetParticlePool());
 	DestroyProps(props);
 
 	for (int i = 0; i < clientPlayerCount; i++) {

@@ -3,6 +3,7 @@
 #define PROP_H
 #include "includes.h"
 #include "TextboxType.h"
+#include "particleEmitter.h"
 
 #define MAX_PROPS 128
 #define MAX_TEXT_LENGTH 512
@@ -73,6 +74,7 @@ typedef struct Props {
 
 void CreatePropStructure(void);
 Props* GetPropStructure(void);
+ParticlePool* GetParticlePool(void);
 int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components);
 int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components);
 int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, Vector3 position, Vector3 size, Color color, uint32_t components);
@@ -82,6 +84,7 @@ void ColliderSetup(Props* obj, int id);
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
 
 void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
+int AddKillFlame(Vector3 position, Vector3 size, bool deadly);
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
