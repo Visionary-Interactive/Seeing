@@ -67,6 +67,9 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 		case PRIMITIVE_MODEL_BUTTON:
 			model = LoadModelFromMesh(GenMeshCube(1.0f, 0, 1.0f));
 			break;
+        case PRIMITIVE_MODEL_WARP:
+            model = LoadModelFromMesh(GenMeshCube(2.0f, 0.2f, 2.0f));
+            break;
         default:
             return -1;
     }
