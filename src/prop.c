@@ -188,7 +188,8 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
     if (deadly == true) 
     {
-        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE);
+        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
+            PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE | PROP_VENT);
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
     }
     else InitParticleEmitter(pool, 20.0f, position, template, WHITE);

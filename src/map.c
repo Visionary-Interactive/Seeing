@@ -294,6 +294,13 @@ void LoadPropTest(Props* props)
 		0.5f, 0.5f, 0.5f
 	}, PURPLE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
 	props->interactType[testCube] = INTERACTABLE_PICKUP;
+
+    AddKillFlame((Vector3){20.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, true);
+	AddKillFlame((Vector3){30.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, false);
+
+    testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {40.0f, 1.8f, 0.0f}, 
+        (Vector3) {1.0f, 1.0f, 1.0f}, RAYWHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE | PROP_VENTLID);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
 }
 
 void SaveMapFile(Map *map, const char *mapPath)

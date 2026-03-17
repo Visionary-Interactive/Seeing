@@ -40,9 +40,6 @@ int main(int argc, char** argv)
 	CreatePropStructure();
 	Props* props = GetPropStructure();
 
-	AddKillFlame((Vector3){20.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, true);
-	AddKillFlame((Vector3){30.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, false);
-
 	RenderTexture2D sceneColorRT = LoadRenderTexture(screenWidth, screenHeight);
 	InitLensShader(screenWidth, screenHeight, sceneColorRT);
   

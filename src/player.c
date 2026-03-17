@@ -425,6 +425,28 @@ void RenderPlayer(Player* p, Props* props)
 	}
 }
 
+static int FindNearestActiveVent(Props* obj, float maxRange)
+{
+	int closestVent = -1;
+	float closestDist = maxRange;
+
+	for (size_t i = 0; i < obj->count; i++)
+	{
+		if ((obj->components[i] & PROP_VENT) &&
+		    (obj->components[i] & PROP_DEADZONE))
+		{
+			float dist = Vector3Distance(player->position, obj->position[i]);
+			if (dist < closestDist)
+			{
+				closestDist = dist;
+				closestVent = (int)i;
+			}
+		}
+	}
+
+	return closestVent;
+}
+
 //checks for interactions between all objects in the scene and the player
 void UpdateInteractions(Props* obj)
 {
@@ -449,6 +471,7 @@ void UpdateInteractions(Props* obj)
 			closestID = i;
 		}
 	}
+
 	if (closestID != -1)
 	{
 		if (!player->remotePlayer)
@@ -463,6 +486,23 @@ void UpdateInteractions(Props* obj)
 				break;
 
 			case INTERACTABLE_PICKUP:
+			{
+				InventoryItem* slot =
+					&player->inventory[player->selectedSlot];
+
+				if (!slot->occupied)
+				{
+					PlaySound(pickupItem1);
+					PlayerPropInteraction(obj, pickup, slot, closestID);
+					SendPropInteractionToRemote(pickup,
+						player->selectedSlot,
+						closestID);
+				}
+				break;
+			}
+
+			//vent lid pickup
+			case INTERACTABLE_VENTLID:
 			{
 				InventoryItem* slot =
 					&player->inventory[player->selectedSlot];
@@ -503,16 +543,39 @@ void UpdateInteractions(Props* obj)
 		}
 	}
 
-	//allows the player to replace the prop based on where they are looking
 	if (player->input.R)
 	{
 		InventoryItem* slot = &player->inventory[player->selectedSlot];
 
 		if (slot->occupied)
 		{
-			PlaySound(placeItem1);
-			PlayerPropInteraction(obj, placed, slot, slot->propIndex);
-			SendPropInteractionToRemote(placed, player->selectedSlot, slot->propIndex);
+			if (slot->components & PROP_VENTLID)
+			{
+				float ventUseRange = 4.0f;
+				int ventID = FindNearestActiveVent(obj, ventUseRange);
+
+				if (ventID != -1)
+				{
+					PlaySound(placeItem1);
+					PlayerPropInteraction(obj, use_ventlid, slot, ventID);
+					SendPropInteractionToRemote(use_ventlid,
+						player->selectedSlot, ventID);
+				}
+				else
+				{
+					PlaySound(placeItem1);
+					PlayerPropInteraction(obj, placed, slot, slot->propIndex);
+					SendPropInteractionToRemote(placed,
+						player->selectedSlot, slot->propIndex);
+				}
+			}
+			else
+			{
+				PlaySound(placeItem1);
+				PlayerPropInteraction(obj, placed, slot, slot->propIndex);
+				SendPropInteractionToRemote(placed,
+					player->selectedSlot, slot->propIndex);
+			}
 		}
 	}
 }
@@ -542,7 +605,6 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		slot->components = obj->components[propID];
 		slot->occupied = true;
 
-
 		obj->components[propID] &= ~PROP_VISIBILE;
 		obj->components[propID] &= ~PROP_COLLIDER;
 
@@ -551,7 +613,6 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	else if (interaction == text)
 	{
 		InitTextBox(obj->textType[propID], obj->text[propID]);
-		
 	}
 	else if (interaction == placed)
 	{
@@ -567,7 +628,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		);
 
 		obj->position[propID] = placePos;
-		ColliderSetup(obj, propID); // Update collider based on new position
+		ColliderSetup(obj, propID);
 		obj->components[propID] = slot->components | PROP_VISIBILE | PROP_COLLIDER;
 
 		slot->occupied = false;
@@ -577,7 +638,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	else if (interaction == push)
 	{
 		printf("Pushing prop %d\n", propID);
-		 Vector3 playerForward = (Vector3){
+		Vector3 playerForward = (Vector3){
 			sinf(player->yaw),
 			0.0f,
 			cosf(player->yaw)
@@ -585,32 +646,27 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		int pushDistance = 2.0f;
 		if (!(obj->components[propID] & PROP_PUSHABLE)) return false;
 
-		// Get 4-direction movement
 		Vector3 moveDir = GetCardinalDirection(playerForward);
-
-		// Calculate new position
 		Vector3 moveAmount = Vector3Scale(moveDir, pushDistance);
 		Vector3 futurePosition = Vector3Add(obj->position[propID], moveAmount);
-		BoundingBox futureBox = ReBuildCollider(obj, propID,futurePosition);
+		BoundingBox futureBox = ReBuildCollider(obj, propID, futurePosition);
 
 		if (CheckCollisionWithProp(obj, propID, futureBox))
 		{
 			printf("Cannot push prop %d, path is blocked!\n", propID);
-			return false; // Collision detected, do not move
+			return false;
 		}
 
 		if (playerList[1] != NULL && CheckCollisionBoxes(GetPlayerCollision(playerList[1]->position), futureBox))
 		{
 			printf("Cannot push prop %d, player is in the way!\n", propID);
-			return false; // Player is in the way, do not move
+			return false;
 		}
 		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
-		ColliderSetup(obj, propID); // Update collider based on new position
-		// Rebuild collider with scale
+		ColliderSetup(obj, propID);
 	}
 	else if (interaction == rotate_puzzle_block)
 	{
-		obj->rotation[propID].y += 5.0f;
 		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
 
@@ -619,9 +675,34 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->text[propID] = strdup(buf);
 		printf("Rotated puzzle block %d to orientation %d\n", propID, blockNum);
 	}
+	//use vent lid on a fire vent
+	else if (interaction == use_ventlid)
+	{
+		// propID here is the fire vent index
+		// Deactivate the fire vent
+		obj->components[propID] &= ~PROP_DEADZONE;
+
+		// Snap the lid visually on top of the vent
+		int lidPropID = slot->propIndex;
+		obj->position[lidPropID] = obj->position[propID];
+		obj->position[lidPropID].y = obj->position[propID].y +
+			(obj->collider[propID].max.y - obj->collider[propID].min.y) * 0.5f;
+
+		// Make the lid visible again (placed on the vent) but no longer interactable
+		obj->components[lidPropID] |= PROP_VISIBILE;
+		obj->components[lidPropID] &= ~PROP_INTERACTABLE;
+		obj->components[lidPropID] &= ~PROP_VENTLID;
+		ColliderSetup(obj, lidPropID);
+
+		slot->occupied = false;
+
+		printf("Used vent lid (prop %d) to disable fire vent (prop %d)\n",
+			lidPropID, propID);
+	}
 
 	return true;
 }
+
 void ResetPlayerToSpawn(Player* p)
 {
 	player->position = player->spawnPosition;
