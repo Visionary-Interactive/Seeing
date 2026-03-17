@@ -19,6 +19,7 @@
 #define PROP_BUTTON (1 << 9)
 #define PROP_DEADZONE (1 << 10)
 #define PROP_CHECKPOINT (1 << 10)
+#define PROP_WARP (1 << 11)
 
 #define PROP_MODEL_PATH_MAX 128
 
@@ -72,6 +73,8 @@ typedef struct Props {
 	char modelPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
 	char texPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
 
+	Vector3 warpPosition[MAX_PROPS];
+
 } Props;
 
 void CreatePropStructure(void);
@@ -88,6 +91,7 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
 void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly);
 
+void AddWarpZone(Vector3 position, Vector3 size, Vector3 warpposition);
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);

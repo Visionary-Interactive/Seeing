@@ -211,6 +211,7 @@ void UpdatePlayer(Props* obj)
 					continue; // deadzones do not block movement
 				}
 
+
 				// Collision Detection
 				if (CheckCollisionBoxes(playerBox, objBox))
 				{
@@ -236,6 +237,14 @@ void UpdatePlayer(Props* obj)
 							printf("Checkpoint reached!\n");
 						}
 						continue;
+					}
+
+
+					if (obj->components[i] & PROP_WARP)
+					{
+						player->position = obj->warpPosition[i];
+						return;
+
 					}
 
 					// Sliding along wall logic:

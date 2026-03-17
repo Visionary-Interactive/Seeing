@@ -49,8 +49,14 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	ColliderSetup(obj, id);
 	obj->components[id] = components; // Default components
 	obj->prim[id] = NO_PRIM;
+
+	//set up text to null by default
 	obj->text[id] = NULL;
 	obj->textType[id] = TEXTBOX_NONE;
+
+	obj->warpPosition[id] = (Vector3){ 0.0f, 0.0f, 0.0f };
+
+    
 
 
 	return id;
@@ -195,10 +201,23 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
     if (deadly == true) 
     {
-        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE);
+        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {position.x+0.5f,position.y,position.z}, (Vector3) { 2.5f, 4.0f,size.z }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE);
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
     }
     else InitParticleEmitter(pool, 20.0f, position, template, WHITE);
+}
+
+
+void AddWarpZone(Vector3 position, Vector3 size, Vector3 Warpposition)
+{
+	CreatePropPrimitive(props, PRIMITIVE_MODEL_WARP, position, size, PURPLE, PROP_VISIBILE);
+    int id = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, RED, PROP_VISIBILE | PROP_COLLIDER);
+
+	AddPropComponent(props, id, PROP_WARP);
+	
+	props->warpPosition[id] = Warpposition;
+
+    
 }
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)

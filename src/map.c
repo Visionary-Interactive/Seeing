@@ -265,6 +265,7 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
     int pushCubeID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 5, 2.0f, -47.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
     int pushCubeID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
 
+	//starting platform for first room
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
         -27.5, 1.5f, -60.0f
@@ -273,7 +274,7 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
         1.0f, 1.5f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
-   
+   //middle platform with book
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
         29.0f, 3.5f, -60.0f
@@ -302,6 +303,9 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
     props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
+
+	AddWarpZone((Vector3) { 0.0f, 0.0f, 0.0f }, (Vector3) { 2.0f, 1.0f, 2.0f }, (Vector3) {-27.5f,5.0f,-60.0f});
+
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
