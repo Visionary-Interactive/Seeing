@@ -200,9 +200,15 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-    int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    int pushCubeID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 5, 2.0f, -47.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    int pushCubeID3 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    //int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    int pushCubeID = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
+        , (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    int pushCubeID2 = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
+        , (Vector3) { 5, 2.0f, -47.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    props->rotation[pushCubeID2].y = 90.0f;
+    int pushCubeID3 = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
+        , (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    props->rotation[pushCubeID3].y = 180.0f;
 
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {

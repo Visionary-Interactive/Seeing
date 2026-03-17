@@ -222,11 +222,8 @@ void UpdatePlayer(Props* obj)
 					float prevFeetY = player->bottom;
 
 					// Platform collision check
-					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
-					{
-						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
-							break;
-					}
+					if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
+						break;
 
 					if (obj->components[i] & PROP_CHECKPOINT)
 					{
@@ -576,6 +573,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == push)
 	{
+		player->velocity.y += 0.001f; // Small movement to trigger collision check
 		printf("Pushing prop %d\n", propID);
 		 Vector3 playerForward = (Vector3){
 			sinf(player->yaw),
