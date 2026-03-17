@@ -11,6 +11,7 @@ extern Sound menuOpen;
 extern Sound menuClose;
 extern Sound menuMusic;
 extern Sound level1Music;
+extern Sound rotatingPuzzleBlock;
 
 void InitSoundSystem();
 void DestroySoundSystem();

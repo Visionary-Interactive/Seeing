@@ -264,7 +264,7 @@ void RenderProps(Props* obj) {
             {
                 if ((int)obj->rotation[i].y % 90 != 0)
                 {
-                    obj->rotation[i].y += 1.0f;
+                    obj->rotation[i].y += 0.75f;
                     obj->components[i] &= ~PROP_INTERACTABLE; // disable interaction while rotating
                 }
                 else 

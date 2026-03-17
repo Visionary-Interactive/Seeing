@@ -611,6 +611,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	else if (interaction == rotate_puzzle_block)
 	{
 		obj->rotation[propID].y += 5.0f;
+		PlaySound(rotatingPuzzleBlock);
 		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
 

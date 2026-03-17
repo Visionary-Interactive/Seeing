@@ -8,6 +8,7 @@ Sound menuOpen;
 Sound menuClose;
 Sound menuMusic;
 Sound level1Music;
+Sound rotatingPuzzleBlock;
 
 void InitSoundSystem()
 {
@@ -20,6 +21,7 @@ void InitSoundSystem()
 	menuClose = LoadSound("resources/sound/sfx/MenuClose.wav");
 	menuMusic = LoadSound("resources/sound/bgm/MenuBGM.wav");
 	level1Music = LoadSound("resources/sound/bgm/Level1BGM.wav");
+	rotatingPuzzleBlock = LoadSound("resources/sound/sfx/rotating_block.wav");
 	menuMusic.stream.buffer->looping = true;
 	level1Music.stream.buffer->looping = true;
 }
@@ -33,5 +35,6 @@ void DestroySoundSystem()
 	UnloadSound(menuClose);
 	UnloadSound(menuMusic);
 	UnloadSound(level1Music);
+	UnloadSound(rotatingPuzzleBlock);
 	CloseAudioDevice();
 }
