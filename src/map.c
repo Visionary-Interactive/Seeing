@@ -210,30 +210,30 @@ void LoadPropTest(Props* props)
         , (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
     props->rotation[pushCubeID3].y = 180.0f;
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
         (Vector3) {
-        -15.0f, 1.5f, -40.0f
+        -15.0f, 0.5f, -40.0f
     },
         (Vector3) {
-        1.0f, 1.5f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+        3.0f, 3.0f, 3.0f
+    }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
         (Vector3) {
-        -20.0f, 1.8f, -40.0f
+        -20.0f, 0.8f, -40.0f
     },
         (Vector3) {
-        1.0f, 1.5f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+        3.0f, 3.0f, 3.0f
+    }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
 
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
         (Vector3) {
-        29.0f, 3.5f, -57.0f
+        29.0f, 2.0f, -57.0f
     },
         (Vector3) {
-        1.0f, 1.5f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+        3.0f, 3.0f, 3.0f
+    }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
     int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 6.0f, -57.0f },
         (Vector3) {
