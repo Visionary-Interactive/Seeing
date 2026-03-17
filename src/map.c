@@ -255,12 +255,12 @@ void LoadPropTest(Props* props)
         WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
-	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
+	props->text[pickupID] = strdup("Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here");
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
     // Spawning rotating puzzle blocks for testing
-    static char blockLetters[3][2]; // 3 blocks, 1 char + null
+    char* blockLetters[3];
     for (int i = 0; i < 3; i++)
     {
         int puzzleBlock1 = CreatePropFromPath(props, 
@@ -275,6 +275,7 @@ void LoadPropTest(Props* props)
 			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
 		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
 		//pre-compiler
+		blockLetters[i] = calloc(2, sizeof(char));
         blockLetters[i][0] = (char)('0' + i);
 		blockLetters[i][1] = '\0';
 		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.

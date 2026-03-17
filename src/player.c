@@ -602,9 +602,12 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			printf("Cannot push prop %d, player is in the way!\n", propID);
 			return false; // Player is in the way, do not move
 		}
-		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
-		ColliderSetup(obj, propID); // Update collider based on new position
-		// Rebuild collider with scale
+		Vector3 newPos = Vector3Add(obj->position[propID], moveAmount);
+		PlaySound(pushBoulder);
+		// Notify prop to move towards new position over time in the render update
+		snprintf(obj->text[propID], 255, "%d,%d",
+						(int)newPos.x,
+						(int)newPos.z);
 	}
 	else if (interaction == rotate_puzzle_block)
 	{

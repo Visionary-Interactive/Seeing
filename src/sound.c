@@ -9,6 +9,7 @@ Sound menuClose;
 Sound menuMusic;
 Sound level1Music;
 Sound rotatingPuzzleBlock;
+Sound pushBoulder;
 
 void InitSoundSystem()
 {
@@ -22,6 +23,7 @@ void InitSoundSystem()
 	menuMusic = LoadSound("resources/sound/bgm/MenuBGM.wav");
 	level1Music = LoadSound("resources/sound/bgm/Level1BGM.wav");
 	rotatingPuzzleBlock = LoadSound("resources/sound/sfx/rotating_block.wav");
+	pushBoulder = LoadSound("resources/sound/sfx/push_blouder.wav");
 	menuMusic.stream.buffer->looping = true;
 	level1Music.stream.buffer->looping = true;
 }
@@ -36,5 +38,6 @@ void DestroySoundSystem()
 	UnloadSound(menuMusic);
 	UnloadSound(level1Music);
 	UnloadSound(rotatingPuzzleBlock);
+	UnloadSound(pushBoulder);
 	CloseAudioDevice();
 }

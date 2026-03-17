@@ -12,6 +12,7 @@ extern Sound menuClose;
 extern Sound menuMusic;
 extern Sound level1Music;
 extern Sound rotatingPuzzleBlock;
+extern Sound pushBoulder;
 
 void InitSoundSystem();
 void DestroySoundSystem();

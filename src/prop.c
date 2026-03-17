@@ -272,7 +272,39 @@ void RenderProps(Props* obj) {
                     obj->components[i] |= PROP_INTERACTABLE; // re-enable interaction when done rotating
 				}
             }
-                
+
+			// Push Block Animation
+			if (obj->components[i] & PROP_PUSHABLE)
+			{
+                if (obj->text[i] == NULL)
+                {
+                    obj->text[i] = calloc(255, sizeof(char));
+					snprintf(obj->text[i], 255, "%d,%d",
+						(int)obj->position[i].x,
+						(int)obj->position[i].z);
+                }
+
+				int x, z;
+				sscanf(obj->text[i], "%d,%d", &x, &z);
+
+				if ((int)obj->position[i].x != x || (int)obj->position[i].z != z)
+				{
+					Vector3 targetPos = { (float)x, obj->position[i].y, (float)z };
+					Vector3 direction = Vector3Subtract(targetPos, obj->position[i]);
+					float distance = Vector3Length(direction);
+					if (distance > 0.1f) // If we're not close enough to the target position
+					{
+						float speed = 1.5f;
+						Vector3 move = Vector3Scale(Vector3Normalize(direction), speed * GetFrameTime());
+						obj->position[i] = Vector3Add(obj->position[i], move);
+					}
+					else
+					{
+						obj->position[i] = targetPos; // Snap to target position when close enough
+					}
+					ColliderSetup(obj, i); // Update collider position
+				}
+			}
 
             DrawModelEx(
                 obj->model[i],
@@ -315,10 +347,19 @@ void RenderLensProps(const Props * obj)
 void ResetProps()
 {
 	if (props == NULL) return;
+
+    for (int i = 0; i < MAX_PROPS; i++) {
+        free(props->text[i]);
+        props->text[i] = NULL;
+    }
 	memset(props, 0, sizeof(Props));
 }
 
 void DestroyProps(Props* obj)
 {
+    for (int i = 0; i < MAX_PROPS; i++) {
+        free(obj->text[i]);
+        obj->text[i] = NULL;
+    }
 	RL_FREE(obj);
 }
