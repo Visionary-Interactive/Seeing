@@ -157,7 +157,7 @@ void LoadPropTest(Props* props)
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
     // Spawning rotating puzzle blocks for testing
-    /*static char blockLetters[3][2]; // 3 blocks, 1 char + null
+    static char blockLetters[3][2]; // 3 blocks, 1 char + null
     for (int i = 0; i < 3; i++)
     {
         int puzzleBlock1 = CreatePropFromPath(props, 
@@ -177,7 +177,7 @@ void LoadPropTest(Props* props)
 		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.
 		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
 		puzzle1BlockIDs[i] = puzzleBlock1;
-	}*/
+	}
 
 	// Pickup blocks for testing
 	int testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,

@@ -66,8 +66,8 @@ int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, V
     if (!model) return -1;
 
     int id = CreateProp(obj, model, position, size, color, components);
-    Texture2D texture = LoadTexture(texPath);
-    obj->model[id]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    Texture2D* tex = GetCachedTexture(texPath);
+    obj->model[id]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = *tex;
     if (id >= 0) {
         strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
         strncpy(obj->texPath[id], texPath, PROP_MODEL_PATH_MAX);
@@ -151,8 +151,6 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
 {
-
-    
     for (int i = 0; i < obj->count; i++)
     {
         if (i == id) continue;
@@ -165,9 +163,7 @@ bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
             return true;
         }
     }
-
     return false;
- 
 }
 
 void AddPropComponent(Props* obj, int id, uint32_t componentMask)

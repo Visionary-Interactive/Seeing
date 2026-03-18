@@ -5,6 +5,7 @@
 #include "TextboxType.h"
 #include "particleEmitter.h"
 #include "modelPool.h"
+#include "texturePool.h"
 
 #define MAX_PROPS 128
 #define MAX_TEXT_LENGTH 512

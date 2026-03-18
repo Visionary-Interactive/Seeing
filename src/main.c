@@ -51,8 +51,8 @@ int main(int argc, char** argv)
 	InitMap(&gameMap, "resources/maps/pz_1");
 
 	InitSaveSlots();
-	LoadPropTest(props);
-	//LoadMapFile(&gameMap, "resources/maps/pz_1");
+	//LoadPropTest(props);
+	LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	SessionManager_Init();
