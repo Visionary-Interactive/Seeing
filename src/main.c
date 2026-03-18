@@ -12,6 +12,7 @@
 #include "skybox.h"
 #include "particleEmitter.h"
 #include "sound.h"
+#include "modelPool.h"
 
 int main(int argc, char** argv)
 {
@@ -23,6 +24,7 @@ int main(int argc, char** argv)
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
 
+	InitModelCache();
 	InitSoundSystem();
 
 	InitPlayer();

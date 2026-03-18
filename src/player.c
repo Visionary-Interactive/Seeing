@@ -409,10 +409,10 @@ void RenderPlayer(Player* p, Props* props)
 						MatrixMultiply(rotation, translation)))
 			);
 
-			props->model[slot->propIndex].transform = itemTransform;
-			DrawModel(props->model[slot->propIndex], (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f,
+			props->model[slot->propIndex]->transform = itemTransform;
+			DrawModel(*props->model[slot->propIndex], (Vector3) { 0.0f, 0.0f, 0.0f }, 1.0f,
 				props->color[slot->propIndex]);
-			props->model[slot->propIndex].transform = MatrixIdentity();
+			props->model[slot->propIndex]->transform = MatrixIdentity();
 		}
 	}
 	else // Remote Player

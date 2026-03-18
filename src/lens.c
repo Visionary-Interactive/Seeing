@@ -35,8 +35,8 @@ void InitLensShader(int screenW, int screenH, RenderTexture2D sceneColorRT) {
 
 void SetPropShader(Props* obj, int id, Shader shader) {
     obj->shader[id] = shader;
-    for (int m = 0; m < obj->model[id].materialCount; m++) {
-        obj->model[id].materials[m].shader = shader;
+    for (int m = 0; m < obj->model[id]->materialCount; m++) {
+        obj->model[id]->materials[m].shader = shader;
     }
 }
 
