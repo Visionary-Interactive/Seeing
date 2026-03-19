@@ -242,7 +242,7 @@ void UpdatePlayer(Props* obj)
 
 					if (obj->components[i] & PROP_WARP)
 					{
-						player->position = obj->warpPosition[i];
+						
 						return;
 
 					}
@@ -307,6 +307,7 @@ void UpdatePlayer(Props* obj)
 		player->velocity.y = 0.0f;
 		player->isGrounded = true;
 	}
+	CheckTriggers(obj);
 
 }
 
@@ -541,6 +542,45 @@ Vector3 GetCardinalDirection(Vector3 forward)
 	return dir;
 }
 
+void CheckTriggers(Props* obj)
+{
+	BoundingBox playerBox = GetPlayerCollision(player->position); //update player bounding box
+	for (size_t i = 0; i < obj->count; i++)
+	{
+		if (!(obj->components[i] & PROP_TRIGGERZONE)) continue;
+
+		BoundingBox objBox = obj->collider[i];
+
+		if (CheckCollisionBoxes(playerBox, objBox))
+		{
+			printf("Player entered Triggerzone!\n");
+
+			// Example behaviors
+			if (obj->triggerType[i] == TRIGGER_WARP)
+			{
+				player->position = obj->position[i]; // Warp player to prop position
+				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
+			}
+			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
+			{
+				ResetPlayerToSpawn(player);
+				printf("Deadzone Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
+			{
+				ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
+				printf("Checkpoint Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_TEXT)
+			{
+				InitTextBox(obj->textType[i], obj->text[i]);
+				obj->Triggered[i] = true; // Prevent retriggering if desired
+				printf("Triggered text box: %s\n", obj->text[i]);
+			}
+
+		}
+	}
+}
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)

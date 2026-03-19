@@ -87,6 +87,8 @@ void LocalInputUpdate(struct InputState *input);
 void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
+
+void CheckTriggers(Props* obj);
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);

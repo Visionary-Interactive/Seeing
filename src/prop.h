@@ -20,6 +20,7 @@
 #define PROP_DEADZONE (1 << 10)
 #define PROP_CHECKPOINT (1 << 10)
 #define PROP_WARP (1 << 11)
+#define PROP_TRIGGERZONE (1 << 12)
 
 #define PROP_MODEL_PATH_MAX 128
 
@@ -43,6 +44,14 @@ typedef enum InteractableType {
 	INTERACTABLE_PUSH,
 	INTERACTABLE_PUZZLE_ROTATATION_BLOCK
 } InteractableType;
+
+typedef enum TriggerType {
+	TRIGGER_NONE = 0,
+	TRIGGER_DEADZONE,
+	TRIGGER_CHECKPOINT,
+	TRIGGER_WARP,
+	TRIGGER_TEXT
+} TriggerType;
 
 
 typedef struct Props {
@@ -73,7 +82,9 @@ typedef struct Props {
 	char modelPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
 	char texPath[MAX_PROPS][PROP_MODEL_PATH_MAX];
 
-	Vector3 warpPosition[MAX_PROPS];
+	//trigger type for interactions (warp, buttons, trigger event)
+	TriggerType triggerType[MAX_PROPS];
+	bool Triggered[MAX_PROPS];
 
 } Props;
 
@@ -88,17 +99,15 @@ void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
 
-void AddDeadzone(Props* obj, Vector3 position, Vector3 size);
+void AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type);
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly);
 
-void AddWarpZone(Vector3 position, Vector3 size, Vector3 warpposition);
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(Props* obj);
-void RenderLensProps(const Props* obj);
 
-void RotateProp(Props* obj, int id, Vector3 rotation);
+void RenderLensProps(const Props* obj);
 void ResetProps();
 void DestroyProps(Props* obj);
 

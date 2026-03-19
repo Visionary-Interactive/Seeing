@@ -54,10 +54,7 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 	obj->text[id] = NULL;
 	obj->textType[id] = TEXTBOX_NONE;
 
-	obj->warpPosition[id] = (Vector3){ 0.0f, 0.0f, 0.0f };
-
-    
-
+	obj->triggerType[id] = TRIGGER_NONE;
 
 	return id;
 }
@@ -171,31 +168,17 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
     return result;
 }
 
-void AddDeadzone(Props* obj, Vector3 position, Vector3 size)
+void AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 {
-    int id = obj->count++;
+    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, BLANK, PROP_TRIGGERZONE | PROP_VISIBILE);
 
-    obj->position[id] = position;
-    obj->size[id] = size;
-    obj->color[id] = RED;
+    obj->triggerType[id] = type;
+    obj->Triggered[id] = false;
 
-    obj->collider[id].min = (Vector3){
-        position.x - size.x / 2,
-        position.y - size.y / 2,
-        position.z - size.z / 2
-    };
 
-    obj->collider[id].max = (Vector3){
-        position.x + size.x / 2,
-        position.y + size.y / 2,
-        position.z + size.z / 2
-    };
-
-    obj->components[id] =
-        PROP_VISIBILE |
-        PROP_COLLIDER|
-        PROP_DEADZONE;
+    return id;
 }
+
 
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
@@ -215,7 +198,7 @@ void AddWarpZone(Vector3 position, Vector3 size, Vector3 Warpposition)
 
 	AddPropComponent(props, id, PROP_WARP);
 	
-	props->warpPosition[id] = Warpposition;
+	//props->warpPosition[id] = Warpposition;
 
     
 }
@@ -280,9 +263,46 @@ void RenderProps(Props* obj) {
             continue; // don't try to draw a model
         }
 
-        if (obj->components[i] & PROP_DOOR)
+        if ((obj->components[i] & PROP_TRIGGERZONE) && !obj->Triggered[i])
         {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                RED
+            );
 
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model   
+        }
+
+        if (obj->triggerType[i] == TRIGGER_TEXT)
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                GREEN
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model
         }
 
             Vector3 scale = obj->size[i];

@@ -304,7 +304,7 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
 
-	AddWarpZone((Vector3) { 0.0f, 0.0f, -2.0f }, (Vector3) { 2.0f, 1.0f, 2.0f }, (Vector3) {-27.5f,5.0f,-60.0f});
+	AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_DEADZONE);
 
 	AddKillFlame((Vector3) { -2.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
@@ -323,13 +323,13 @@ int newWallID = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 0.
     AddKillFlame((Vector3) { 1.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
-    AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    //AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    //AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    //AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
-    AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    //AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    //AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    //AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
