@@ -39,6 +39,7 @@ typedef enum {
 	placed,
     push,
     text,
+    door,
 	rotate_puzzle_block,
     use_ventlid
 } InteractionType;
@@ -100,4 +101,4 @@ void DestroyPlayer();
 // Function pointer to send prop interactions to remote player through the SessionStateController
 extern void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID);  
 
-#endif
+#endif // PLAYER_H

@@ -171,7 +171,7 @@ void AddWarpZone(Vector3 position, Vector3 size, Vector3 Warpposition)
 	CreatePropPrimitive(props, PRIMITIVE_MODEL_WARP, position, size, PURPLE, PROP_VISIBILE);
     int id = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, RED, PROP_VISIBILE | PROP_COLLIDER);
 
-	AddPropComponent(props, id, PROP_WARP);
+	//AddPropComponent(props, id, PROP_WARP);
 	
 	//props->warpPosition[id] = Warpposition;
 

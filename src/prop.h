@@ -23,6 +23,7 @@
 #define PROP_CHECKPOINT (1 << 11)
 #define PROP_VENTLID (1 << 12)
 #define PROP_VENT (1 << 13)
+#define PROP_TRIGGERZONE (1 << 14)
 
 #define PROP_MODEL_PATH_MAX 128
 

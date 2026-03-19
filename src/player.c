@@ -239,14 +239,6 @@ void UpdatePlayer(Props* obj)
 						continue;
 					}
 
-
-					if (obj->components[i] & PROP_WARP)
-					{
-						
-						return;
-
-					}
-
 					// Sliding along wall logic:
 					if (move.x > 0 && // moving toward +X
 						playerBox.max.x > objBox.min.x && // intersecting wall
