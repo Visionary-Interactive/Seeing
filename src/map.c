@@ -55,6 +55,7 @@ void LoadPropTest(Props* props)
         (Vector3){40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, pillar, wTexP,
         (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
     /*
     for (int i = 0; i < 5; i++)
     {
@@ -65,48 +66,49 @@ void LoadPropTest(Props* props)
                 (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
         }
     }
+    */
 
 	int newWallID = CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 	//big room back wall2 leftside
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { -8.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { -18.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { -28.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -8.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -18.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -28.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 	//big room back wall rightside
-	CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 10.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL2, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall2, wTexP,(Vector3) { 10.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-	int newWallID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     //hallway leftside
-	CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -6.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-	CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -6.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -6.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -6.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
     //hallway rightside
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 4.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 4.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 4.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 4.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
 
 
 	//big room leftside
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -33.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -33.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -33.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -33.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { -33.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
 
     //big room rightside
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 30.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 30.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 30.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_WALL, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
     //big room pillar
     CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
@@ -205,7 +207,10 @@ void LoadPropTest(Props* props)
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
 
-	AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_DEADZONE);
+	int zoneID = AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_TEXT);
+	props->text[zoneID] = "I have entered a new area, I wonder if there is anything different here?";
+	props->textType[zoneID] = TEXTBOX_PLAYER;
+
 
 	AddKillFlame((Vector3) { -2.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
@@ -224,13 +229,13 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 1.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
-    //AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    //AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    //AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
-    //AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    //AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    //AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });

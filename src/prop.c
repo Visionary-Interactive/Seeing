@@ -139,13 +139,12 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
     return result;
 }
 
-void AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
+int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 {
     int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, BLANK, PROP_TRIGGERZONE | PROP_VISIBILE);
 
     obj->triggerType[id] = type;
     obj->Triggered[id] = false;
-
 
     return id;
 }

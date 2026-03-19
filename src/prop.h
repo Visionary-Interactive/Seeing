@@ -54,7 +54,8 @@ typedef enum TriggerType {
 	TRIGGER_DEADZONE,
 	TRIGGER_CHECKPOINT,
 	TRIGGER_WARP,
-	TRIGGER_TEXT
+	TRIGGER_TEXT,
+	TRIGGER_IMPAIRMENT
 } TriggerType;
 
 
@@ -103,7 +104,7 @@ void ColliderSetup(Props* obj, int id);
 //rebuilds the collider for a prop based on its model and position
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
 
-void AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type);
+int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type);
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly);
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
