@@ -11,12 +11,6 @@ void CreatePropStructure(void)
     pool = InitParticlePool(512);
 	InitFlameTemplate();
 	template = GetParticleTemplate();
-
-    /*InitParticleEmitter(pool, 20.0f, (Vector3){0.0f, 0.0f, 0.0f}, template, RED);
-	InitParticleEmitter(pool, 20.0f, (Vector3){10.0f, 0.0f, 0.0f}, template, WHITE);
-	InitParticleEmitter(pool, 20.0f, (Vector3){20.0f, 0.0f, 0.0f}, template, YELLOW);
-	InitParticleEmitter(pool, 20.0f, (Vector3){30.0f, 0.0f, 0.0f}, template, GREEN);
-	InitParticleEmitter(pool, 20.0f, (Vector3){40.0f, 0.0f, 0.0f}, template, BLUE);*/
 }
 
 Props* GetPropStructure(void)
@@ -29,7 +23,7 @@ ParticlePool* GetParticlePool(void)
     return pool;
 }
 
-int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color color, uint32_t components) {
+int CreateProp(Props* obj, Model* model, Vector3 position, Vector3 size, Color color, uint32_t components) {
 	if (obj->count >= MAX_PROPS) {
 		return -1; // Max props reached
 	}
@@ -61,46 +55,23 @@ int CreateProp(Props* obj, Model model, Vector3 position, Vector3 size, Color co
 
 int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vector3 size, Color color, uint32_t components)
 {
-    Model model;
-    switch (prim) {
-        case PRIMITIVE_MODEL_CUBE:
-            model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-            break;
-        case PRIMITIVE_MODEL_DOOR:
-            model = LoadModelFromMesh(GenMeshCube(3.0f, 4.0f, 0.5f));
-            break;
-		case PRIMITIVE_MODEL_LENS:
-            model = LoadModelFromMesh(GenMeshSphere(2.0f, 32, 32));
-            break;
-		case PRIMITIVE_MODEL_PLATFORM:
-			model = LoadModelFromMesh(GenMeshCube(4.0f, 0.5f, 4.0f));
-			break;
-		case PRIMITIVE_MODEL_WALL:
-			model = LoadModel("resources/global/models/wall/wall.glb");
-			break;
-        case PRIMITIVE_MODEL_WALL2:
-            model = LoadModel("resources/global/models/wall2/wall2.glb");
-            break;
-		case PRIMITIVE_MODEL_BUTTON:
-			model = LoadModelFromMesh(GenMeshCube(1.0f, 0, 1.0f));
-			break;
-        case PRIMITIVE_MODEL_WARP:
-            model = LoadModelFromMesh(GenMeshCube(2.0f, 0.2f, 2.0f));
-            break;
-        default:
-            return -1;
-    }
+    Model* model = GetCachedPrimitive(prim);
+    if (!model) return -1;
+
     int id = CreateProp(obj, model, position, size, color, components);
     if (id >= 0) obj->prim[id] = prim;
+
     return id;
 }
 
 int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, Vector3 position, Vector3 size, Color color, uint32_t components)
 {
-    Model model = LoadModel(modelPath);
+    Model* model = GetCachedModel(modelPath);
+    if (!model) return -1;
+
     int id = CreateProp(obj, model, position, size, color, components);
-    Texture2D texture = LoadTexture(texPath);
-    obj->model[id].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    Texture2D* tex = GetCachedTexture(texPath);
+    obj->model[id]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = *tex;
     if (id >= 0) {
         strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
         strncpy(obj->texPath[id], texPath, PROP_MODEL_PATH_MAX);
@@ -120,7 +91,7 @@ void CreateLight(Props* obj, int id, Color color, float intensity) {
 void ColliderSetup(Props* obj, int id) {
 	if (id < 0 || id >= obj->count) return;
 	//get the boundingbox from the model, adds scale to it 
-	BoundingBox bb = GetModelBoundingBox(obj->model[id]);
+	BoundingBox bb = GetModelBoundingBox(*obj->model[id]);
 	Vector3 scale = obj->size[id];
 
 	//offsets the box based on the position
@@ -148,7 +119,7 @@ void ColliderSetup(Props* obj, int id) {
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 {
 
-    BoundingBox bb = GetModelBoundingBox(obj->model[id]);
+    BoundingBox bb = GetModelBoundingBox(*obj->model[id]);
     Vector3 scale = obj->size[id];
 
     BoundingBox result;
@@ -184,10 +155,14 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
     if (deadly == true) 
     {
-        CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {position.x-0.5f,position.y,position.z}, (Vector3) { 2.5f, 4.0f,size.z }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE);
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
+        return CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
+            PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE | PROP_VENT);
     }
-    else InitParticleEmitter(pool, 20.0f, position, template, WHITE);
+    else {
+        InitParticleEmitter(pool, 20.0f, position, template, WHITE);
+        return -1;
+    }
 }
 
 
@@ -205,8 +180,6 @@ void AddWarpZone(Vector3 position, Vector3 size, Vector3 Warpposition)
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
 {
-
-    
     for (int i = 0; i < obj->count; i++)
     {
         if (i == id) continue;
@@ -219,9 +192,7 @@ bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
             return true;
         }
     }
-
     return false;
- 
 }
 
 void AddPropComponent(Props* obj, int id, uint32_t componentMask)
@@ -326,7 +297,7 @@ void RenderProps(Props* obj) {
                 
 
             DrawModelEx(
-                obj->model[i],
+                *obj->model[i],
                 obj->position[i],
                 (Vector3) {
                 0.0f, 1.0f, 0.0f
@@ -350,7 +321,7 @@ void RenderLensProps(const Props * obj)
         }
 
         DrawModelEx(
-            obj->model[i],
+            *obj->model[i],
             obj->position[i],
             (Vector3) {
             0.0f, 1.0f, 0.0f
