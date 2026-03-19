@@ -85,17 +85,13 @@ int CreatePropPrimitive(Props* obj, PrimitiveModelId prim, Vector3 position, Vec
 int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, Vector3 position, Vector3 size, Color color, uint32_t components);
 void CreateLight(Props* obj, int id, Color color, float intensity);
 void ColliderSetup(Props* obj, int id);
-//rebuilds the collider for a prop based on its model and position
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 position);
-
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly);
-
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other);
 void AddPropComponent(Props* obj, int id, uint32_t componentMask);
 void RemovePropComponent(Props* obj, int id, uint32_t componentMask);
 void RenderProps(Props* obj);
 void RenderLensProps(const Props* obj);
-
 void RotateProp(Props* obj, int id, Vector3 rotation);
 void ResetProps();
 void DestroyProps(Props* obj);

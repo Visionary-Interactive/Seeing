@@ -330,12 +330,12 @@ void DrawInteractTextBox()
 }
 
 
-void InitTextBox(TextboxType type, const char* text)
+void InitTextBox(TextboxType type, const char* tText)
 {
-	printf("Initializing TextBox of type %d with text: %s\n", type, text);
+	printf("Initializing TextBox of type %d with text: %s\n", type, tText);
     currentTextbox.type = type;
     currentTextbox.active = true;
-    strncpy(currentTextbox.text, text, sizeof(currentTextbox.text));
+    strncpy(currentTextbox.text, tText, sizeof(currentTextbox.text));
 
     if (type == TEXTBOX_PLAYER)
     {
@@ -459,7 +459,7 @@ void InitSaveSlots()
 // Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
-    static MenuScreen lastScreen = menu_main;
+    lastScreen = menu_main;
 	static Vector2 currentMousePos = { 0, 0 };
     currentMousePos = GetMousePosition();
 

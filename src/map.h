@@ -14,15 +14,7 @@
 
 #define MAX_CUBES MAX_MAP_X * MAX_MAP_Y * MAX_MAP_Z
 
-// The idea is that the map is contructed out of voxels for the terrain, and props for everything else (lenses, mirrors, lights, items).
-// As far as what those two structs looks like we still need to figure that out. But the overall structure of the map is something like this.
-
 typedef struct Map {
-    Matrix *transforms;
-    Mesh cubeMesh; //should be pulling textures from the object pool eventually
-    Material matInstances;
-    Material matDefault;
-    int blockCount;
 } Map;
 
 typedef struct PlayerRecord {
@@ -49,12 +41,7 @@ typedef struct PropRecord {
     char texturePath[PROP_MODEL_PATH_MAX];
 } PropRecord;
 
-
-//something like this...
 bool InitMap(Map *map, const char *mapPath);
-void DrawMap(void);//const Map *map);
-//void DrawFloor(void);
-
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);
