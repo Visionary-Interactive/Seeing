@@ -3,7 +3,6 @@
 #include "sound.h"
 #include "map.h"
 
-
 Player* player;
 
 const float gravity = -16.0f; //gravity force
@@ -37,10 +36,8 @@ void InitPlayer()
 	player->checkpoint.position = player->spawnPosition;
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
-;
-memset(player->inventory, 0, sizeof(player->inventory));
+	memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
-
 }
 
 void ManualInitPlayer(Vector3 position, Vector3 velocity, float yaw, float pitch, bool grounded)
@@ -106,25 +103,23 @@ void LocalInputUpdate(InputState* input)
 	else if (player->input.THREE) player->selectedSlot = 2;
 	else if (player->input.FOUR)  player->selectedSlot = 3;
 	else if (player->input.FIVE)  player->selectedSlot = 4;
-
 }
 
 void SetPlayer(Player* p)
 {
 	player = p;
 }
+
 //Updates the player's position and handles input
 void UpdatePlayer(Props* obj)
 {
 	float dt = GetFrameTime();
-
 
 	Vector2 mouseDelta = GetMouseDelta();
 	const float mouseSensitivity = 0.003f;
 	player->yaw -= mouseDelta.x * mouseSensitivity;
 	player->pitch -= mouseDelta.y * mouseSensitivity;
 	player->bottom = player->position.y - player->size.y;
-
 
 	const float pitchLimit = 89.0f * PI/180;
 	if (player->pitch > pitchLimit) player->pitch = pitchLimit;
@@ -133,6 +128,7 @@ void UpdatePlayer(Props* obj)
 	// Clamp pitch to avoid flipping
 	if (player->pitch > PI / 2.0f) player->pitch = PI / 2.0f;
 	if (player->pitch < -PI / 2.0f) player->pitch = -PI / 2.0f;
+
 	// Direction vectors to help with movement
 	Vector3 forward = {
 		sinf(player->yaw),
@@ -172,7 +168,6 @@ void UpdatePlayer(Props* obj)
 
 	// Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
 	//subtract move backwards/right and add to move forwards/left
-	//
 	Vector3 move = { 0 };
 	if (player->input.W) move = Vector3Add(move, forward);
 	if (player->input.S) move = Vector3Subtract(move, forward);
@@ -425,6 +420,7 @@ void RenderPlayer(Player* p, Props* props)
 	}
 }
 
+//this sucks dude!
 static int FindNearestActiveVent(Props* obj, float maxRange)
 {
 	int closestVent = -1;
@@ -712,6 +708,7 @@ void ResetPlayerToSpawn(Player* p)
 
 	player->velocity = (Vector3){ 0 };
 }
+
 void DestroyPlayer()
 {
 	RL_FREE(player);
