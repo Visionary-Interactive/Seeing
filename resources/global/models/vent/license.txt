@@ -1,0 +1,11 @@
+Model Information:
+* title:	Air Vent
+* source:	https://sketchfab.com/3d-models/air-vent-f4be8757222d47b28e593ee079c3c458
+* author:	nathanielmoore (https://sketchfab.com/nathanielmoore)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Air Vent" (https://sketchfab.com/3d-models/air-vent-f4be8757222d47b28e593ee079c3c458) by nathanielmoore (https://sketchfab.com/nathanielmoore) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

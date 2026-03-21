@@ -13,21 +13,9 @@ static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
 {
-    // Pillar
-    /*pillar = LoadModel("resources/global/models/pillar/scene.gltf");
-    Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
-
-    // Book
-    book = LoadModel("resources/global/models/book/scene.gltf");
-    Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
-
-    // Misc
-	chair = LoadModel("resources/assets/chair.glb");*/
-
     pillar = "resources/global/models/pillar/scene.gltf";
     wTexP = "resources/global/models/pillar/textures/Material_baseColor.png";
 
-    // Book
     book = "resources/global/models/book/scene.gltf";
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
     bTexP = "resources/global/models/book/textures/01_-_Default_baseColor.png";
@@ -37,8 +25,6 @@ bool InitMap(Map *map, const char *mapPath)
     wall = "resources/global/models/wall/wall.glb";
     wall2 = "resources/global/models/wall2/wall2.glb";
 
-    //pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-	//book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
 }
 
@@ -251,11 +237,6 @@ void SaveMapFile(Map *map, const char *mapPath)
         rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
-
-    //model path todo
-    /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
-    fwrite(&len, sizeof(uint16_t), 1, f);
-    fwrite(props->modelPath[i], sizeof(char), len, f);*/
 
     fclose(f);
     TraceLog(LOG_INFO, "Map saved successfully.");

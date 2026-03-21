@@ -25,14 +25,14 @@ ParticlePool* GetParticlePool(void)
 
 int CreateProp(Props* obj, Model* model, Vector3 position, Vector3 size, Color color, uint32_t components) {
 	if (obj->count >= MAX_PROPS) {
-		return -1; // Max props reached
+		return -1; //max props reached
 	}
 	int id = obj->count++;
 	obj->position[id] = position;
 	obj->size[id] = size;
 	obj->model[id] = model;
 	obj->color[id] = color;
-	obj->rotation[id] = (Vector3){ 0.0f, 0.0f, 0.0f }; // Default rotation
+	obj->rotation[id] = (Vector3){ 0.0f, 0.0f, 0.0f }; //default rotation
     obj->interactRange[id] = (Vector3){
     obj->size[id].x + 2.0f,
     obj->size[id].y + 2.0f,
@@ -41,7 +41,7 @@ int CreateProp(Props* obj, Model* model, Vector3 position, Vector3 size, Color c
 
 	//set up collider code based on model
 	ColliderSetup(obj, id);
-	obj->components[id] = components; // Default components
+	obj->components[id] = components; //default components
 	obj->prim[id] = NO_PRIM;
 	obj->text[id] = NULL;
 	obj->textType[id] = TEXTBOX_NONE;
