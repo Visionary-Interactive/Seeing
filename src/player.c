@@ -336,10 +336,13 @@ void RenderPlayer(Player* p, Props* props)
 	// Animations
 	ModelAnimation anim;
 	int animState = 0; // Default to idle
-	if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
-		animState = 1; // Interact
-	else if (p->input.R || p->animData.animFrame[2] > 0)
-		animState = 2; // Place
+	if (!p->remotePlayer)
+	{
+		if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+			animState = 1; // Interact
+		else if (p->input.R || p->animData.animFrame[2] > 0)
+			animState = 2; // Place
+	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
 
@@ -657,7 +660,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			return false;
 		}
 		Vector3 newPos = Vector3Add(obj->position[propID], moveAmount);
-		PlaySound(pushBoulder);
+		if (!player->remotePlayer)
+			PlaySound(pushBoulder);
 		// Notify prop to move towards new position over time in the render update
 		snprintf(obj->text[propID], 255, "%d,%d",
 						(int)newPos.x,
@@ -666,7 +670,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	else if (interaction == rotate_puzzle_block)
 	{
 		obj->rotation[propID].y += 5.0f;
-		PlaySound(rotatingPuzzleBlock);
+		if (!player->remotePlayer)
+			PlaySound(rotatingPuzzleBlock);
 		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
 
