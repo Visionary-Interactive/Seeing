@@ -15,6 +15,7 @@
 #define MAX_CUBES MAX_MAP_X * MAX_MAP_Y * MAX_MAP_Z
 
 typedef struct Map {
+	char temp; // Placeholder member to allow an empty struct definition
 } Map;
 
 typedef struct PlayerRecord {
