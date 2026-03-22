@@ -428,8 +428,7 @@ static int FindNearestActiveVent(Props* obj, float maxRange)
 
 	for (size_t i = 0; i < obj->count; i++)
 	{
-		if ((obj->components[i] & PROP_VENT) &&
-		    (obj->components[i] & PROP_DEADZONE))
+		if ((obj->components[i] & PROP_VENT))
 		{
 			float dist = Vector3Distance(player->position, obj->position[i]);
 			if (dist < closestDist)

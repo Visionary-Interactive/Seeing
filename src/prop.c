@@ -114,7 +114,6 @@ void ColliderSetup(Props* obj, int id) {
 //rebuild the collider for a prop based on its model and position, used for moving props and updating their colliders
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 {
-
     BoundingBox bb = GetModelBoundingBox(*obj->model[id]);
     Vector3 scale = obj->size[id];
 
@@ -140,11 +139,19 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
     if (deadly == true) 
     {
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
+        CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", 
+            "resources/global/models/vent/textures/Material_baseColor.png", (Vector3){position.x, position.y + 0.2f, position.z}, size, WHITE, 
+            PROP_VISIBILE | PROP_VENT);
+        
         return CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
-            PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE | PROP_VENT);
+            PROP_COLLIDER | PROP_DEADZONE);
+        
     }
     else {
         InitParticleEmitter(pool, 20.0f, position, template, WHITE);
+        CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", 
+            "resources/global/models/vent/textures/Material_baseColor.png", (Vector3){position.x, position.y + 0.2f, position.z}, size, WHITE, 
+            PROP_VISIBILE | PROP_VENT);
         return -1;
     }
 }
