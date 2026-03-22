@@ -13,21 +13,9 @@ static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
 {
-    // Pillar
-    /*pillar = LoadModel("resources/global/models/pillar/scene.gltf");
-    Texture2D texture = LoadTexture("resources/global/models/pillar/textures/Material_baseColor.png");
-
-    // Book
-    book = LoadModel("resources/global/models/book/scene.gltf");
-    Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
-
-    // Misc
-	chair = LoadModel("resources/assets/chair.glb");*/
-
     pillar = "resources/global/models/pillar/scene.gltf";
     wTexP = "resources/global/models/pillar/textures/Material_baseColor.png";
 
-    // Book
     book = "resources/global/models/book/scene.gltf";
     Texture2D bookTexture = LoadTexture("resources/global/models/book/textures/01_-_Default_baseColor.png");
     bTexP = "resources/global/models/book/textures/01_-_Default_baseColor.png";
@@ -37,8 +25,6 @@ bool InitMap(Map *map, const char *mapPath)
     wall = "resources/global/models/wall/wall.glb";
     wall2 = "resources/global/models/wall2/wall2.glb";
 
-    //pillar.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-	//book.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     return true;
 }
 
@@ -66,103 +52,6 @@ void LoadPropTest(Props* props)
                 (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
         }
     }
-    /*int puzzle = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {5.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    
-    puzzle = CreateProp(props,(Vector3) {3.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {-1.0f, 10.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props, (Vector3) {-3.0f, 10.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
-    puzzle = CreateProp(props, (Vector3) {5.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {3.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), YELLOW, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {1.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {-1.0f, 8.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props, (Vector3) {-3.0f, 8.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
-    puzzle = CreateProp(props, (Vector3) {5.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {3.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {1.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {-1.0f, 6.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props, (Vector3) {-3.0f, 6.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
-    puzzle = CreateProp(props, (Vector3) {5.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {3.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), RED, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {1.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), PURPLE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {-1.0f, 4.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), YELLOW, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props, (Vector3) {-3.0f, 4.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-    puzzle = CreateProp(props, (Vector3) {5.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {3.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props,(Vector3) {-1.0f, 2.0f, 10.0f},(Vector3) {1.0, 1.0, 1.0},LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), GREEN, PROP_VISIBILE | PROP_COLLIDER);
-    puzzle = CreateProp(props, (Vector3) {-3.0f, 2.0f, 10.0f}, (Vector3) {1.0, 1.0, 1.0}, LoadModelFromMesh(GenMeshCube(1.0, 1.0, 1.0)), BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
-	//Create the door PROP to interact with
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR,
-        (Vector3) {
-        -4.0f, 2.0f, -10.0f
-    },
-        (Vector3) {
-        1.0, 1.0, 1.0
-    }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {-4.0f, 2.0f, -10.0f},
-		(Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {0.0f, 2.0f, -10.0f},
-    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) {4.0f, 2.0f, -10.0f},
-    (Vector3) {1.0f, 1.0f, 1.0f}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
-    props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
-
-    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, 
-        (Vector3) {-2.0f, 1.0f, -5.0f}, 
-		(Vector3) {
-		1.0f, 1.5f, 1.0f
-	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
-
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 0.0f, 2.0f, -10.0f },
-        (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
-
-    doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 4.0f, 2.0f, -10.0f },
-        (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
-    props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
-
-	int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -10.0f, 2.0f, -5.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-	props->interactType[pushCubeID] = INTERACTABLE_PUSH;
-
-	int pickupID = CreateProp(props, book, 
-        (Vector3) {-10, 1.0, 0}, (Vector3) {0.03, 0.03, 0.03}, 
-        WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_TEXT; //this also sucks
-
-    int pickupID2 = CreateProp(props, book,
-        (Vector3) {
-        -15, 1.0, 0
-    }, (Vector3) { 0.03, 0.03, 0.03 },
-            RED, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
-    props->interactType[pickupID2] = INTERACTABLE_PICKUP;
-
-    int pickupID3 = CreateProp(props, book,
-        (Vector3) {
-        -25, 1.0, 0
-    }, (Vector3) { 0.03, 0.03, 0.03 },
-            GREEN, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
-    props->interactType[pickupID3] = INTERACTABLE_PICKUP;
-
-    Vector3 lensPos  = (Vector3){ 30.0f, 2.0f, 40.0f };
-    Vector3 lensSize = (Vector3){ 2.0f, 4.0f, 2.0f };
-    CreateLensProp(props, lensPos, lensSize);
-
-    
-*/
-
 
 	int newWallID = CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 	//big room back wall2 leftside
@@ -301,6 +190,13 @@ void LoadPropTest(Props* props)
 		0.5f, 0.5f, 0.5f
 	}, PURPLE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE);
 	props->interactType[testCube] = INTERACTABLE_PICKUP;
+
+    AddKillFlame((Vector3){20.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, true);
+	AddKillFlame((Vector3){30.0f, 0.0f, 0.0f}, (Vector3){1.0f, 1.0f, 1.0f}, false);
+
+    testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {40.0f, 1.8f, 0.0f}, 
+        (Vector3) {1.0f, 1.0f, 1.0f}, RAYWHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE | PROP_VENTLID);
+	props->interactType[testCube] = INTERACTABLE_PICKUP;
 }
 
 void SaveMapFile(Map *map, const char *mapPath)
@@ -348,11 +244,6 @@ void SaveMapFile(Map *map, const char *mapPath)
         rec.texturePath[PROP_MODEL_PATH_MAX - 1] = '\0';
         fwrite(&rec, sizeof(PropRecord), 1, f);
     }
-
-    //model path todo
-    /*uint16_t len = (uint16_t)strlen(props->modelPath[i]);
-    fwrite(&len, sizeof(uint16_t), 1, f);
-    fwrite(props->modelPath[i], sizeof(char), len, f);*/
 
     fclose(f);
     TraceLog(LOG_INFO, "Map saved successfully.");
@@ -468,7 +359,7 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
     }
 
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    return CreateProp(props, fallback, rec->position, rec->size, rec->color, rec->components);
+    return CreateProp(props, &fallback, rec->position, rec->size, rec->color, rec->components);
 }
 
 
