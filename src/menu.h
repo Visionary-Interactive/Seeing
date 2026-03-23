@@ -42,7 +42,7 @@ typedef struct TextBox
 	float duration;
 } TextBox;
 
-
+void LoadMenuElements();
 void DrawMenu();
 void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);

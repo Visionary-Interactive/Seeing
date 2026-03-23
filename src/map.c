@@ -651,26 +651,6 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 
     if (rec->prim == NO_PRIM && rec->modelPath[0] != '\0')
     {
-        /*Model model = LoadModel(rec->modelPath);
-        if (&model == NULL)
-        {
-            TraceLog(LOG_WARNING, "Failed to load model '%s'. Using fallback cube.", rec->modelPath);
-            model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-        }
-        else if (rec->texturePath[0] != '\0')
-        {
-            Texture2D tex = LoadTexture(rec->texturePath);
-            if (&tex == NULL)
-            {
-                model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
-            }
-            else
-            {
-                TraceLog(LOG_WARNING, "Failed to load texture '%s' for model '%s'.", rec->texturePath, rec->modelPath);
-            }
-        }
-
-        props->model[props->count] = model;*/
         int id = CreatePropFromPath(props, rec->modelPath, rec->texturePath, rec->position, rec->size, rec->color, rec->components);
         if (id >= 0)
         {
@@ -694,7 +674,7 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
     }
 
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    return CreateProp(props, &fallback, rec->position, rec->size, rec->color, rec->components);
+    return CreateProp(props, &fallback, rec->position, rec->size, PURPLE, rec->components);
 }
 
 
