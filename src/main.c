@@ -61,6 +61,8 @@ int main(int argc, char** argv)
 
 	int swap = 0;
 
+	float intensity = 0;
+
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
 		float dt = GetFrameTime();
@@ -72,7 +74,7 @@ int main(int argc, char** argv)
 		{
 			swap = playerList[0]->pendingImpairment;
 
-			float intensity = 0.5;
+			intensity = playerList[0]->activeImpairmentIntensity;
 
 
 
@@ -99,7 +101,7 @@ int main(int argc, char** argv)
 		}
 
 		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, GetParticlePool());
-		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
+		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, intensity,screenWidth, screenHeight);
 	}
 
 	SaveMapFile(&gameMap, "resources/maps/pz_1");

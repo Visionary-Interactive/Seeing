@@ -17,13 +17,13 @@
 #include "particleEmitter.h"
 #include "particlePool.h"
 
-static void UpdateSceneImpairments(void);
+static void UpdateSceneImpairments(float intensity);
 void DestroySceneImpairments(void);
 
 void InitSceneImpairments(int screenWidth, int screenHeight);
 void DestroySceneImpairments(void);
 
 void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, ParticlePool* pool);
-void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, int screenWidth, int screenHeight);
+void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, float intensity,int screenWidth, int screenHeight);
 
 #endif

@@ -38,6 +38,7 @@ void InitPlayer()
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
 	player->activeImpairment = 0;
+	player->activeImpairmentIntensity = 0.0f
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -636,9 +637,10 @@ void CheckTriggers(Props* obj)
 			}
 			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
 			{
+				printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				//IncreaseImpairmentIntensity();
+				player->activeImpairmentIntensity = 0.5f; // Example intensity
 			}
 
 		}

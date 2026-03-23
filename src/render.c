@@ -22,12 +22,12 @@ void InitSceneImpairments(int screenWidth, int screenHeight)
 	glaucoma = LoadImpairment(Glaucoma, screenWidth, screenHeight);
 }
 
-static void UpdateSceneImpairments(void)
+static void UpdateSceneImpairments(float intensity)
 {
-	if (tritanopia) UpdateImpairment(tritanopia);
-	if (astigmatism) UpdateImpairment(astigmatism);
-	if (glaucoma) UpdateImpairment(glaucoma);
-	if (convex) UpdateImpairment(convex);
+	if (tritanopia) UpdateImpairment(tritanopia, intensity);
+	if (astigmatism) UpdateImpairment(astigmatism, intensity);
+	if (glaucoma) UpdateImpairment(glaucoma, intensity);
+	if (convex) UpdateImpairment(convex, intensity);
 }
 
 void DestroySceneImpairments(void)
@@ -74,14 +74,14 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
     EndTextureMode();
 }
 
-void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, int screenWidth, int screenHeight)
+void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, float intensity,int screenWidth, int screenHeight)
 {
 	BeginDrawing();
 	ClearBackground(WHITE);
 
 	if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
 	{
-		UpdateSceneImpairments();
+		UpdateSceneImpairments(intensity);
 
 		if (swap == 0 && tritanopia) BeginImpairment(tritanopia);
 		else if (swap == 1 && glaucoma) BeginImpairment(glaucoma);

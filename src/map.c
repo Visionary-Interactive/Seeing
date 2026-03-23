@@ -177,6 +177,15 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -28.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -18.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -8.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 2.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 12.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 22.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 32.0f, 0.0f, -57.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+
     //hallway leftside
     int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 54.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
 	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
@@ -195,7 +204,7 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    //CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
 
 
 
@@ -269,30 +278,30 @@ void LoadPropTest(Props* props)
 
 
 
-    int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 1.5f, -45.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    int pushCubeID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 12, 1.5f, -55.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -20.0f, 1.5f, -53.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    int pushCubeID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 17, 1.5f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
     props->interactType[pushCubeID] = INTERACTABLE_PUSH;
     props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 
 	//starting platform for first room
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
-        -27.5, 1.5f, -60.0f
+        -29, 1.5f, -56.0f
     },
         (Vector3) {
         1.0f, 1.5f, 1.0f
     }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
 
-   //middle platform with book
+   //End platform
     CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
-        29.0f, 3.5f, -60.0f
+        29.0f, 3.5f, -56.0f
     },
         (Vector3) {
         1.0f, 1.5f, 1.0f
-    }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+    }, PURPLE, PROP_VISIBILE | PROP_COLLIDER);
 
-    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -60.0f },
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -57.0f },
         (Vector3) {
         1.0f, 1.0f, 1.0f
     }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
@@ -308,13 +317,13 @@ void LoadPropTest(Props* props)
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
 
-	//int zoneID = AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_IMPAIRMENT);
+	int zoneID = AddZone(props, (Vector3) { -15.0f, 0.0f, 50.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_IMPAIRMENT);
 	//props->text[zoneID] = "I have entered a new area, I wonder if there is anything different here?";
 	//props->textType[zoneID] = TEXTBOX_PLAYER;
-	//props->ImpairmentType[zoneID] = 1;
+	props->ImpairmentType[zoneID] = 0;
 
-	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
-	props->warpTarget[warpID] = (Vector3){ -27.0f, 4.0f, -60.0f };
+	int warpID = AddZone(props, (Vector3) { 1.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
+	props->warpTarget[warpID] = (Vector3){ -29.0f, 4.0f, -54.0f };
    
 
     //fires for hallway puzzle
@@ -344,47 +353,46 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
     //fires for main room puzzle
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) {  18.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
 
 

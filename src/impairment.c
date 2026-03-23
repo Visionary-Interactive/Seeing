@@ -143,13 +143,15 @@ void IncreaseImpairmentIntensity(Impairment *im)
     im->intensity += 0.5f;
 }
 
-void UpdateImpairment(Impairment *im)
+void UpdateImpairment(Impairment *im, float intensity)
 {
     if (!im) return;
 
     //universal controls
     if (IsKeyDown(KEY_UP))    im->intensity += 0.01f;
     if (IsKeyDown(KEY_DOWN))  im->intensity -= 0.01f;
+
+	im->intensity += intensity;
 
     if (im->type == Astigmatism)
     {
