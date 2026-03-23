@@ -50,8 +50,9 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 
-	InitSaveSlots();
+	//InitSaveSlots();
 	LoadPropTest(props);
+	//LoadLevel2(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
@@ -66,6 +67,19 @@ int main(int argc, char** argv)
 		if (IsKeyDown(KEY_LEFT_BRACKET)) swap = 0;
         if (IsKeyDown(KEY_RIGHT_BRACKET)) swap = 1;
 		if (IsKeyDown(KEY_APOSTROPHE)) swap = 2;
+
+		if (playerList[0]->pendingImpairment != -1)
+		{
+			swap = playerList[0]->pendingImpairment;
+
+			float intensity = 0.5;
+
+
+
+			playerList[0]->pendingImpairment = -1; // reset		
+
+
+		}
 
 		MenuScreen currentScreen = GetCurrentScreen();
 		if (multiplayerSession) SessionStateController_Tick(isServer); // Networking tick

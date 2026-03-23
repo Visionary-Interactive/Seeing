@@ -15,6 +15,7 @@
 #define MAX_CUBES MAX_MAP_X * MAX_MAP_Y * MAX_MAP_Z
 
 typedef struct Map {
+	char temp; // Placeholder member to allow an empty struct definition
 } Map;
 
 typedef struct PlayerRecord {
@@ -45,6 +46,14 @@ bool InitMap(Map *map, const char *mapPath);
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);
+
+void LoadLevel2(Props* props);
+
+void GenerateCubePuzzle(Props* props, int count,
+    float minX, float maxX,
+    float minZ, float maxZ,
+    Vector3 size, Color color, uint32_t components);
+
 void LoadMapFile(Map *map, const char *mapPath);
 void LoadMapProgress(Map *map, Player *player, const char *mapPath);
 void UnloadMap(Map *map);

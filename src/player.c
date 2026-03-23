@@ -18,13 +18,14 @@ void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlo
 void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
-	player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
+	player->position = (Vector3){ 0.0f, 1.8f, 47.0f };
+	//player->position = (Vector3){ -12.0f, 1.8f, 5.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
 	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
-	player->speed = 8.0f;
+	player->speed = 7.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
@@ -36,7 +37,9 @@ void InitPlayer()
 	player->checkpoint.position = player->spawnPosition;
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
-	memset(player->inventory, 0, sizeof(player->inventory));
+	player->activeImpairment = 0;
+
+memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 }
 
@@ -149,8 +152,8 @@ void UpdatePlayer(Props* obj)
 	}
 
 	// Sprint
-	if (player->input.SHIFT) player->speed = 16.0f;
-	else player->speed = 8.0f; // Normal speed
+	if (player->input.SHIFT) player->speed = 10.0f;
+	else player->speed = 7.0f; // Normal speed
 
 	if (player->input.SPACE && player->isGrounded)
 	{
@@ -206,6 +209,7 @@ void UpdatePlayer(Props* obj)
 					continue; // deadzones do not block movement
 				}
 
+
 				// Collision Detection
 				if (CheckCollisionBoxes(playerBox, objBox))
 				{
@@ -217,11 +221,8 @@ void UpdatePlayer(Props* obj)
 					float prevFeetY = player->bottom;
 
 					// Platform collision check
-					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE)
-					{
-						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
-							break;
-					}
+					if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
+						break;
 
 					if (obj->components[i] & PROP_CHECKPOINT)
 					{
@@ -293,6 +294,7 @@ void UpdatePlayer(Props* obj)
 		player->velocity.y = 0.0f;
 		player->isGrounded = true;
 	}
+	CheckTriggers(obj);
 
 }
 
@@ -339,10 +341,13 @@ void RenderPlayer(Player* p, Props* props)
 	// Animations
 	ModelAnimation anim;
 	int animState = 0; // Default to idle
-	if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
-		animState = 1; // Interact
-	else if (p->input.R || p->animData.animFrame[2] > 0)
-		animState = 2; // Place
+	if (!p->remotePlayer)
+	{
+		if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+			animState = 1; // Interact
+		else if (p->input.R || p->animData.animFrame[2] > 0)
+			animState = 2; // Place
+	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
 
@@ -478,7 +483,7 @@ void UpdateInteractions(Props* obj)
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
-				RequestExit();
+				PlayerPropInteraction(obj, door, NULL, closestID);
 				break;
 
 			case INTERACTABLE_PICKUP:
@@ -592,6 +597,53 @@ Vector3 GetCardinalDirection(Vector3 forward)
 	return dir;
 }
 
+void CheckTriggers(Props* obj)
+{
+	BoundingBox playerBox = GetPlayerCollision(player->position); //update player bounding box
+	for (size_t i = 0; i < obj->count; i++)
+	{
+		if (!(obj->components[i] & PROP_TRIGGERZONE)) continue;
+
+		BoundingBox objBox = obj->collider[i];
+
+		if (CheckCollisionBoxes(playerBox, objBox))
+		{
+			printf("Player entered Triggerzone!\n");
+
+			// Example behaviors
+			if (obj->triggerType[i] == TRIGGER_WARP)
+			{
+				player->position = obj->warpTarget[i]; // Warp player to prop position
+				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
+			}
+			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
+			{
+				ResetPlayerToSpawn(player);
+				printf("Deadzone Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
+			{
+				ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
+				printf("Checkpoint Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_TEXT && obj->Triggered[i] == false)
+			{
+				InitTextBox(obj->textType[i], obj->text[i]);
+				obj->Triggered[i] = true; // Prevent retriggering if desired
+				printf("Triggered text box: %s\n", obj->text[i]);
+			}
+			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
+			{
+				//obj->Triggered[i] = true;
+				player->pendingImpairment = obj->ImpairmentType[i];
+				//IncreaseImpairmentIntensity();
+			}
+
+		}
+	}
+}
+
+
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)
@@ -605,6 +657,11 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->components[propID] &= ~PROP_COLLIDER;
 
 		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
+	}
+	if (interaction == door)
+	{
+		RequestExit();
+
 	}
 	else if (interaction == text)
 	{
@@ -633,6 +690,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == push)
 	{
+		player->velocity.y += 0.001f; // Small movement to trigger collision check
 		printf("Pushing prop %d\n", propID);
 		Vector3 playerForward = (Vector3){
 			sinf(player->yaw),
@@ -658,11 +716,19 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			printf("Cannot push prop %d, player is in the way!\n", propID);
 			return false;
 		}
-		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
-		ColliderSetup(obj, propID);
+		Vector3 newPos = Vector3Add(obj->position[propID], moveAmount);
+		if (!player->remotePlayer)
+			PlaySound(pushBoulder);
+		// Notify prop to move towards new position over time in the render update
+		snprintf(obj->text[propID], 255, "%d,%d",
+						(int)newPos.x,
+						(int)newPos.z);
 	}
 	else if (interaction == rotate_puzzle_block)
 	{
+		obj->rotation[propID].y += 5.0f;
+		if (!player->remotePlayer)
+			PlaySound(rotatingPuzzleBlock);
 		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
 

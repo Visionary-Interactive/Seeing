@@ -11,6 +11,7 @@
 #include "prop.h"
 #include "menu.h"
 #include "sessionManager.h"
+#include "impairment.h"
 
 typedef struct InputState {
     bool W;
@@ -39,6 +40,7 @@ typedef enum {
 	placed,
     push,
     text,
+    door,
 	rotate_puzzle_block,
     use_ventlid
 } InteractionType;
@@ -77,6 +79,9 @@ typedef struct Player {
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
     Checkpoint checkpoint;
+    int activeImpairment;
+    int pendingImpairment;
+	float activeImpairmentIntensity;
 } Player;
 
 extern Player* playerList[MAX_PLAYERS];
@@ -87,6 +92,8 @@ void LocalInputUpdate(struct InputState *input);
 void SetPlayer(Player* p);
 void UpdatePlayer(Props* obj);
 void UpdateInteractions(Props* obj);
+
+void CheckTriggers(Props* obj);
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID);
 BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
@@ -97,4 +104,4 @@ void DestroyPlayer();
 // Function pointer to send prop interactions to remote player through the SessionStateController
 extern void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID);  
 
-#endif
+#endif // PLAYER_H
