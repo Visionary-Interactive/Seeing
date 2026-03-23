@@ -19,6 +19,7 @@ void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
 	player->position = (Vector3){ 0.0f, 1.8f, 47.0f };
+	//player->position = (Vector3){ -12.0f, 1.8f, 5.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);

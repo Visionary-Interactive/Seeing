@@ -92,13 +92,12 @@ void CreateLight(Props* obj, int id, Color color, float intensity) {
 }
 
 void ColliderSetup(Props* obj, int id) {
-	if (id < 0 || id >= obj->count) return;
-	//get the boundingbox from the model, adds scale to it 
-	BoundingBox bb = GetModelBoundingBox(*obj->model[id]);
-	Vector3 scale = obj->size[id];
+    if (id < 0 || id >= obj->count) return;
 
-	//offsets the box based on the position
-	Vector3 center = Vector3Scale(Vector3Add(bb.min, bb.max), 0.5f);
+    BoundingBox bb = GetModelBoundingBox(*obj->model[id]);
+    Vector3 scale = obj->size[id];
+
+    Vector3 center = Vector3Scale(Vector3Add(bb.min, bb.max), 0.5f);
     Vector3 halfExtents = Vector3Scale(Vector3Subtract(bb.max, bb.min), 0.5f);
 
     Vector3 scaledCenter = {
@@ -106,18 +105,27 @@ void ColliderSetup(Props* obj, int id) {
         center.y * scale.y,
         center.z * scale.z
     };
-
     Vector3 scaledHalf = {
         fabsf(halfExtents.x * scale.x),
         fabsf(halfExtents.y * scale.y),
         fabsf(halfExtents.z * scale.z)
     };
 
-    Vector3 worldCenter = Vector3Add(obj->position[id], scaledCenter);
-    obj->collider[id].min = Vector3Subtract(worldCenter, scaledHalf);
-    obj->collider[id].max = Vector3Add(worldCenter, scaledHalf);
+    Matrix rot = MatrixRotateXYZ(obj->rotation[id]);
 
+    Vector3 rotatedCenter = Vector3Transform(scaledCenter, rot);
+
+    Vector3 rotatedHalf = {
+        fabsf(rot.m0)*scaledHalf.x + fabsf(rot.m4)*scaledHalf.y + fabsf(rot.m8) *scaledHalf.z,
+        fabsf(rot.m1)*scaledHalf.x + fabsf(rot.m5)*scaledHalf.y + fabsf(rot.m9) *scaledHalf.z,
+        fabsf(rot.m2)*scaledHalf.x + fabsf(rot.m6)*scaledHalf.y + fabsf(rot.m10)*scaledHalf.z,
+    };
+
+    Vector3 worldCenter = Vector3Add(obj->position[id], rotatedCenter); // was scaledCenter
+    obj->collider[id].min = Vector3Subtract(worldCenter, rotatedHalf);  // was scaledHalf
+    obj->collider[id].max = Vector3Add(worldCenter, rotatedHalf);        // was scaledHalf
 }
+
 //rebuild the collider for a prop based on its model and position, used for moving props and updating their colliders
 BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 {
@@ -354,15 +362,23 @@ void RenderProps(Props* obj) {
 			}
 
             DrawModelEx(
-                *obj->model[i],
-                obj->position[i],
-                (Vector3) {
-                0.0f, 1.0f, 0.0f
-            }, //rot axis
-                obj->rotation[i].y, //rot angle
-                scale,
-                obj->color[i]
-            );
+    *obj->model[i],
+    obj->position[i],
+    (Vector3){0, 1, 0},
+    obj->rotation[i].y * RAD2DEG,
+    obj->size[i],
+    obj->color[i]
+);
+            //DrawModelEx(
+            //    *obj->model[i],
+            //    obj->position[i],
+            //    (Vector3) {
+            //    0.0f, 1.0f, 0.0f
+            //}, //rot axis
+            //    obj->rotation[i].y, //rot angle
+            //    scale,
+            //    obj->color[i]
+            //);
     }
 }
 

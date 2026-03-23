@@ -7,7 +7,7 @@
 #include "modelPool.h"
 #include "texturePool.h"
 
-#define MAX_PROPS 128
+#define MAX_PROPS 256
 #define MAX_TEXT_LENGTH 512
 #define PROP_VISIBILE (1 << 0)
 #define PROP_LIGHT (1 << 1)
@@ -25,7 +25,7 @@
 #define PROP_VENT (1 << 13)
 #define PROP_TRIGGERZONE (1 << 14)
 
-#define PROP_MODEL_PATH_MAX 128
+#define PROP_MODEL_PATH_MAX 256
 
 typedef enum PrimitiveModelId {
 	NO_PRIM = 0,
@@ -65,7 +65,7 @@ typedef struct Props {
 	//core features
 	Vector3 position[MAX_PROPS];
 	Vector3 size[MAX_PROPS];
-	Vector3 rotation[MAX_PROPS];
+	Vector3 rotation[MAX_PROPS]; // RADIAN
 	Model* model[MAX_PROPS];
 	Color color[MAX_PROPS];
 	Vector3 interactRange[MAX_PROPS];
