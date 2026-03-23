@@ -46,7 +46,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
     if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
     {
         BeginTextureMode(sceneColorRT);
-        ClearBackground(RAYWHITE);
+        ClearBackground(((Color){255,242,195,255}));
 
         BeginMode3D(*camera);
 			rlDisableBackfaceCulling();
@@ -65,19 +65,19 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
         EndMode3D();
         EndTextureMode();
 
-        if ((currentScreen == menu_game && IsKeyPressed(KEY_ESCAPE)) || (currentScreen == menu_editor && IsKeyPressed(KEY_ESCAPE))) SetCurrentScreen(menu_game_paused);
+        if ((currentScreen == menu_game && IsKeyPressed(KEY_ESCAPE)) ||
+			(currentScreen == menu_editor && IsKeyPressed(KEY_ESCAPE))) SetCurrentScreen(menu_game_paused);
         return;
     }
 
     BeginTextureMode(sceneColorRT);
-    ClearBackground(BLACK);
     EndTextureMode();
 }
 
 void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Camera* camera, Props* props, int swap, int screenWidth, int screenHeight)
 {
 	BeginDrawing();
-	ClearBackground(WHITE);
+	ClearBackground(((Color){255,250,234,255}));
 
 	if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
 	{

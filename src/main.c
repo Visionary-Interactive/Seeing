@@ -24,6 +24,8 @@ int main(int argc, char** argv)
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
 
+	LoadMenuElements();
+
 	InitModelCache();
 	InitSoundSystem();
 

@@ -10,7 +10,7 @@
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
 Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
 Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
-Button editorButton = { { 100, 400, 200, 50 }, "Level Editor" };
+Button compendiumButton = { { 100, 400, 200, 50 }, "Compendium" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
 Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
@@ -23,6 +23,8 @@ Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
 
+#define HOVER_ANIM_SPEED 0.15f
+
 Button saveSlots[SAVE_SLOT_COUNT];
 
 Rectangle ipAddressText = { 400, 200, 200, 50 };
@@ -33,13 +35,54 @@ static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen;
 static bool gExitRequested = false;
 static TextBox currentTextbox = { 0 };
+static Texture2D flammarion;
+static Font greatVibes;
+static Font romanica;
+static Texture2D buttonTex;
+static Rectangle buttonSrcNormal;
+static Rectangle buttonSrcHover;
+
+static Texture2D hoverAnimTex;
+static Rectangle hoverFrames[3];
+static int hoverFrameCount = 3;
+
+static float hoverAnimTimer = 0.0f;
+static int hoverFrameIndex = 0;
 
 static void CenterButton(Button* button, float y)
 {
     float screenWidth = (float)GetScreenWidth();
 
-    button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
+    button->bounds.x = screenWidth * 0.80f - button->bounds.width * 0.5f;
     button->bounds.y = y;
+}
+
+void LoadMenuElements()
+{
+    greatVibes = LoadFontEx("resources/global/fonts/greatvibes/GreatVibes-Regular.ttf", 128, NULL, 0);
+    romanica = LoadFontEx("resources/global/fonts/romanica/Romanica.ttf", 128, NULL, 0);
+    flammarion = LoadTexture("resources/global/tex/flammarion.png");
+    buttonTex = LoadTexture("resources/global/tex/seeingButton.png");
+    hoverAnimTex = LoadTexture("resources/global/tex/seeingButtonSketch.png");
+
+    int frameWidth = hoverAnimTex.width;
+    int frameHeight = hoverAnimTex.height / hoverFrameCount;
+
+    for (int i = 0; i < hoverFrameCount; i++)
+    {
+        hoverFrames[i] = (Rectangle){
+            0,
+            i * frameHeight,
+            frameWidth,
+            frameHeight
+        };
+    }
+
+    buttonSrcNormal = (Rectangle){ 0, 0, buttonTex.width, buttonTex.height / 2 };
+    buttonSrcHover  = (Rectangle){ 0, buttonTex.height / 2, buttonTex.width, buttonTex.height / 2 };
+
+    SetTextureFilter(buttonTex, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(greatVibes.texture, TEXTURE_FILTER_BILINEAR);
 }
 
 // Draws the current menu screen based on the current state
@@ -51,24 +94,24 @@ void DrawMenu()
     {
     case menu_main:
     {
-        
         float screenW = GetScreenWidth();
         float screenH = GetScreenHeight();
 
-        float buttonHeight = 50;
+        float buttonHeight = 100;
         float spacing = 20;
         float totalHeight = (6 * buttonHeight) + (5 * spacing);
 
         float startY = screenH * 0.5f - totalHeight * 0.5f;
 
-        // Center title
-        const char* title = "The Delian Problem";
-        int titleWidth = MeasureText(title, 40);
-        DrawText(title, screenW * 0.5f - titleWidth * 0.5f, 80, 40, BLACK);
+        DrawTextureEx(flammarion, (Vector2){150, GetScreenHeight() * 0.2f},
+            0.0f, 0.4f, WHITE
+        );
+
+        DrawTextEx(greatVibes, "The Delian Problem", (Vector2){screenW * 0.125f, screenH * 0.05f}, 128.0f, 0.0f, BLACK);
 
         CenterButton(&levelButton, startY + 0 * (buttonHeight + spacing));
         CenterButton(&saveButton, startY + 1 * (buttonHeight + spacing));
-        CenterButton(&editorButton, startY + 2 * (buttonHeight + spacing));
+        CenterButton(&compendiumButton, startY + 2 * (buttonHeight + spacing));
         CenterButton(&multiMenuButton, startY + 3 * (buttonHeight + spacing));
         CenterButton(&optionsButton, startY + 4 * (buttonHeight + spacing));
         CenterButton(&exitButton, startY + 5 * (buttonHeight + spacing));
@@ -78,7 +121,7 @@ void DrawMenu()
 		StopSound(level1Music);
         DrawButton(levelButton, DARKGRAY);
         DrawButton(saveButton, DARKGRAY);
-        DrawButton(editorButton, DARKGRAY);
+        DrawButton(compendiumButton, DARKGRAY);
         DrawButton(multiMenuButton, DARKGRAY);
         DrawButton(optionsButton, DARKGRAY);
         DrawButton(exitButton, DARKGRAY);
@@ -92,6 +135,7 @@ void DrawMenu()
 
     case menu_options:
         DrawText("OPTIONS", 100, 40, 30, ORANGE);
+        //DrawTextEx(romanican, "OPTIONS", (Vector2){100, 40}, 30, ORANGE);
 		DrawButton(menuButton, DARKGRAY);
         break;
 
@@ -172,32 +216,59 @@ void DrawMenu()
         DrawText("UNKNOWN SCREEN", 100, 40, 30, RED);
         break;
     }
+
+    //update the button anim
+    hoverAnimTimer += GetFrameTime();
+
+    if (hoverAnimTimer >= HOVER_ANIM_SPEED)
+    {
+        hoverAnimTimer = 0.0f;
+        hoverFrameIndex++;
+
+        if (hoverFrameIndex >= hoverFrameCount)
+            hoverFrameIndex = 0;
+    }
 }
 
 //Draws a button and handles its interaction logic
 void DrawButton(Button button, Color color)
 {
-    DrawRectangleRec(button.bounds, color);
-    int textWidth = MeasureText(button.text, 20);
-    DrawText(
-        button.text,
-        button.bounds.x + button.bounds.width * 0.5f - textWidth * 0.5f,
-        button.bounds.y + button.bounds.height * 0.5f - 10,
-        20,
+    bool hovered = CheckCollisionPointRec(GetMousePosition(), button.bounds);
+
+    Rectangle src = hovered ? buttonSrcHover : buttonSrcNormal;
+
+    DrawTexturePro(
+        buttonTex,
+        src,
+        button.bounds,
+        (Vector2){0,0},
+        0.0f,
         WHITE
     );
 
-    // Button press logic:
-    if (CheckCollisionPointRec(GetMousePosition(), button.bounds))
-    {
-        DrawRectangleLines(button.bounds.x, button.bounds.y, button.bounds.width, button.bounds.height, YELLOW);
+    float fontSize = 40.0f;
+    float spacing = 0.0f;
 
+    Vector2 textSize = MeasureTextEx(romanica, button.text, fontSize, spacing);
+
+    DrawTextEx(
+        romanica,
+        button.text,
+        (Vector2){
+            button.bounds.x + button.bounds.width * 0.5f - textSize.x * 0.5f,
+            button.bounds.y + button.bounds.height * 0.5f - textSize.y * 0.5f
+        },
+        fontSize,
+        spacing,
+        BLACK
+    );
+
+    if (hovered)
+    {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
-			// Play click sound
             PlaySound(btnClick);
 
-            // Buttons trigger screen changes:
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Level 1") == 0)
@@ -205,14 +276,14 @@ void DrawButton(Button button, Color color)
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Level Editor") == 0)
-				SetCurrentScreen(menu_editor);
-			else if (strcmp(button.text, "Exit Game") == 0)
-				RequestExit();
-			else if (strcmp(button.text, "Back to Menu") == 0)
-			{
-				SessionManager_Client_Disonnect();
-				multiplayerSession = false;
-				SetCurrentScreen(menu_main);
+                SetCurrentScreen(menu_editor);
+            else if (strcmp(button.text, "Exit Game") == 0)
+                RequestExit();
+            else if (strcmp(button.text, "Back to Menu") == 0)
+            {
+                SessionManager_Client_Disonnect();
+                multiplayerSession = false;
+                SetCurrentScreen(menu_main);
             }
             else if (strcmp(button.text, "Multiplayer") == 0)
                 SetCurrentScreen(menu_multi);
@@ -226,11 +297,28 @@ void DrawButton(Button button, Color color)
                 ResetPlayerToSpawn(playerList[0]);
                 SetCurrentScreen(menu_game);
             }
-			else if (strcmp(button.text, "Level Select") == 0)
-				SetCurrentScreen(menu_level_select);
+            else if (strcmp(button.text, "Level Select") == 0)
+                SetCurrentScreen(menu_level_select);
             else if (strcmp(button.text, "Save/Load") == 0)
-				SetCurrentScreen(menu_save);
+                SetCurrentScreen(menu_save);
         }
+
+        float animationPadding = 20.0f; 
+        Rectangle hoverBounds = {
+            button.bounds.x - animationPadding,
+            button.bounds.y - animationPadding,
+            button.bounds.width + 2 * animationPadding,
+            button.bounds.height + 2 * animationPadding
+        };
+
+        DrawTexturePro(
+            hoverAnimTex,
+            hoverFrames[hoverFrameIndex],
+            hoverBounds,
+            (Vector2){0,0},
+            0.0f,
+            Fade(WHITE, 0.9f)
+        );
     }
 }
 
@@ -252,8 +340,6 @@ void DrawUI(InventoryItem *item, int selectedSlot)
             DrawText("X", 540 + i * 100, 860, 20, BLACK);
     }
 }
-
-
 
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused)
 {
