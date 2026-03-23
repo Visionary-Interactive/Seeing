@@ -27,6 +27,7 @@ void SendPropInteraction(InteractionType interaction, int selectedSlot, int prop
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);
 
+
 int16_t QuantizeFloat(float value, float max_abs);
 float DequantizeFloat(int16_t scaled, float max_abs);
 
