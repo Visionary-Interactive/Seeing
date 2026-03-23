@@ -42,6 +42,7 @@ void RenderSceneToTexture(MenuScreen currentScreen, RenderTexture2D sceneColorRT
 {
 	float dt = GetFrameTime();
 	UpdateParticleEmitter(dt);
+	UpdateParticlePool(pool, dt);
 
     if (currentScreen == menu_game || currentScreen == menu_game_paused || currentScreen == menu_editor)
     {

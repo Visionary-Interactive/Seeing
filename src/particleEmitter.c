@@ -6,7 +6,7 @@ ParticleTemplate flameTemplate;
 
 void InitFlameTemplate(void) {
     flameTemplate.velocity = (Vector3){ 0.0f, 5.0f, 0.0f };
-    flameTemplate.size = (Vector3){ 5.0f, 5.0f, 1.0f };
+    flameTemplate.size = (Vector3){ 2.0f, 2.0f, 1.0f };
     flameTemplate.lifetime = 1.5f;
 }
 
@@ -58,7 +58,7 @@ void UpdateParticleEmitter(float dt) {
                           template->lifetime);
         }
 
-        UpdateParticlePool(emitter->pool, dt);
+        //UpdateParticlePool(emitter->pool, dt);
     }
 }
 
@@ -69,10 +69,10 @@ void RenderParticlePool(const ParticlePool* pool, Camera3D camera, Color tint) {
     Rectangle source = { 0.0f, 0.0f, (float)pool->texture.width, (float)pool->texture.height };
     Vector3 up = { 0.0f, 1.0f, 0.0f };
 
-    rlDrawRenderBatchActive();
+    //rlDrawRenderBatchActive();
     rlDisableDepthMask();
-
-    BeginBlendMode(BLEND_ALPHA);
+    rlSetBlendFactors(RL_SRC_ALPHA, RL_ONE, RL_FUNC_ADD);
+    rlSetBlendMode(BLEND_CUSTOM);
     
     for (size_t i = 0; i < pool->capacity; ++i) {
         const Particle* particle = &pool->particles[i];
@@ -85,7 +85,8 @@ void RenderParticlePool(const ParticlePool* pool, Camera3D camera, Color tint) {
         DrawBillboardPro(camera, pool->texture, source, particle->position, up, quadSize, origin, 0.0f, particle->tint);
     }
 
-    EndBlendMode();
+    rlSetBlendMode(BLEND_ALPHA);
+    //EndBlendMode();
 
     rlDrawRenderBatchActive();
     rlEnableDepthMask();

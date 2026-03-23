@@ -7,7 +7,7 @@ ParticlePool* InitParticlePool(size_t capacity) {
     M_ASSERT(pool, "Could not allocate space for particle pool. It's hosed.");
 
     //change this later
-    pool->texture = LoadTexture("resources/global/tex/flame.png");
+    pool->texture = LoadTexture("resources/global/tex/flame3.png");
 
     pool->particles = (Particle*)calloc(capacity, sizeof(Particle));
     pool->freeList = (int*)malloc(sizeof(int) * capacity);
