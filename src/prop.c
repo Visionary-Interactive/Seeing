@@ -43,8 +43,15 @@ int CreateProp(Props* obj, Model* model, Vector3 position, Vector3 size, Color c
 	ColliderSetup(obj, id);
 	obj->components[id] = components; //default components
 	obj->prim[id] = NO_PRIM;
+
+	//set up text to null by default
 	obj->text[id] = NULL;
 	obj->textType[id] = TEXTBOX_NONE;
+
+	obj->triggerType[id] = TRIGGER_NONE;
+	obj->ImpairmentType[id] = 0;
+
+	obj->warpTarget[id] = (Vector3){ 0.0f, 0.0f, 0.0f };
 
 	return id;
 }
@@ -135,18 +142,44 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
     return result;
 }
 
+int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
+{
+    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, BLANK, PROP_TRIGGERZONE | PROP_VISIBILE);
+
+    obj->triggerType[id] = type;
+    obj->Triggered[id] = false;
+
+    return id;
+}
+
+
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
     if (deadly == true) 
     {
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
-        return CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
-            PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE | PROP_VENT);
+        int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
+            PROP_VISIBILE | PROP_TRIGGERZONE | PROP_VENT);
+		props->triggerType[flame] = TRIGGER_DEADZONE;
+		return flame;
     }
     else {
         InitParticleEmitter(pool, 20.0f, position, template, WHITE);
         return -1;
     }
+}
+
+
+void AddWarpZone(Vector3 position, Vector3 size, Vector3 Warpposition)
+{
+	CreatePropPrimitive(props, PRIMITIVE_MODEL_WARP, position, size, PURPLE, PROP_VISIBILE);
+    int id = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, RED, PROP_VISIBILE | PROP_COLLIDER);
+
+	//AddPropComponent(props, id, PROP_WARP);
+	
+	//props->warpPosition[id] = Warpposition;
+
+    
 }
 
 bool CheckCollisionWithProp(const Props* obj, int id, BoundingBox other)
@@ -192,6 +225,69 @@ void RenderProps(Props* obj) {
                 obj->size[i].y,
                 obj->size[i].z,
                 RED
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model
+        }
+
+        if ((obj->components[i] & PROP_TRIGGERZONE) && !obj->Triggered[i])
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                RED
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model   
+        }
+
+        if (obj->triggerType[i] == TRIGGER_TEXT)
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                GREEN
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model
+        }
+
+        if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                PURPLE
             );
 
             DrawCubeWires(

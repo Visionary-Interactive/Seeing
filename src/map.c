@@ -4,7 +4,6 @@ static char* pillar;
 static char* book;
 static char* wall;
 static char* wall2;
-static char* door;
 static char* chair;
 static char* wTexP;
 static char* bTexP;
@@ -32,6 +31,105 @@ void DrawMap(void)
 {
 }
 
+void LoadLevel2 (Props* props)
+{
+
+
+    CreatePropFromPath(props, pillar, wTexP,
+        (Vector3) {
+        40.0, 0.0, 40.0
+    }, (Vector3) { 0.15, 0.15, 0.15 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, pillar, wTexP,
+        (Vector3) {
+        -40.0, 0.0, 40.0
+    }, (Vector3) { 0.15, 0.15, 0.15 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, pillar, wTexP,
+        (Vector3) {
+        40.0, 0.0, -40.0
+    }, (Vector3) { 0.15, 0.15, 0.15 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, pillar, wTexP,
+        (Vector3) {
+        -40.0, 0.0, -40.0
+    }, (Vector3) { 0.15, 0.15, 0.15 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    GenerateCubePuzzle(props, 3, 15, 50, -10, 10, (Vector3) { 1.0f, 1.0f, 1.0f }, YELLOW, PROP_VISIBILE);
+
+
+	int newWallID = CreatePropFromPath(props, wall, wTexP, (Vector3) { 0.0f, 0.0f, 15.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { 0.0f, 0.0f, -2.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 0.0f, 0.0f, -12.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { 0.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -4.0f, 0.0f, -17.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -14.0f, 0.0f, -17.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -20.0f, 0.0f, -22.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    //Main Room
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -4.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -14.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -20.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -26.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    //Hallway
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 6.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 16.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 20.0f, 0.0f, 15.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, 20.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 36.0f, 0.0f, 20.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 0.0f, 15.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 0.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 36.0f, 0.0f, -8.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -8.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 20.0f, 0.0f, -3.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 20.0f, 3.0f, 15.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 3.0f, 20.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 36.0f, 3.0f, 20.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 3.0f, 15.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 3.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 40.0f, 3.0f, -5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 36.0f, 3.0f, -8.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 3.0f, -8.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 20.0f, 3.0f, -3.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, GREEN, PROP_VISIBILE | PROP_COLLIDER);
+
+
+	CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM, (Vector3) { 32.0f, 50.0f, 6.0f }, (Vector3) { 15.0f, 1.0f, 15.0f }, BLACK, PROP_VISIBILE | PROP_COLLIDER);
+
+
+
+
+
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 6.0f, 0.0f, 2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 16.0f, 0.0f, 2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+   
+}
+
+void GenerateCubePuzzle(Props* props, int count, float minX, float maxX, float minZ, float maxZ, Vector3 size, Color color, uint32_t components)
+{
+    for (int i = 0; i < count; i++)
+    {
+        float x = (float)GetRandomValue((int)(minX * 100), (int)(maxX * 100)) / 100.0f;
+        float z = (float)GetRandomValue((int)(minZ * 100), (int)(maxZ * 100)) / 100.0f;
+
+        Vector3 position = { x, 49.0f, z }; // sit on ground
+
+        CreatePropPrimitive(
+            props,
+            PRIMITIVE_MODEL_CUBE,
+            position,
+            size,
+            color,
+            components
+        );
+    }
+}
+
 void LoadPropTest(Props* props)
 {
     CreatePropFromPath(props, pillar, wTexP,
@@ -43,6 +141,7 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, pillar, wTexP,
         (Vector3){-40.0, 0.0, -40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
+    /*
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 5; j++)
@@ -52,22 +151,36 @@ void LoadPropTest(Props* props)
                 (Vector3) {1.0, 1.0, 1.0}, GREEN, PROP_VISIBILE | PROP_COLLIDER);
         }
     }
+    */
 
-	int newWallID = CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	int newWallID = CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f,-6.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
 	//big room back wall2 leftside
-    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -8.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -18.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, wall2, wTexP, (Vector3) { -28.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -8.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -18.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall2, wTexP,(Vector3) { -28.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 	//big room back wall rightside
-	CreatePropFromPath(props, wall2, wTexP, (Vector3) { 10.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall2, wTexP,(Vector3) { 10.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-	int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -4.0f, 0.0f, 0.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
     //hallway leftside
-	CreatePropFromPath(props, wall, wTexP, (Vector3) { -4.0f, 0.0f, -9.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-	CreatePropFromPath(props, wall, wTexP, (Vector3) { -4.0f, 0.0f, -18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, wall, wTexP, (Vector3) { -4.0f, 0.0f, -27.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    //hallway rightside
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+
 
 	//big room leftside
     CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
@@ -76,11 +189,6 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-    //hallway rightside
-    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 0.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-	CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -9.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -27.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
     //big room rightside
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
@@ -89,66 +197,184 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-    //int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 4.0f, 4.0f, 4.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    int pushCubeID = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
-        , (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    int pushCubeID2 = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
-        , (Vector3) { 5, 2.0f, -47.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    props->rotation[pushCubeID2].y = 90.0f;
-    int pushCubeID3 = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb","resources/global/models/pushBoulder/Push_Boulder.glb"
-        , (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
-    props->rotation[pushCubeID3].y = 180.0f;
+    //big room pillar
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+		(Vector3) {
+		-30, 0.0, -50.0f
+	}, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
         (Vector3) {
-        -15.0f, 0.5f, -40.0f
+        -30, 0.0, -35.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        -19, 0.0, -35.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        -8, 0.0, -35.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        0.5, 3.5f, -35.0f
+    },
+        (Vector3) {
+        2.0f, 1.5f, 1.0f
+	}, ORANGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        19, 0.0, -35.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        30, 0.0, -35.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        30, 0.0, -44.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        30, 0.0, -52.0f
+    }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+
+
+    int pushCubeID = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { -19.0f, 1.5f, -45.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, RED, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    int pushCubeID2 = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) { 12, 1.5f, -55.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+    props->interactType[pushCubeID] = INTERACTABLE_PUSH;
+    props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
+
+	//starting platform for first room
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
+        (Vector3) {
+        -27.5, 1.5f, -60.0f
     },
         (Vector3) {
         3.0f, 3.0f, 3.0f
     }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
+   //middle platform with book
+    CreatePropPrimitive(props, PRIMITIVE_MODEL_PLATFORM,
         (Vector3) {
-        -20.0f, 0.8f, -40.0f
+        29.0f, 3.5f, -60.0f
     },
         (Vector3) {
         3.0f, 3.0f, 3.0f
     }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-
-    CreatePropFromPath(props, "resources/global/models/platform/platform1.glb","resources/global/models/platform/platform1.glb",
-        (Vector3) {
-        29.0f, 2.0f, -57.0f
-    },
-        (Vector3) {
-        3.0f, 3.0f, 3.0f
-    }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
-
-    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 6.0f, -57.0f },
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -60.0f },
         (Vector3) {
         1.0f, 1.0f, 1.0f
     }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
     props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
 
-    props->interactType[pushCubeID] = INTERACTABLE_PUSH;
-	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
-	props->interactType[pushCubeID3] = INTERACTABLE_PUSH;
-
-
-	//int chairID = CreatePropFromPath(props, chair, (Vector3) { 5.5f, 0.0f, -1.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BROWN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
-
-    int pickupID = CreatePropFromPath(props, book, bTexP,
-        (Vector3) {-0.8f, 1.0f, 3.5f}, 
-        (Vector3) { 0.03f, 0.03f, 0.03f },
-        WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+    int pickupID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
+        (Vector3) {
+		1.5, 4.5f, -35.0f
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = strdup("Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here");
 
+	//int zoneID = AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_IMPAIRMENT);
+	//props->text[zoneID] = "I have entered a new area, I wonder if there is anything different here?";
+	//props->textType[zoneID] = TEXTBOX_PLAYER;
+	//props->ImpairmentType[zoneID] = 1;
+
+	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
+	props->warpTarget[warpID] = (Vector3){ -27.0f, 4.0f, -60.0f };
+   
+
+    //fires for hallway puzzle
+	AddKillFlame((Vector3) { -2.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+
+
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+
+    AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+
+    //fires for main room puzzle
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 10.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) {  18.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+
+
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 10.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 18.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+
+
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 10.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 18.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 10.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 18.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 10.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 18.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+
+
+
+
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
     // Spawning rotating puzzle blocks for testing
+    /*
     char* blockLetters[3];
     for (int i = 0; i < 3; i++)
     {
@@ -171,6 +397,7 @@ void LoadPropTest(Props* props)
 		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
 		puzzle1BlockIDs[i] = puzzleBlock1;
 	}
+    */
 
 	// Pickup blocks for testing
 	int testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
@@ -197,6 +424,11 @@ void LoadPropTest(Props* props)
     testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, (Vector3) {40.0f, 1.8f, 0.0f}, 
         (Vector3) {1.0f, 1.0f, 1.0f}, RAYWHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_PICKUP | PROP_INTERACTABLE | PROP_VENTLID);
 	props->interactType[testCube] = INTERACTABLE_PICKUP;
+
+    CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", "resources/global/models/vent/textures/Material_baseColor.png",
+        (Vector3) {
+        0.0f, 0.0f, -20.0f
+    }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
 }
 
 void SaveMapFile(Map *map, const char *mapPath)

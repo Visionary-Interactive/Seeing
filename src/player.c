@@ -18,13 +18,13 @@ void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlo
 void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
-	player->position = (Vector3){ 0.0f, 1.8f, 0.0f };
+	player->position = (Vector3){ -12.0f, 1.8f, 5.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
 	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
-	player->speed = 8.0f;
+	player->speed = 7.0f;
 	player->yaw = 0.0f;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
@@ -36,7 +36,9 @@ void InitPlayer()
 	player->checkpoint.position = player->spawnPosition;
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
-	memset(player->inventory, 0, sizeof(player->inventory));
+	player->activeImpairment = 0;
+
+memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 }
 
@@ -149,8 +151,8 @@ void UpdatePlayer(Props* obj)
 	}
 
 	// Sprint
-	if (player->input.SHIFT) player->speed = 16.0f;
-	else player->speed = 8.0f; // Normal speed
+	if (player->input.SHIFT) player->speed = 10.0f;
+	else player->speed = 7.0f; // Normal speed
 
 	if (player->input.SPACE && player->isGrounded)
 	{
@@ -205,6 +207,7 @@ void UpdatePlayer(Props* obj)
 
 					continue; // deadzones do not block movement
 				}
+
 
 				// Collision Detection
 				if (CheckCollisionBoxes(playerBox, objBox))
@@ -290,6 +293,7 @@ void UpdatePlayer(Props* obj)
 		player->velocity.y = 0.0f;
 		player->isGrounded = true;
 	}
+	CheckTriggers(obj);
 
 }
 
@@ -478,7 +482,7 @@ void UpdateInteractions(Props* obj)
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
-				RequestExit();
+				PlayerPropInteraction(obj, door, NULL, closestID);
 				break;
 
 			case INTERACTABLE_PICKUP:
@@ -592,6 +596,53 @@ Vector3 GetCardinalDirection(Vector3 forward)
 	return dir;
 }
 
+void CheckTriggers(Props* obj)
+{
+	BoundingBox playerBox = GetPlayerCollision(player->position); //update player bounding box
+	for (size_t i = 0; i < obj->count; i++)
+	{
+		if (!(obj->components[i] & PROP_TRIGGERZONE)) continue;
+
+		BoundingBox objBox = obj->collider[i];
+
+		if (CheckCollisionBoxes(playerBox, objBox))
+		{
+			printf("Player entered Triggerzone!\n");
+
+			// Example behaviors
+			if (obj->triggerType[i] == TRIGGER_WARP)
+			{
+				player->position = obj->warpTarget[i]; // Warp player to prop position
+				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
+			}
+			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
+			{
+				ResetPlayerToSpawn(player);
+				printf("Deadzone Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
+			{
+				ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
+				printf("Checkpoint Trigger\n");
+			}
+			else if (obj->triggerType[i] == TRIGGER_TEXT && obj->Triggered[i] == false)
+			{
+				InitTextBox(obj->textType[i], obj->text[i]);
+				obj->Triggered[i] = true; // Prevent retriggering if desired
+				printf("Triggered text box: %s\n", obj->text[i]);
+			}
+			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
+			{
+				//obj->Triggered[i] = true;
+				player->pendingImpairment = obj->ImpairmentType[i];
+				//IncreaseImpairmentIntensity();
+			}
+
+		}
+	}
+}
+
+
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)
@@ -605,6 +656,11 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->components[propID] &= ~PROP_COLLIDER;
 
 		printf("Picked up prop %d into slot %d\n", propID, player->selectedSlot);
+	}
+	if (interaction == door)
+	{
+		RequestExit();
+
 	}
 	else if (interaction == text)
 	{
