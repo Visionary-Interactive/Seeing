@@ -163,8 +163,9 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
-	int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
     //hallway leftside
+    int newWallID2 = CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 54.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
+	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
 	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 	CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
@@ -172,12 +173,15 @@ void LoadPropTest(Props* props)
     CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
     //hallway rightside
+    CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 54.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
+
+    CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
 
 
 
