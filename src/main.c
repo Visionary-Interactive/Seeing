@@ -20,6 +20,7 @@ int main(int argc, char** argv)
 	const int screenHeight = 900;
 
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
+	SetMasterVolume(0.0f);
 	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);

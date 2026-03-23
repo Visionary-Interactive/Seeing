@@ -8,7 +8,7 @@
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
-Button saveButton = { { 100, 200, 200, 50 }, "Save/Load" };
+Button saveButton = { { 100, 200, 200, 50 }, "Save / Load" };
 Button levelButton = { { 100, 300, 200, 50 }, "Level Select" };
 Button compendiumButton = { { 100, 400, 200, 50 }, "Compendium" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
@@ -22,7 +22,6 @@ Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
-
 #define HOVER_ANIM_SPEED 0.15f
 
 Button saveSlots[SAVE_SLOT_COUNT];
@@ -41,15 +40,28 @@ static Font romanica;
 static Texture2D buttonTex;
 static Rectangle buttonSrcNormal;
 static Rectangle buttonSrcHover;
+static Texture2D inventorySlot;
 
 static Texture2D hoverAnimTex;
 static Rectangle hoverFrames[3];
 static int hoverFrameCount = 3;
 
+static Texture2D inventoryHoverAnim;
+static Rectangle inventoryFrames[3];
+static int inventoryFrameCount = 3;
+
 static float hoverAnimTimer = 0.0f;
 static int hoverFrameIndex = 0;
 
-static void CenterButton(Button* button, float y)
+static void CentreMenuButton(Button* button, float y)
+{
+    float screenWidth = (float)GetScreenWidth();
+
+    button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
+    button->bounds.y = y;
+}
+
+static void RightMenuButton(Button* button, float y)
 {
     float screenWidth = (float)GetScreenWidth();
 
@@ -64,6 +76,8 @@ void LoadMenuElements()
     flammarion = LoadTexture("resources/global/tex/flammarion.png");
     buttonTex = LoadTexture("resources/global/tex/seeingButton.png");
     hoverAnimTex = LoadTexture("resources/global/tex/seeingButtonSketch.png");
+    inventorySlot = LoadTexture("resources/global/tex/seeingInventorySlot2.png");
+    inventoryHoverAnim = LoadTexture("resources/global/tex/seeingInventorySlotSketch.png");
 
     int frameWidth = hoverAnimTex.width;
     int frameHeight = hoverAnimTex.height / hoverFrameCount;
@@ -78,17 +92,42 @@ void LoadMenuElements()
         };
     }
 
+    frameWidth = inventoryHoverAnim.width;
+    frameHeight = inventoryHoverAnim.height / inventoryFrameCount;
+
+    for (int i = 0; i < inventoryFrameCount; i++)
+    {
+        inventoryFrames[i] = (Rectangle){
+            0,
+            i * frameHeight,
+            frameWidth,
+            frameHeight
+        };
+    }
+
     buttonSrcNormal = (Rectangle){ 0, 0, buttonTex.width, buttonTex.height / 2 };
     buttonSrcHover  = (Rectangle){ 0, buttonTex.height / 2, buttonTex.width, buttonTex.height / 2 };
 
     SetTextureFilter(buttonTex, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(greatVibes.texture, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(romanica.texture, TEXTURE_FILTER_BILINEAR);
 }
 
 // Draws the current menu screen based on the current state
 void DrawMenu()
 {
     MenuScreen screen = GetCurrentScreen();
+
+    hoverAnimTimer += GetFrameTime();
+
+    if (hoverAnimTimer >= HOVER_ANIM_SPEED)
+    {
+        hoverAnimTimer = 0.0f;
+        hoverFrameIndex++;
+
+        if (hoverFrameIndex >= hoverFrameCount)
+            hoverFrameIndex = 0;
+    }
 
     switch (screen)
     {
@@ -109,12 +148,12 @@ void DrawMenu()
 
         DrawTextEx(greatVibes, "The Delian Problem", (Vector2){screenW * 0.125f, screenH * 0.05f}, 128.0f, 0.0f, BLACK);
 
-        CenterButton(&levelButton, startY + 0 * (buttonHeight + spacing));
-        CenterButton(&saveButton, startY + 1 * (buttonHeight + spacing));
-        CenterButton(&compendiumButton, startY + 2 * (buttonHeight + spacing));
-        CenterButton(&multiMenuButton, startY + 3 * (buttonHeight + spacing));
-        CenterButton(&optionsButton, startY + 4 * (buttonHeight + spacing));
-        CenterButton(&exitButton, startY + 5 * (buttonHeight + spacing));
+        RightMenuButton(&levelButton, startY + 0 * (buttonHeight + spacing));
+        RightMenuButton(&multiMenuButton, startY + 1 * (buttonHeight + spacing));
+        RightMenuButton(&saveButton, startY + 2 * (buttonHeight + spacing));
+        RightMenuButton(&optionsButton, startY + 3 * (buttonHeight + spacing));
+        RightMenuButton(&compendiumButton, startY + 4 * (buttonHeight + spacing));
+        RightMenuButton(&exitButton, startY + 5 * (buttonHeight + spacing));
 
 		// Play menu music if not already playing
 		if (!IsSoundPlaying(menuMusic)) PlaySound(menuMusic);
@@ -134,15 +173,15 @@ void DrawMenu()
         break;
 
     case menu_options:
-        DrawText("OPTIONS", 100, 40, 30, ORANGE);
+        DrawTextEx(romanica, "OPTIONS", (Vector2){100,40}, 90, 0, BLACK);
         //DrawTextEx(romanican, "OPTIONS", (Vector2){100, 40}, 30, ORANGE);
 		DrawButton(menuButton, DARKGRAY);
         break;
 
     case menu_level_select:
-       DrawText("LEVEL SELECT", 100, 40, 30, GREEN);
-	   CenterButton(&level1Button, 200);
-	   CenterButton(&menuButton, 600);
+       DrawTextEx(romanica, "LEVEL SELECT", (Vector2){100,40}, 90, 0, BLACK);
+	   RightMenuButton(&level1Button, 200);
+	   RightMenuButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 		break;
@@ -152,14 +191,15 @@ void DrawMenu()
         break;
 
     case menu_multi:
-		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
+		DrawTextEx(romanica, "MULTIPLAYER", (Vector2){100,40}, 90, 0, BLACK);
 		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
-		DrawButton(multiConnectButton, DARKGRAY);
+		RightMenuButton(&multiConnectButton, multiConnectButton.bounds.y);
+        RightMenuButton(&menuButton, menuButton.bounds.y);
         DrawButton(menuButton, DARKGRAY);
+	    DrawButton(multiConnectButton, DARKGRAY);
         break;
-
     case menu_multi2:
-		DrawText("MULTIPLAYER", 100, 40, 30, BLUE);
+		DrawTextEx(romanica, "MULTIPLAYER", (Vector2){100,40}, 90, 0, BLACK);
 		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
         DrawButton(menuButton, DARKGRAY);
 		DrawText("Connecting to Game Server...", 100, 340, 30, DARKGRAY);
@@ -184,7 +224,7 @@ void DrawMenu()
         DrawButton(menuButton, DARKGRAY);
         break;
 
-        DrawText("SAVE/LOAD", 100, 40, 30, PURPLE);
+        DrawTextEx(romanica, "SAVE / LOAD", (Vector2){100,40}, 90, 0, BLACK);
 		DrawButton(menuButton, DARKGRAY);
         break;
 
@@ -197,11 +237,11 @@ void DrawMenu()
         float totalHeight = (5 * buttonHeight) + (4 * spacing);
         float startY = screenH * 0.5f - totalHeight * 0.5f;
 
-        CenterButton(&playButton, startY + 0 * (buttonHeight + spacing));
-        CenterButton(&retryButton, startY + 1 * (buttonHeight + spacing));
-        CenterButton(&saveButton, startY + 2 * (buttonHeight + spacing));
-        CenterButton(&optionsButton, startY + 3 * (buttonHeight + spacing));
-        CenterButton(&menuButton, startY + 4 * (buttonHeight + spacing));
+        CentreMenuButton(&playButton, startY + 0 * (buttonHeight + spacing));
+        CentreMenuButton(&retryButton, startY + 1 * (buttonHeight + spacing));
+        CentreMenuButton(&saveButton, startY + 2 * (buttonHeight + spacing));
+        CentreMenuButton(&optionsButton, startY + 3 * (buttonHeight + spacing));
+        CentreMenuButton(&menuButton, startY + 4 * (buttonHeight + spacing));
 
         DrawButton(playButton, DARKGRAY);
         DrawButton(retryButton, DARKGRAY);
@@ -218,16 +258,7 @@ void DrawMenu()
     }
 
     //update the button anim
-    hoverAnimTimer += GetFrameTime();
-
-    if (hoverAnimTimer >= HOVER_ANIM_SPEED)
-    {
-        hoverAnimTimer = 0.0f;
-        hoverFrameIndex++;
-
-        if (hoverFrameIndex >= hoverFrameCount)
-            hoverFrameIndex = 0;
-    }
+    
 }
 
 //Draws a button and handles its interaction logic
@@ -328,16 +359,54 @@ void DrawUI(InventoryItem *item, int selectedSlot)
     if (currentTextbox.active)
     {
         DrawCharacterbox();
-		printf("Current TextBox Active: %s\n", currentTextbox.text);
     }
+
+    float scale = 0.5f;
+    float slotSize = 200 * scale;
 
     for (int i = 0; i < INVENTORY_SIZE; i++)
     {
-        Color c = (i == selectedSlot) ? YELLOW : GRAY;
-        DrawRectangle(500 + i * 100, 850, 80, 80, c);
+        float x = 360 + i * 200;
+        float y = GetScreenHeight() - 75;
+
+        Rectangle dest = { x, y, slotSize, slotSize };
+
+        Color c = (i == selectedSlot) ? GRAY : WHITE;
+
+        // draw base slot
+        DrawTexturePro(
+            inventorySlot,
+            (Rectangle){0,0, inventorySlot.width, inventorySlot.height},
+            dest,
+            (Vector2){0,0},
+            0,
+            c
+        );
+
+        // draw animated selection border
+        if (i == selectedSlot)
+        {
+            float padding = 8.0f; // make border slightly bigger
+
+            Rectangle animDest = {
+                dest.x - padding,
+                dest.y - padding,
+                dest.width + padding*2,
+                dest.height + padding*2
+            };
+
+            DrawTexturePro(
+                inventoryHoverAnim,
+                inventoryFrames[hoverFrameIndex],
+                animDest,
+                (Vector2){0,0},
+                0,
+                Fade(WHITE, 0.9f)
+            );
+        }
 
         if (item[i].occupied)
-            DrawText("X", 540 + i * 100, 860, 20, BLACK);
+            DrawText("X", x + 40, y + 40, 20, BLACK);
     }
 }
 
