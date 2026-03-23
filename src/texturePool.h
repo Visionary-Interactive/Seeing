@@ -3,7 +3,7 @@
 
 #include "includes.h"
 
-#define MAX_CACHED_TEXTURES 64
+#define MAX_CACHED_TEXTURES 128
 
 typedef struct {
     char* path;

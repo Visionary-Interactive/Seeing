@@ -3,7 +3,7 @@
 
 #include "includes.h"
 
-#define MAX_CACHED_MODELS 64
+#define MAX_CACHED_MODELS 128
 
 typedef enum PrimitiveModelId PrimitiveModelId;
 

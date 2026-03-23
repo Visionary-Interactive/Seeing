@@ -42,28 +42,20 @@ typedef struct TextBox
 	float duration;
 } TextBox;
 
-
+void LoadMenuElements();
 void DrawMenu();
 void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);
 void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
-
-void InitTextBox(TextboxType type, const char* text);
-
+void InitTextBox(TextboxType type, const char* tText);
 void UpdateTextBox(float deltaTime);
-
 void DrawCharacterbox();
-
 void DrawInteractTextBox();
-
 MenuScreen GetCurrentScreen();
-
 void InitSaveSlots();
 void SetCurrentScreen(MenuScreen newScreen);
 void SetUIInteraction(bool interaction);
-
 bool IsExitRequested(void);
-
 bool IsTextboxStoppingPlayer();
 void RequestExit(void);
 

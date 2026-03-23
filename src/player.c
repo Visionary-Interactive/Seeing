@@ -3,7 +3,6 @@
 #include "sound.h"
 #include "map.h"
 
-
 Player* player;
 
 const float gravity = -16.0f; //gravity force
@@ -20,6 +19,7 @@ void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
 	player->position = (Vector3){ 0.0f, 1.8f, 47.0f };
+	//player->position = (Vector3){ -12.0f, 1.8f, 5.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
@@ -42,7 +42,6 @@ void InitPlayer()
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
-
 }
 
 void ManualInitPlayer(Vector3 position, Vector3 velocity, float yaw, float pitch, bool grounded)
@@ -108,25 +107,23 @@ void LocalInputUpdate(InputState* input)
 	else if (player->input.THREE) player->selectedSlot = 2;
 	else if (player->input.FOUR)  player->selectedSlot = 3;
 	else if (player->input.FIVE)  player->selectedSlot = 4;
-
 }
 
 void SetPlayer(Player* p)
 {
 	player = p;
 }
+
 //Updates the player's position and handles input
 void UpdatePlayer(Props* obj)
 {
 	float dt = GetFrameTime();
-
 
 	Vector2 mouseDelta = GetMouseDelta();
 	const float mouseSensitivity = 0.003f;
 	player->yaw -= mouseDelta.x * mouseSensitivity;
 	player->pitch -= mouseDelta.y * mouseSensitivity;
 	player->bottom = player->position.y - player->size.y;
-
 
 	const float pitchLimit = 89.0f * PI/180;
 	if (player->pitch > pitchLimit) player->pitch = pitchLimit;
@@ -135,6 +132,7 @@ void UpdatePlayer(Props* obj)
 	// Clamp pitch to avoid flipping
 	if (player->pitch > PI / 2.0f) player->pitch = PI / 2.0f;
 	if (player->pitch < -PI / 2.0f) player->pitch = -PI / 2.0f;
+
 	// Direction vectors to help with movement
 	Vector3 forward = {
 		sinf(player->yaw),
@@ -174,7 +172,6 @@ void UpdatePlayer(Props* obj)
 
 	// Vector Add/Subtract and Vector Scale from raymath.h. helps with vector math
 	//subtract move backwards/right and add to move forwards/left
-	//
 	Vector3 move = { 0 };
 	if (player->input.W) move = Vector3Add(move, forward);
 	if (player->input.S) move = Vector3Subtract(move, forward);
@@ -225,11 +222,8 @@ void UpdatePlayer(Props* obj)
 					float prevFeetY = player->bottom;
 
 					// Platform collision check
-					if (obj->prim[i] == PRIMITIVE_MODEL_PLATFORM || obj->prim[i] == PRIMITIVE_MODEL_CUBE || obj->components[i] & PROP_COLLIDER)
-					{
-						if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
-							break;
-					}
+					if (CheckPlatformCollision(playerBox, prevFeetY, objBox))
+						break;
 
 					if (obj->components[i] & PROP_CHECKPOINT)
 					{
@@ -348,10 +342,13 @@ void RenderPlayer(Player* p, Props* props)
 	// Animations
 	ModelAnimation anim;
 	int animState = 0; // Default to idle
-	if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
-		animState = 1; // Interact
-	else if (p->input.R || p->animData.animFrame[2] > 0)
-		animState = 2; // Place
+	if (!p->remotePlayer)
+	{
+		if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+			animState = 1; // Interact
+		else if (p->input.R || p->animData.animFrame[2] > 0)
+			animState = 2; // Place
+	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
 
@@ -429,6 +426,7 @@ void RenderPlayer(Player* p, Props* props)
 	}
 }
 
+//this sucks dude!
 static int FindNearestActiveVent(Props* obj, float maxRange)
 {
 	int closestVent = -1;
@@ -436,8 +434,7 @@ static int FindNearestActiveVent(Props* obj, float maxRange)
 
 	for (size_t i = 0; i < obj->count; i++)
 	{
-		if ((obj->components[i] & PROP_VENT) &&
-		    (obj->components[i] & PROP_DEADZONE))
+		if ((obj->components[i] & PROP_VENT))
 		{
 			float dist = Vector3Distance(player->position, obj->position[i]);
 			if (dist < closestDist)
@@ -694,6 +691,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == push)
 	{
+		player->velocity.y += 0.001f; // Small movement to trigger collision check
 		printf("Pushing prop %d\n", propID);
 		Vector3 playerForward = (Vector3){
 			sinf(player->yaw),
@@ -719,11 +717,19 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			printf("Cannot push prop %d, player is in the way!\n", propID);
 			return false;
 		}
-		obj->position[propID] = Vector3Add(obj->position[propID], moveAmount);
-		ColliderSetup(obj, propID);
+		Vector3 newPos = Vector3Add(obj->position[propID], moveAmount);
+		if (!player->remotePlayer)
+			PlaySound(pushBoulder);
+		// Notify prop to move towards new position over time in the render update
+		snprintf(obj->text[propID], 255, "%d,%d",
+						(int)newPos.x,
+						(int)newPos.z);
 	}
 	else if (interaction == rotate_puzzle_block)
 	{
+		obj->rotation[propID].y += 5.0f;
+		if (!player->remotePlayer)
+			PlaySound(rotatingPuzzleBlock);
 		int blockNum = atoi(obj->text[propID]);
 		blockNum = (blockNum + 1) % 4;
 
@@ -769,6 +775,7 @@ void ResetPlayerToSpawn(Player* p)
 
 	player->velocity = (Vector3){ 0 };
 }
+
 void DestroyPlayer()
 {
 	RL_FREE(player);
