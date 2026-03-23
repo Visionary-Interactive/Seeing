@@ -19,7 +19,7 @@ void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlo
 void InitPlayer()
 {
 	player = (Player*)malloc(sizeof(Player));
-	player->position = (Vector3){ 0.0f, 1.8f, 45.0f };
+	player->position = (Vector3){ -12.0f, 1.8f, 5.0f };
 	player->size = (Vector3){ 0.5f, 1.8f, 0.5f };
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
@@ -37,6 +37,7 @@ void InitPlayer()
 	player->checkpoint.position = player->spawnPosition;
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
+	player->activeImpairment = 0;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -614,7 +615,7 @@ void CheckTriggers(Props* obj)
 			// Example behaviors
 			if (obj->triggerType[i] == TRIGGER_WARP)
 			{
-				player->position = obj->position[i]; // Warp player to prop position
+				player->position = obj->warpTarget[i]; // Warp player to prop position
 				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
 			}
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
@@ -627,16 +628,24 @@ void CheckTriggers(Props* obj)
 				ActivateCheckpoint(obj->position[i], player->yaw, player->pitch);
 				printf("Checkpoint Trigger\n");
 			}
-			else if (obj->triggerType[i] == TRIGGER_TEXT)
+			else if (obj->triggerType[i] == TRIGGER_TEXT && obj->Triggered[i] == false)
 			{
 				InitTextBox(obj->textType[i], obj->text[i]);
 				obj->Triggered[i] = true; // Prevent retriggering if desired
 				printf("Triggered text box: %s\n", obj->text[i]);
 			}
+			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
+			{
+				//obj->Triggered[i] = true;
+				player->pendingImpairment = obj->ImpairmentType[i];
+				//IncreaseImpairmentIntensity();
+			}
 
 		}
 	}
 }
+
+
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)

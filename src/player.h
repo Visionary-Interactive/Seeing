@@ -11,6 +11,7 @@
 #include "prop.h"
 #include "menu.h"
 #include "sessionManager.h"
+#include "impairment.h"
 
 typedef struct InputState {
     bool W;
@@ -78,6 +79,9 @@ typedef struct Player {
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
     Checkpoint checkpoint;
+    int activeImpairment;
+    int pendingImpairment;
+	float activeImpairmentIntensity;
 } Player;
 
 extern Player* playerList[MAX_PLAYERS];

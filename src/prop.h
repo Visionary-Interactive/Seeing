@@ -91,6 +91,10 @@ typedef struct Props {
 	TriggerType triggerType[MAX_PROPS];
 	bool Triggered[MAX_PROPS];
 
+	int ImpairmentType[MAX_PROPS];
+
+	Vector3 warpTarget[MAX_PROPS];
+
 } Props;
 
 void CreatePropStructure(void);

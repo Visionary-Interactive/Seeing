@@ -54,11 +54,15 @@ typedef struct {
     float blurStrength;
     float edgeDarkening;
 
+
 } Impairment;
 
 //screensize changes, so we need to pass this when we render the quad
 Impairment *LoadImpairment(Impairments type, int screenW, int screenH);
 void BeginImpairment(Impairment *vs);
+
+void IncreaseImpairmentIntensity(Impairment* vs);
+void SetImpairment(Impairment* vs, float value);
 void EndImpairment(Impairment *vs);
 void UpdateImpairment(Impairment *vs);
 void DestroyImpairment(Impairment *vs);

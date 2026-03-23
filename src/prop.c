@@ -49,6 +49,9 @@ int CreateProp(Props* obj, Model* model, Vector3 position, Vector3 size, Color c
 	obj->textType[id] = TEXTBOX_NONE;
 
 	obj->triggerType[id] = TRIGGER_NONE;
+	obj->ImpairmentType[id] = 0;
+
+	obj->warpTarget[id] = (Vector3){ 0.0f, 0.0f, 0.0f };
 
 	return id;
 }
@@ -155,8 +158,10 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
     if (deadly == true) 
     {
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
-        return CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
-            PROP_VISIBILE | PROP_COLLIDER | PROP_DEADZONE | PROP_VENT);
+        int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
+            PROP_VISIBILE | PROP_TRIGGERZONE | PROP_VENT);
+		props->triggerType[flame] = TRIGGER_DEADZONE;
+		return flame;
     }
     else {
         InitParticleEmitter(pool, 20.0f, position, template, WHITE);
@@ -262,6 +267,27 @@ void RenderProps(Props* obj) {
                 obj->size[i].y,
                 obj->size[i].z,
                 GREEN
+            );
+
+            DrawCubeWires(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                BLACK
+            );
+
+            continue; // don't try to draw a model
+        }
+
+        if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
+        {
+            DrawCube(
+                obj->position[i],
+                obj->size[i].x,
+                obj->size[i].y,
+                obj->size[i].z,
+                PURPLE
             );
 
             DrawCubeWires(
