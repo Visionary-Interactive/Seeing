@@ -79,9 +79,12 @@ typedef struct Player {
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
     Checkpoint checkpoint;
+
+	// Impairment data for the player
     int activeImpairment;
     int pendingImpairment;
 	float activeImpairmentIntensity;
+    float pendingIntensity;
 } Player;
 
 extern Player* playerList[MAX_PLAYERS];

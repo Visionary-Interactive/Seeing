@@ -74,12 +74,13 @@ int main(int argc, char** argv)
 		{
 			swap = playerList[0]->pendingImpairment;
 
-			intensity = playerList[0]->activeImpairmentIntensity;
+			intensity = playerList[0]->pendingIntensity;
 
+			playerList[0]->activeImpairmentIntensity = intensity; // store current
 
+			playerList[0]->pendingImpairment = -1; // reset ONLY pending
 
-			playerList[0]->pendingImpairment = -1; // reset		
-
+			
 
 		}
 

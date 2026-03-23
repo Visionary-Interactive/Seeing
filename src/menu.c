@@ -240,7 +240,7 @@ void DrawUI(InventoryItem *item, int selectedSlot)
     if (currentTextbox.active)
     {
         DrawCharacterbox();
-		printf("Current TextBox Active: %s\n", currentTextbox.text);
+		//printf("Current TextBox Active: %s\n", currentTextbox.text);
     }
 
     for (int i = 0; i < INVENTORY_SIZE; i++)

@@ -3,7 +3,7 @@
 
 #include "particlePool.h"
 
-#define MAX_EMITTERS 16
+#define MAX_EMITTERS 64
 
 typedef struct {
     Vector3 velocity;

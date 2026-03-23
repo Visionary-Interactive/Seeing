@@ -317,10 +317,12 @@ void LoadPropTest(Props* props)
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = "Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here";
 
-	int zoneID = AddZone(props, (Vector3) { -15.0f, 0.0f, 50.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_IMPAIRMENT);
-	//props->text[zoneID] = "I have entered a new area, I wonder if there is anything different here?";
-	//props->textType[zoneID] = TEXTBOX_PLAYER;
+	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
+
+	int zoneID2 = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_TEXT);
+	props->text[zoneID2] = "My Eyes! What happened?";
+	props->textType[zoneID2] = TEXTBOX_PLAYER;
 
 	int warpID = AddZone(props, (Vector3) { 1.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
 	props->warpTarget[warpID] = (Vector3){ -29.0f, 4.0f, -54.0f };

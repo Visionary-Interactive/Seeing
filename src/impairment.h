@@ -39,6 +39,8 @@ typedef struct {
 
     //runtime parameters
     float intensity;
+	float offsetIntensity; //used for temporary adjustments
+
     float angle;
     float radiusMajor;
     float radiusMinor;

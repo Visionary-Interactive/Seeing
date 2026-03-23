@@ -611,7 +611,7 @@ void CheckTriggers(Props* obj)
 
 		if (CheckCollisionBoxes(playerBox, objBox))
 		{
-			printf("Player entered Triggerzone!\n");
+			//printf("Player entered Triggerzone!\n");
 
 			// Example behaviors
 			if (obj->triggerType[i] == TRIGGER_WARP)
@@ -633,14 +633,14 @@ void CheckTriggers(Props* obj)
 			{
 				InitTextBox(obj->textType[i], obj->text[i]);
 				obj->Triggered[i] = true; // Prevent retriggering if desired
-				printf("Triggered text box: %s\n", obj->text[i]);
+				//printf("Triggered text box: %s\n", obj->text[i]);
 			}
 			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
 			{
-				printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
+				//printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				player->activeImpairmentIntensity = 0.5f; // Example intensity
+				player->pendingIntensity = 2.0f; // Example intensity
 			}
 
 		}

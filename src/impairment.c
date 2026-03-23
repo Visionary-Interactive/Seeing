@@ -37,6 +37,7 @@ Impairment *LoadImpairment(Impairments type, int screenW, int screenH)
 
     //astig
     im->intensity = 0.4f;
+	im->offsetIntensity = 0.0f;
     im->angle = 0.0f;
     im->radiusMajor = 6.0f;
     im->radiusMinor = 1.5f;
@@ -146,12 +147,18 @@ void IncreaseImpairmentIntensity(Impairment *im)
 void UpdateImpairment(Impairment *im, float intensity)
 {
     if (!im) return;
+    float dt = GetFrameTime();
+    float speed = 0.5f;
 
-    //universal controls
-    if (IsKeyDown(KEY_UP))    im->intensity += 0.01f;
-    if (IsKeyDown(KEY_DOWN))  im->intensity -= 0.01f;
+    // accumulate offset over time
+    if (IsKeyDown(KEY_UP))
+        im->offsetIntensity += speed * dt;
 
-	im->intensity += intensity;
+    if (IsKeyDown(KEY_DOWN))
+        im->offsetIntensity -= speed * dt;
+
+    // combine base + offset
+    im->intensity = intensity + im->offsetIntensity;
 
     if (im->type == Astigmatism)
     {
