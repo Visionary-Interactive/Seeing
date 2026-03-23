@@ -341,7 +341,7 @@ void LoadPropTest(Props* props)
 
     //fires for main room puzzle
     AddKillFlame((Vector3) { -22.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { -6.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 2.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 10.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
@@ -349,30 +349,30 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 24.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { -6.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 2.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 10.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 18.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -22.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { -6.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { 10.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 18.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
     AddKillFlame((Vector3) { -22.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { -14.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -6.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { 2.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { 10.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 18.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
     AddKillFlame((Vector3) { -22.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { -14.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
@@ -380,7 +380,7 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 2.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 10.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 18.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
 
 
