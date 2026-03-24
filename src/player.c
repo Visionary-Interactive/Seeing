@@ -26,7 +26,7 @@ void InitPlayer()
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
 	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
 	player->speed = 7.0f;
-	player->yaw = 0.0f;
+	player->yaw = PI;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
 	player->remotePlayer = false;

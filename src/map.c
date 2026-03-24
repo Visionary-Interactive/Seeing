@@ -492,7 +492,7 @@ void LoadPropTest(Props* props)
     {
         int torchTemp;
         torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
-            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -62.8f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -56.9f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
         torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
             (Vector3) { -22.0f + (i * 9.0f), 6.0f, -33.1f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
 		props->rotation[torchTemp].y = PI;
