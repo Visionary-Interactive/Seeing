@@ -328,6 +328,10 @@ void RenderProps(Props* obj) {
                 {
                     obj->components[i] |= PROP_INTERACTABLE; // re-enable interaction when done rotating
 				}
+                // Rotating Cubes have their own rendering.
+                DrawModelEx( *obj->model[i],obj->position[i],
+                    (Vector3){0, 1, 0},obj->rotation[i].y,obj->size[i],obj->color[i]);
+                continue;
             }
 
 			// Push Block Animation
