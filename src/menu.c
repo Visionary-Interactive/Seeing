@@ -50,6 +50,9 @@ static Texture2D inventoryHoverAnim;
 static Rectangle inventoryFrames[3];
 static int inventoryFrameCount = 3;
 
+static Texture2D textbox;
+static Texture2D bigTextbox;
+
 static float hoverAnimTimer = 0.0f;
 static int hoverFrameIndex = 0;
 
@@ -78,6 +81,8 @@ void LoadMenuElements()
     hoverAnimTex = LoadTexture("resources/global/tex/seeingButtonSketch.png");
     inventorySlot = LoadTexture("resources/global/tex/seeingInventorySlot2.png");
     inventoryHoverAnim = LoadTexture("resources/global/tex/seeingInventorySlotSketch.png");
+    textbox = LoadTexture("resources/global/tex/textbox.png");
+    bigTextbox = LoadTexture("resources/global/tex/bigTextbox.png");
 
     int frameWidth = hoverAnimTex.width;
     int frameHeight = hoverAnimTex.height / hoverFrameCount;
@@ -411,35 +416,47 @@ void DrawUI(InventoryItem *item, int selectedSlot)
     }
 }
 
-void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused)
+void DrawInteractTextBox()
 {
-    DrawRectangleRec(bounds, LIGHTGRAY);
-    DrawRectangleLines(bounds.x, bounds.y, bounds.width, bounds.height, (*focused) ? BLUE : DARKGRAY);
-    DrawText(buffer, bounds.x + 5, bounds.y + 10, 20, BLACK);
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
 
-    if (CheckCollisionPointRec(GetMousePosition(), bounds) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        *focused = true;
-    else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(GetMousePosition(), bounds))
-        *focused = false;
+    // Size of the book page (80% of screen)
+    int boxWidth = screenWidth * 0.8f;
+    int boxHeight = screenHeight * 0.8f;
 
-    // Handle keyboard input if focused
-    if (*focused)
-    {
-        int key = GetCharPressed();
-        while (key > 0)
-        {
-            if ((key >= 32) && (key <= 125) && (currentSize < maxSize - 1))
-            {
-                buffer[currentSize] = (char)key;
-                buffer[currentSize + 1] = '\0';
-            }
-            key = GetCharPressed();
-        }
-        if ((IsKeyPressed(KEY_BACKSPACE) || IsKeyDown(KEY_BACKSPACE)) && currentSize > 0)
-        {
-            buffer[currentSize - 1] = '\0';
-        }
-    }
+    // Centered position
+    int boxX = (screenWidth - boxWidth) / 2;
+    int boxY = (screenHeight - boxHeight) / 2;
+
+    // Optional: darken background behind book
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
+
+    // White page
+    DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
+
+    // Black border
+    DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
+
+    // Text padding inside page
+    int padding = 40;
+
+    DrawText(
+        currentTextbox.text,
+        boxX + padding,
+        boxY + padding,
+        24,
+        BLACK
+    );
+
+    // Close hint
+    DrawText(
+        "",
+        boxX + boxWidth - 200,
+        boxY + boxHeight - 40,
+        18,
+        DARKGRAY
+    );
 }
 
 
@@ -489,40 +506,30 @@ void DrawCharacterbox()
     if (currentTextbox.type == TEXTBOX_PLAYER)
     {
         // Bottom RPG style textbox
-        DrawRectangle(
-            50,
-            screenHeight - 180,
-            screenWidth - 100,
-            130,
-            Fade(BLACK, 0.85f)
+        DrawTextureEx(
+            bigTextbox,
+            (Vector2){50,
+            screenHeight - 230},
+            0,
+            1,
+            Fade(WHITE, 0.85f)
         );
 
-        DrawText(
-            currentTextbox.text,
-            80,
-            screenHeight - 150,
-            20,
-            RAYWHITE
-        );
+        DrawTextEx(romanica, currentTextbox.text, (Vector2){80,
+            screenHeight - 200}, 50, 0, BLACK);
     }
     else if (currentTextbox.type == TEXTBOX_BOOK)
     {
-        // Full screen reading textbox
-        DrawRectangle(
-            50,
-            50,
-            screenWidth - 100,
-            screenHeight - 100,
-            Fade(BLACK, 0.95f)
+        DrawTextureEx(
+            textbox,
+            (Vector2){50, 50},
+            0,
+            1,
+            Fade(WHITE, 0.85f)
         );
 
-        DrawText(
-            currentTextbox.text,
-            100,
-            120,
-            24,
-            RAYWHITE
-        );
+        DrawTextEx(romanica, currentTextbox.text, (Vector2){100,
+            120}, 50, 0, BLACK);
 
         DrawText(
             "Press R to close the page",
