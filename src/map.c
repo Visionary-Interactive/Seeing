@@ -332,8 +332,14 @@ void LoadPropTest(Props* props)
     props->textType[zoneID2] = TEXTBOX_PLAYER;
 	props->text[zoneID2] = strdup("This place is giving me a headache...");
 
+	// Warp Zone
 	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
 	props->warpTarget[warpID] = (Vector3){ -30.0f, 4.0f, -56.0f };
+    // Warp Pad Model
+	CreatePropFromPath(props, "resources/global/models/warpPad/warpPad1.glb", "resources/global/models/warpPad/warpPad1.glb",
+		(Vector3) { 0.0f, 0.0f, -3.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+	CreatePropFromPath(props, "resources/global/models/warpPad/warpPad1.glb", "resources/global/models/warpPad/warpPad1.glb",
+		(Vector3) { -30.0f, 1.5f, -56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
 
 	char* ventModel = "resources/global/models/vent/scene.gltf";
 	char* ventTexture = "resources/global/models/vent/textures/Material_baseColor.png";
