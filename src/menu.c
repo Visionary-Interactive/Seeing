@@ -51,6 +51,7 @@ static Rectangle inventoryFrames[3];
 static int inventoryFrameCount = 3;
 
 static Texture2D textbox;
+static Texture2D bigTextbox;
 
 static float hoverAnimTimer = 0.0f;
 static int hoverFrameIndex = 0;
@@ -81,6 +82,7 @@ void LoadMenuElements()
     inventorySlot = LoadTexture("resources/global/tex/seeingInventorySlot2.png");
     inventoryHoverAnim = LoadTexture("resources/global/tex/seeingInventorySlotSketch.png");
     textbox = LoadTexture("resources/global/tex/textbox.png");
+    bigTextbox = LoadTexture("resources/global/tex/bigTextbox.png");
 
     int frameWidth = hoverAnimTex.width;
     int frameHeight = hoverAnimTex.height / hoverFrameCount;
@@ -505,7 +507,7 @@ void DrawCharacterbox()
     {
         // Bottom RPG style textbox
         DrawTextureEx(
-            textbox,
+            bigTextbox,
             (Vector2){50,
             screenHeight - 230},
             0,
@@ -518,22 +520,16 @@ void DrawCharacterbox()
     }
     else if (currentTextbox.type == TEXTBOX_BOOK)
     {
-        // Full screen reading textbox
-        DrawRectangle(
-            50,
-            50,
-            screenWidth - 100,
-            screenHeight - 100,
-            Fade(BLACK, 0.95f)
+        DrawTextureEx(
+            textbox,
+            (Vector2){50, 50},
+            0,
+            1,
+            Fade(WHITE, 0.85f)
         );
 
-        DrawText(
-            currentTextbox.text,
-            100,
-            120,
-            24,
-            RAYWHITE
-        );
+        DrawTextEx(romanica, currentTextbox.text, (Vector2){100,
+            120}, 50, 0, BLACK);
 
         DrawText(
             "Press R to close the page",
