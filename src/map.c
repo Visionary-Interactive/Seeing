@@ -283,7 +283,7 @@ void LoadPropTest(Props* props)
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 
 	//starting platform for first room
-	CreatePropFromPath(props, "resources/global/models/platform/platform1.glb", "resources/global/models/platform/platform1.glb",
+	CreatePropFromPath(props, "resources/global/models/platform/platform2.glb", "resources/global/models/platform/platform2.glb",
 		(Vector3) {
 		-30, 0.5f, -56.0f
 	},
@@ -323,37 +323,50 @@ void LoadPropTest(Props* props)
 			WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
-	props->text[pickupID] = strdup("Gained the ability to control Tritanopia \n Use the Up and Down Arrow Keys to Increase and Decrease the Impairment \n I think I can solve this Maze now!");
+	props->text[pickupID] = strdup("Gained the ability to control Tritanopia!\nUse the UP and DOWN arrow keys to increase and decrease the Impairment\nI think I can solve this maze now!");
 
     int tutorialID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {
-        2.5f, 1.8f, 50.0f
+        2.5f, 1.0f, 50.0f
     }, (Vector3) { 0.03, 0.03, 0.03 },
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[tutorialID] = INTERACTABLE_TEXT;
     props->textType[tutorialID] = TEXTBOX_BOOK;
-    props->text[tutorialID] = strdup("To Move the Character use the W,A,S,D Keys \n Interact with Objects using the E Key \n I Got to get out of this tower!");
+    props->text[tutorialID] = strdup("Oh gods, where am I? My legs still work - I can move with the WASD Keys.\nInteract with objects using the E key.\nI've got to get out of this tower!");
 
-    int ventID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
+    int ventlidID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
         (Vector3) {
         -1.8f, 0.0f, 13.0f
-    }, (Vector3) { 2.0f, 1.0f, 2.0f },
+    }, (Vector3) { 3.0f, 1.0f, 3.0f },
 			WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE |PROP_VENTLID);
-	props->interactType[ventID] = INTERACTABLE_VENTLID;
+	props->interactType[ventlidID] = INTERACTABLE_VENTLID;
+
+    int ventlidID2 = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
+        (Vector3) {
+        -0.6f, 0.0f, -56.0f
+    }, (Vector3) { 3.0f, 1.0f, 3.0f },
+            WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_VENTLID);
+    props->interactType[ventlidID2] = INTERACTABLE_VENTLID;
 
 	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
 
     int zoneID2 = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_TEXT);
     props->textType[zoneID2] = TEXTBOX_PLAYER;
-	props->text[zoneID2] = strdup("My Eyes, What's Happening. My Vision is all strange");
+	props->text[zoneID2] = strdup("My eyes, what's happening? My vision is all strange...");
 
     int zoneID3 = AddZone(props, (Vector3) { 0.5f, 0.0f, 44.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_TEXT);
     props->textType[zoneID3] = TEXTBOX_PLAYER;
-    props->text[zoneID3] = strdup("I gotta be careful about these vents, the Green ones look dangerous\n the blue ones are okay.");
+    props->text[zoneID3] = strdup("Hah, what a trick! They intend to mimic a flame, but its green colour gives it away.");
 
+	// Warp Zone
 	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
 	props->warpTarget[warpID] = (Vector3){ -30.0f, 4.0f, -56.0f };
+    // Warp Pad Model
+	CreatePropFromPath(props, "resources/global/models/warpPad/warpPad1.glb", "resources/global/models/warpPad/warpPad1.glb",
+		(Vector3) { 0.0f, 0.0f, -3.5f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+	CreatePropFromPath(props, "resources/global/models/warpPad/warpPad1.glb", "resources/global/models/warpPad/warpPad1.glb",
+		(Vector3) { -30.0f, 1.5f, -56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
 
 	char* ventModel = "resources/global/models/vent/scene.gltf";
 	char* ventTexture = "resources/global/models/vent/textures/Material_baseColor.png";
@@ -377,7 +390,7 @@ void LoadPropTest(Props* props)
 
     AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
     AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
@@ -427,8 +440,143 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 23.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
 
+    // Decorations ------------------------------------------------------------------------------------
 
+    char* wallTorch = "resources/global/models/wallTorch/wallTorch1.glb";
+	// Wall Torches for hallway
+    for (int i = 0; i < 6; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -3.4f, 2.0f, 43.0f + (i * -9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI / 2.0f;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { 4.4f, 2.0f, 43.0f + (i * -9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI + PI / 2.0f;
+	}
 
+	// Wall Torches for big room
+    for (int i = 0; i < 4; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -32.3f, 6.0f, -62.0f + (i * 9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI / 2.0f;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { 31.3f, 6.0f, -62.0f + (i * 9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI + PI / 2.0f;
+	}
+    for (int i = 0; i < 6; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -56.9f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -33.1f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+		props->rotation[torchTemp].y = PI;
+	}
+
+    // Vases
+	char* vaseModel = "resources/global/models/vase/vase1.glb";
+	int vaseTemp;
+
+	// Vases for hallway
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 2.7f, 0.0f, 56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.1f, 0.0f, 55.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 3.1f, 0.0f, -2.8f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.7f, 0.0f, -3.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+
+	// Vases for big room
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -19.0f, 0.0f, -61.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+	props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.7f, 0.0f, -35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -1.3f, 0.0f, -56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 15.0f, 0.0f, -44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 24.0f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 24.0f, 0.0f, -34.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -25.0f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+
+    // Grass
+	char* grassModel = "resources/global/models/grass/grass1.glb";
+	// Hallway grass
+    for (int i = 0; i < 25; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 57;
+		int minZ = 42;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 15; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 38;
+		int minZ = 32;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 10; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 24;
+		int minZ = 20;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 10; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 16;
+		int minZ = 12;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+	// Big room grass
+    for (int i = 0; i < 100; i++)
+    {
+        int maxX = 31;
+		int minX = -32;
+        int maxZ = -33;
+		int minZ = -62;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+	// Decorations End --------------------------------------------------------------------------------
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 

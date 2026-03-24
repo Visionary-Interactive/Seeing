@@ -31,7 +31,7 @@ char ipAddress[32] = HOME_SERVER_IP;
 bool ipBoxFocused = false;
 
 static MenuScreen currentScreen = menu_main;
-static MenuScreen lastScreen;
+static MenuScreen lastScreen = menu_main;
 static bool gExitRequested = false;
 static TextBox currentTextbox = { 0 };
 static Texture2D flammarion;
@@ -82,7 +82,7 @@ void LoadMenuElements()
     inventorySlot = LoadTexture("resources/global/tex/seeingInventorySlot2.png");
     inventoryHoverAnim = LoadTexture("resources/global/tex/seeingInventorySlotSketch.png");
     textbox = LoadTexture("resources/global/tex/textbox.png");
-    bigTextbox = LoadTexture("resources/global/tex/bigTextbox.png");
+    bigTextbox = LoadTexture("resources/global/tex/big-textbox.png");
 
     int frameWidth = hoverAnimTex.width;
     int frameHeight = hoverAnimTex.height / hoverFrameCount;
@@ -507,7 +507,7 @@ void DrawCharacterbox()
     {
         // Bottom RPG style textbox
         DrawTextureEx(
-            bigTextbox,
+            textbox,
             (Vector2){50,
             screenHeight - 230},
             0,
@@ -521,7 +521,7 @@ void DrawCharacterbox()
     else if (currentTextbox.type == TEXTBOX_BOOK)
     {
         DrawTextureEx(
-            textbox,
+            bigTextbox,
             (Vector2){50, 50},
             0,
             1,
@@ -531,13 +531,8 @@ void DrawCharacterbox()
         DrawTextEx(romanica, currentTextbox.text, (Vector2){100,
             120}, 50, 0, BLACK);
 
-        DrawText(
-            "Press R to close the page",
-            screenWidth - 250,
-            screenHeight - 80,
-            18,
-            GRAY
-        );
+        DrawTextEx(romanica, "Press R to close this page.", (Vector2){screenWidth - 600,
+            screenHeight - 200}, 50, 0, DARKGRAY);
     }
 }
 
@@ -579,7 +574,6 @@ void InitSaveSlots()
 // Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
-    lastScreen = menu_main;
 	static Vector2 currentMousePos = { 0, 0 };
     currentMousePos = GetMousePosition();
 
@@ -590,7 +584,7 @@ void SetCurrentScreen(MenuScreen newScreen) {
             DisableCursor();
         else
             EnableCursor();
-
+        
         // SFX
         if (currentScreen == menu_game || currentScreen == menu_editor)
         {

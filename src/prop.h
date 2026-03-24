@@ -7,7 +7,7 @@
 #include "modelPool.h"
 #include "texturePool.h"
 
-#define MAX_PROPS 256
+#define MAX_PROPS 512
 #define MAX_TEXT_LENGTH 512
 #define PROP_VISIBILE (1 << 0)
 #define PROP_LIGHT (1 << 1)
@@ -25,7 +25,7 @@
 #define PROP_VENT (1 << 13)
 #define PROP_TRIGGERZONE (1 << 14)
 
-#define PROP_MODEL_PATH_MAX 256
+#define PROP_MODEL_PATH_MAX 512
 
 typedef enum PrimitiveModelId {
 	NO_PRIM = 0,
