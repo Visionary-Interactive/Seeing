@@ -327,19 +327,19 @@ void LoadPropTest(Props* props)
 
     int tutorialID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {
-        2.5f, 1.8f, 50.0f
+        2.5f, 1.0f, 50.0f
     }, (Vector3) { 0.03, 0.03, 0.03 },
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[tutorialID] = INTERACTABLE_TEXT;
     props->textType[tutorialID] = TEXTBOX_BOOK;
     props->text[tutorialID] = strdup("To Move the Character use the W,A,S,D Keys \n Interact with Objects using the E Key \n I Got to get out of this tower!");
 
-    int ventID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
+    int ventlidID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
         (Vector3) {
         -1.8f, 0.0f, 13.0f
-    }, (Vector3) { 2.0f, 1.0f, 2.0f },
+    }, (Vector3) { 3.0f, 1.0f, 3.0f },
 			WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE |PROP_VENTLID);
-	props->interactType[ventID] = INTERACTABLE_VENTLID;
+	props->interactType[ventlidID] = INTERACTABLE_VENTLID;
 
 	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
@@ -383,7 +383,7 @@ void LoadPropTest(Props* props)
 
     AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
-    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
+    AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
     AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);

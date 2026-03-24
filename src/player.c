@@ -624,7 +624,6 @@ void CheckTriggers(Props* obj)
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
 				ResetPlayerToSpawn(player);
-				printf("Entered Deadzone Trigger! by %s", obj[i]);
 			}
 			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
 			{
@@ -759,7 +758,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		int lidPropID = slot->propIndex;
 		obj->position[lidPropID] = obj->position[propID];
 		obj->position[lidPropID].y = obj->position[propID].y +
-			(obj->collider[propID].max.y - obj->collider[propID].min.y) * 0.5f;
+			(obj->collider[propID].max.y - obj->collider[propID].min.y) * 0.5f - 2.0f;
 
 		// Make the lid visible again (placed on the vent) but no longer interactable
 		obj->components[lidPropID] |= PROP_VISIBILE;
