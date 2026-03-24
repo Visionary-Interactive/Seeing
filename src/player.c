@@ -674,7 +674,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	else if (interaction == text)
 	{
-		InitTextBox(obj->textType[propID], obj->text[propID]);
+		if (!player->remotePlayer) // Only trigger text for local player
+			InitTextBox(obj->textType[propID], obj->text[propID]);
 	}
 	else if (interaction == placed)
 	{
