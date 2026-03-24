@@ -313,7 +313,7 @@ void LoadPropTest(Props* props)
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 
 	//starting platform for first room
-	CreatePropFromPath(props, "resources/global/models/platform/platform1.glb", "resources/global/models/platform/platform1.glb",
+	CreatePropFromPath(props, "resources/global/models/platform/platform2.glb", "resources/global/models/platform/platform2.glb",
 		(Vector3) {
 		-27.5, 0.5f, -60.0f
 	},
@@ -471,8 +471,143 @@ void LoadPropTest(Props* props)
     AddKillFlame((Vector3) { 18.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
     AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
+    // Decorations ------------------------------------------------------------------------------------
 
+    char* wallTorch = "resources/global/models/wallTorch/wallTorch1.glb";
+	// Wall Torches for hallway
+    for (int i = 0; i < 6; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -3.4f, 2.0f, 43.0f + (i * -9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI / 2.0f;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { 4.4f, 2.0f, 43.0f + (i * -9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI + PI / 2.0f;
+	}
 
+	// Wall Torches for big room
+    for (int i = 0; i < 4; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -32.3f, 6.0f, -62.0f + (i * 9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI / 2.0f;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { 31.3f, 6.0f, -62.0f + (i * 9.0f) }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI + PI / 2.0f;
+	}
+    for (int i = 0; i < 6; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -62.8f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) { -22.0f + (i * 9.0f), 6.0f, -33.1f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+		props->rotation[torchTemp].y = PI;
+	}
+
+    // Vases
+	char* vaseModel = "resources/global/models/vase/vase1.glb";
+	int vaseTemp;
+
+	// Vases for hallway
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 2.7f, 0.0f, 56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.1f, 0.0f, 55.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 3.1f, 0.0f, -2.8f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.7f, 0.0f, -3.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+
+	// Vases for big room
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -19.0f, 0.0f, -61.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+	props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -2.7f, 0.0f, -35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -1.3f, 0.0f, -56.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 15.0f, 0.0f, -44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 24.0f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { 24.0f, 0.0f, -34.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+            (Vector3) { -25.0f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE); 
+    props->rotation[vaseTemp].y = rand() % 360;
+
+    // Grass
+	char* grassModel = "resources/global/models/grass/grass1.glb";
+	// Hallway grass
+    for (int i = 0; i < 25; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 57;
+		int minZ = 42;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 15; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 38;
+		int minZ = 32;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 10; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 24;
+		int minZ = 20;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+    for (int i = 0; i < 10; i++)
+    {
+        int maxX = 4;
+		int minX = -3;
+        int maxZ = 16;
+		int minZ = 12;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+	// Big room grass
+    for (int i = 0; i < 100; i++)
+    {
+        int maxX = 31;
+		int minX = -32;
+        int maxZ = -33;
+		int minZ = -62;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) { (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ) }, (Vector3) { 1.0f, 1.0f, 1.0f },
+            CLITERAL(Color){ 0, 117, 44, 150 }, PROP_VISIBILE);
+        props->rotation[grassTemp].y = rand() % 360;
+	}
+	// Decorations End --------------------------------------------------------------------------------
 
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 

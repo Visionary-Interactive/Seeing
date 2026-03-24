@@ -348,6 +348,10 @@ void RenderPlayer(Player* p, Props* props)
 		else if (p->input.R || p->animData.animFrame[2] > 0)
 			animState = 2; // Place
 	}
+	else
+	{
+		animState = 2; // test
+	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
 
