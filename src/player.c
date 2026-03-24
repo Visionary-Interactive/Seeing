@@ -620,7 +620,7 @@ void CheckTriggers(Props* obj)
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
 				ResetPlayerToSpawn(player);
-				printf("Deadzone Trigger\n");
+				printf("Entered Deadzone Trigger! by %s", obj[i]);
 			}
 			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
 			{
@@ -745,6 +745,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		// propID here is the fire vent index
 		// Deactivate the fire vent
 		obj->components[propID] &= ~PROP_DEADZONE;
+		obj->components[propID] &= ~PROP_VENT;
+		obj->components[propID] &= ~PROP_TRIGGERZONE;
 
 		// Snap the lid visually on top of the vent
 		int lidPropID = slot->propIndex;

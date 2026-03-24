@@ -323,14 +323,34 @@ void LoadPropTest(Props* props)
 			WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
 	props->interactType[pickupID] = INTERACTABLE_TEXT;
 	props->textType[pickupID] = TEXTBOX_BOOK;
-	props->text[pickupID] = strdup("Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here");
+	props->text[pickupID] = strdup("Gained the ability to control Tritanopia \n Use the Up and Down Arrow Keys to Increase and Decrease the Impairment \n I think I can solve this Maze now!");
 
-	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_IMPAIRMENT);
+    int tutorialID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
+        (Vector3) {
+        2.5f, 1.8f, 50.0f
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[tutorialID] = INTERACTABLE_TEXT;
+    props->textType[tutorialID] = TEXTBOX_BOOK;
+    props->text[tutorialID] = strdup("To Move the Character use the W,A,S,D Keys \n Interact with Objects using the E Key \n I Got to get out of this tower!");
+
+    int ventID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
+        (Vector3) {
+        -1.8f, 0.0f, 13.0f
+    }, (Vector3) { 2.0f, 1.0f, 2.0f },
+			WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE |PROP_VENTLID);
+	props->interactType[ventID] = INTERACTABLE_VENTLID;
+
+	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
 
-    int zoneID2 = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_TEXT);
+    int zoneID2 = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_TEXT);
     props->textType[zoneID2] = TEXTBOX_PLAYER;
-	props->text[zoneID2] = strdup("This place is giving me a headache...");
+	props->text[zoneID2] = strdup("My Eyes, What's Happening. My Vision is all strange");
+
+    int zoneID3 = AddZone(props, (Vector3) { 0.5f, 0.0f, 44.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_TEXT);
+    props->textType[zoneID3] = TEXTBOX_PLAYER;
+    props->text[zoneID3] = strdup("I gotta be careful about these vents, the Green ones look dangerous\n the blue ones are okay.");
 
 	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
 	props->warpTarget[warpID] = (Vector3){ -30.0f, 4.0f, -56.0f };

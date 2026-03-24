@@ -50,7 +50,6 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
 void InitTextBox(TextboxType type, const char* tText);
 void UpdateTextBox(float deltaTime);
 void DrawCharacterbox();
-void DrawInteractTextBox();
 MenuScreen GetCurrentScreen();
 void InitSaveSlots();
 void SetCurrentScreen(MenuScreen newScreen);

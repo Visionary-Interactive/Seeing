@@ -442,49 +442,6 @@ void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, b
     }
 }
 
-void DrawInteractTextBox()
-{
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-
-    // Size of the book page (80% of screen)
-    int boxWidth = screenWidth * 0.8f;
-    int boxHeight = screenHeight * 0.8f;
-
-    // Centered position
-    int boxX = (screenWidth - boxWidth) / 2;
-    int boxY = (screenHeight - boxHeight) / 2;
-
-    // Optional: darken background behind book
-    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
-
-    // White page
-    DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
-
-    // Black border
-    DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
-
-    // Text padding inside page
-    int padding = 40;
-
-    DrawText(
-        currentTextbox.text,
-        boxX + padding,
-        boxY + padding,
-        24,
-        BLACK
-    );
-
-    // Close hint
-    DrawText(
-        "",
-        boxX + boxWidth - 200,
-        boxY + boxHeight - 40,
-        18,
-        DARKGRAY
-    );
-}
-
 
 void InitTextBox(TextboxType type, const char* tText)
 {

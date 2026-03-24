@@ -164,11 +164,11 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
     CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", 
         "resources/global/models/vent/textures/Material_baseColor.png", 
-        (Vector3){position.x, position.y + 0.1f, position.z}, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE | PROP_VENT);
+        (Vector3){position.x, position.y + 0.1f, position.z}, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     if (deadly == true) 
     {
         InitParticleEmitter(pool, 20.0f, position, template, (Color){ 0, 255, 0, 100});
-        int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
+        int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, (Vector3) {size.x + 1.5f,size.y + 4.0f, size.z + 1.5f}, WHITE,
             PROP_TRIGGERZONE| PROP_VENT);
 		props->triggerType[flame] = TRIGGER_DEADZONE;
 		return flame;
@@ -227,7 +227,7 @@ void RenderProps(Props* obj) {
         if (!(obj->components[i] & PROP_VISIBILE)) continue;
 
 		// Special rendering for deadzones for debugging sake
-        if (obj->components[i] & PROP_DEADZONE)
+        /*if (obj->components[i] & PROP_DEADZONE)
         {
             DrawCube(
                 obj->position[i],
@@ -246,7 +246,7 @@ void RenderProps(Props* obj) {
             );
 
             continue; // don't try to draw a model
-        }
+        }*/
 
         /*if ((obj->components[i] & PROP_TRIGGERZONE) && !obj->Triggered[i])
         {
@@ -269,7 +269,7 @@ void RenderProps(Props* obj) {
             continue; // don't try to draw a model   
         }*/
 
-        if (obj->triggerType[i] == TRIGGER_TEXT)
+        /*if (obj->triggerType[i] == TRIGGER_TEXT)
         {
             DrawCube(
                 obj->position[i],
@@ -309,7 +309,7 @@ void RenderProps(Props* obj) {
             );
 
             continue; // don't try to draw a model
-        }
+        }*/
 
             Vector3 scale = obj->size[i];
             if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f) {
