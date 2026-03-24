@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
 	SetMasterVolume(0.0f);
-	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+	InitWindow(screenWidth, screenHeight, "The Delian Problem");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
 

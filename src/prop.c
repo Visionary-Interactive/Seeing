@@ -8,7 +8,7 @@ void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
 	memset(props, 0, sizeof(Props));
-    pool = InitParticlePool(512);
+    pool = InitParticlePool(4096);
 	InitFlameTemplate();
 	template = GetParticleTemplate();
 }
@@ -162,17 +162,19 @@ int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 
 int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
 {
-    //CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", "resources/global/models/vent/textures/Material_baseColor.png", (Vector3){position.x, position.y + 0.2f, position.z}, size, WHITE, PROP_VISIBILE | PROP_VENT);
+    CreatePropFromPath(props, "resources/global/models/vent/scene.gltf", 
+        "resources/global/models/vent/textures/Material_baseColor.png", 
+        (Vector3){position.x, position.y + 0.1f, position.z}, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE | PROP_VENT);
     if (deadly == true) 
     {
-        InitParticleEmitter(pool, 20.0f, position, template, BLUE);
+        InitParticleEmitter(pool, 20.0f, position, template, (Color){ 0, 255, 0, 100});
         int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
             PROP_VISIBILE | PROP_TRIGGERZONE| PROP_VENT);
 		props->triggerType[flame] = TRIGGER_DEADZONE;
 		return flame;
     }
     else {
-        InitParticleEmitter(pool, 20.0f, position, template, WHITE);
+        InitParticleEmitter(pool, 20.0f, position, template, (Color){ 0, 0, 255, 100});
         return -1;
     }
 }
