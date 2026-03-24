@@ -624,7 +624,7 @@ void CheckTriggers(Props* obj)
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
 				ResetPlayerToSpawn(player);
-				printf("Deadzone Trigger\n");
+				printf("Entered Deadzone Trigger! by %s", obj[i]);
 			}
 			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
 			{
@@ -645,7 +645,7 @@ void CheckTriggers(Props* obj)
 				//printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				player->pendingIntensity = 2.0f; // Example intensity
+				player->pendingIntensity = 0.9f; // Example intensity
 			}
 
 		}
@@ -752,6 +752,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		// propID here is the fire vent index
 		// Deactivate the fire vent
 		obj->components[propID] &= ~PROP_DEADZONE;
+		obj->components[propID] &= ~PROP_VENT;
+		obj->components[propID] &= ~PROP_TRIGGERZONE;
 
 		// Snap the lid visually on top of the vent
 		int lidPropID = slot->propIndex;
