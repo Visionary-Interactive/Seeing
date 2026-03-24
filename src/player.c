@@ -633,9 +633,12 @@ void CheckTriggers(Props* obj)
 			}
 			else if (obj->triggerType[i] == TRIGGER_TEXT && obj->Triggered[i] == false)
 			{
-				InitTextBox(obj->textType[i], obj->text[i]);
-				obj->Triggered[i] = true; // Prevent retriggering if desired
-				//printf("Triggered text box: %s\n", obj->text[i]);
+				if (!player->remotePlayer) // Only trigger text for local player
+				{
+					InitTextBox(obj->textType[i], obj->text[i]);
+					obj->Triggered[i] = true; // Prevent retriggering if desired
+					//printf("Triggered text box: %s\n", obj->text[i]);
+				}
 			}
 			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
 			{
