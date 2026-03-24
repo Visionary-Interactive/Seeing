@@ -169,7 +169,7 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
     {
         InitParticleEmitter(pool, 20.0f, position, template, (Color){ 0, 255, 0, 100});
         int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
-            PROP_VISIBILE | PROP_TRIGGERZONE| PROP_VENT);
+            PROP_TRIGGERZONE| PROP_VENT);
 		props->triggerType[flame] = TRIGGER_DEADZONE;
 		return flame;
     }
@@ -248,7 +248,7 @@ void RenderProps(Props* obj) {
             continue; // don't try to draw a model
         }
 
-        if ((obj->components[i] & PROP_TRIGGERZONE) && !obj->Triggered[i])
+        /*if ((obj->components[i] & PROP_TRIGGERZONE) && !obj->Triggered[i])
         {
             DrawCube(
                 obj->position[i],
@@ -267,7 +267,7 @@ void RenderProps(Props* obj) {
             );
 
             continue; // don't try to draw a model   
-        }
+        }*/
 
         if (obj->triggerType[i] == TRIGGER_TEXT)
         {

@@ -366,99 +366,44 @@ void LoadPropTest(Props* props)
     //fires for main room puzzle
 
     AddKillFlame((Vector3) { -25.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {-25.0f, 0.0f, -54.0f}, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -19.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, 
-        (Vector3) { -19.0f, 0.0f, -54.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -13.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, 
-        (Vector3) { -13.0f, 0.0f, -54.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -7.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        -13.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -1.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        -1.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 5.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        5.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 11.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        11.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 17.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        17.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 23.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture,
-        (Vector3) {
-        23.0f, 0.0f, -54.0f
-    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+ 
 
     AddKillFlame((Vector3) { -25.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -19.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -13.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -7.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -1.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 5.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 11.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 17.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 23.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 23.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
 
     AddKillFlame((Vector3) { -25.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -19.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -13.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -7.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -1.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 5.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 11.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 17.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 23.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 23.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
 
-    AddKillFlame((Vector3) { -25.0f, 0.0f, -39.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
     AddKillFlame((Vector3) { -19.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -13.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -7.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -1.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 5.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 11.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 17.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { 23.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
 

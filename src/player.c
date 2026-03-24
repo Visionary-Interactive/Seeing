@@ -638,7 +638,7 @@ void CheckTriggers(Props* obj)
 				//printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				player->pendingIntensity = 2.0f; // Example intensity
+				player->pendingIntensity = 0.9f; // Example intensity
 			}
 
 		}
