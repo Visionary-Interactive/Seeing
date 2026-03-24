@@ -31,7 +31,7 @@ char ipAddress[32] = HOME_SERVER_IP;
 bool ipBoxFocused = false;
 
 static MenuScreen currentScreen = menu_main;
-static MenuScreen lastScreen;
+static MenuScreen lastScreen = menu_main;
 static bool gExitRequested = false;
 static TextBox currentTextbox = { 0 };
 static Texture2D flammarion;
@@ -579,7 +579,6 @@ void InitSaveSlots()
 // Sets the current menu screen and manages cursor visibility
 void SetCurrentScreen(MenuScreen newScreen) {
     currentScreen = newScreen;
-    lastScreen = menu_main;
 	static Vector2 currentMousePos = { 0, 0 };
     currentMousePos = GetMousePosition();
 
@@ -590,7 +589,7 @@ void SetCurrentScreen(MenuScreen newScreen) {
             DisableCursor();
         else
             EnableCursor();
-
+        
         // SFX
         if (currentScreen == menu_game || currentScreen == menu_editor)
         {

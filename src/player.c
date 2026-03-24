@@ -26,7 +26,7 @@ void InitPlayer()
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
 	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
 	player->speed = 7.0f;
-	player->yaw = 0.0f;
+	player->yaw = PI;
 	player->pitch = 0.0f;
 	player->isGrounded = true;
 	player->remotePlayer = false;
@@ -349,6 +349,10 @@ void RenderPlayer(Player* p, Props* props)
 		else if (p->input.R || p->animData.animFrame[2] > 0)
 			animState = 2; // Place
 	}
+	else
+	{
+		animState = 2; // Keep remote players in IDLE pose
+	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
 
@@ -629,9 +633,12 @@ void CheckTriggers(Props* obj)
 			}
 			else if (obj->triggerType[i] == TRIGGER_TEXT && obj->Triggered[i] == false)
 			{
-				InitTextBox(obj->textType[i], obj->text[i]);
-				obj->Triggered[i] = true; // Prevent retriggering if desired
-				//printf("Triggered text box: %s\n", obj->text[i]);
+				if (!player->remotePlayer) // Only trigger text for local player
+				{
+					InitTextBox(obj->textType[i], obj->text[i]);
+					obj->Triggered[i] = true; // Prevent retriggering if desired
+					//printf("Triggered text box: %s\n", obj->text[i]);
+				}
 			}
 			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
 			{
