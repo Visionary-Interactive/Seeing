@@ -351,7 +351,7 @@ void RenderPlayer(Player* p, Props* props)
 	}
 	else
 	{
-		animState = 2; // test
+		animState = 2; // Keep remote players in IDLE pose
 	}
 
 	animState %= p->animData.animsCount; // Ensure valid index
