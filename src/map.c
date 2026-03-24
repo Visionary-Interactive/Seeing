@@ -341,6 +341,13 @@ void LoadPropTest(Props* props)
 			WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE |PROP_VENTLID);
 	props->interactType[ventlidID] = INTERACTABLE_VENTLID;
 
+    int ventlidID2 = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
+        (Vector3) {
+        -0.6f, 0.0f, -56.0f
+    }, (Vector3) { 3.0f, 1.0f, 3.0f },
+            WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_VENTLID);
+    props->interactType[ventlidID2] = INTERACTABLE_VENTLID;
+
 	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
 
