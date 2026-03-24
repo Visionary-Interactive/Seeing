@@ -38,7 +38,8 @@ void InitPlayer()
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
 	player->activeImpairment = 0;
-
+	player->activeImpairmentIntensity = 0.0f
+;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
 }
@@ -437,8 +438,7 @@ static int FindNearestActiveVent(Props* obj, float maxRange)
 
 	for (size_t i = 0; i < obj->count; i++)
 	{
-		if ((obj->components[i] & PROP_VENT) &&
-		    (obj->components[i] & PROP_DEADZONE))
+		if ((obj->components[i] & PROP_VENT))
 		{
 			float dist = Vector3Distance(player->position, obj->position[i]);
 			if (dist < closestDist)
@@ -612,13 +612,14 @@ void CheckTriggers(Props* obj)
 
 		if (CheckCollisionBoxes(playerBox, objBox))
 		{
-			printf("Player entered Triggerzone!\n");
+			//printf("Player entered Triggerzone!\n");
 
 			// Example behaviors
 			if (obj->triggerType[i] == TRIGGER_WARP)
 			{
 				player->position = obj->warpTarget[i]; // Warp player to prop position
 				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
+				player->spawnPosition = obj->warpTarget[i]; // Update spawn position to new location
 			}
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
@@ -634,13 +635,14 @@ void CheckTriggers(Props* obj)
 			{
 				InitTextBox(obj->textType[i], obj->text[i]);
 				obj->Triggered[i] = true; // Prevent retriggering if desired
-				printf("Triggered text box: %s\n", obj->text[i]);
+				//printf("Triggered text box: %s\n", obj->text[i]);
 			}
 			else if (obj->triggerType[i] == TRIGGER_IMPAIRMENT)
 			{
+				//printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				//IncreaseImpairmentIntensity();
+				player->pendingIntensity = 2.0f; // Example intensity
 			}
 
 		}

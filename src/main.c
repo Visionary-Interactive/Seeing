@@ -20,9 +20,12 @@ int main(int argc, char** argv)
 	const int screenHeight = 900;
 
 	//SetConfigFlags(FLAG_MSAA_4X_HINT);
-	InitWindow(screenWidth, screenHeight, "A Game About Seeing");
+	SetMasterVolume(0.0f);
+	InitWindow(screenWidth, screenHeight, "The Delian Problem");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
+
+	LoadMenuElements();
 
 	InitModelCache();
 	InitSoundSystem();
@@ -61,6 +64,8 @@ int main(int argc, char** argv)
 
 	int swap = 0;
 
+	float intensity = 0;
+
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
 		float dt = GetFrameTime();
@@ -72,12 +77,13 @@ int main(int argc, char** argv)
 		{
 			swap = playerList[0]->pendingImpairment;
 
-			float intensity = 0.5;
+			intensity = playerList[0]->pendingIntensity;
 
+			playerList[0]->activeImpairmentIntensity = intensity; // store current
 
+			playerList[0]->pendingImpairment = -1; // reset ONLY pending
 
-			playerList[0]->pendingImpairment = -1; // reset		
-
+			
 
 		}
 
@@ -99,7 +105,7 @@ int main(int argc, char** argv)
 		}
 
 		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, GetParticlePool());
-		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, screenWidth, screenHeight);
+		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, intensity,screenWidth, screenHeight);
 	}
 
 	SaveMapFile(&gameMap, "resources/maps/pz_1");

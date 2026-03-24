@@ -163,6 +163,9 @@ void LoadPropTest(Props* props)
  //   CreatePropFromPath(props, wall2, wTexP, (Vector3) { 20.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
  //   CreatePropFromPath(props, wall2, wTexP, (Vector3) { 26.0f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
+
+    //hallway leftside
+
     //hallway
     char* wall1 = "resources/global/models/wall/wall1.glb";
 	char* curvedCeiling = "resources/global/models/ceiling/ceiling1.glb";
@@ -181,25 +184,6 @@ void LoadPropTest(Props* props)
 	wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 	props->rotation[wallTemp].y = PI / 2.0f;
 	ColliderSetup(props, wallTemp);
-
-	//CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, RED, PROP_VISIBILE | PROP_COLLIDER);
-	//CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-	//CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
- //   CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
- //   CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
- //   CreatePropFromPath(props, wall, wTexP, (Vector3) { -6.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-
-    //hallway rightside
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 54.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 44.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 35.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 26.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 17.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, 7.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 4.0f, 0.0f, -2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-
-    //CreatePropFromPath(props, wall2, wTexP, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BLUE, PROP_VISIBILE | PROP_COLLIDER);
-
 
     // Big room
 	// Left & Right side walls
@@ -232,10 +216,10 @@ void LoadPropTest(Props* props)
 		ColliderSetup(props, wallTemp);
 
 		// Forward walls
-        wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -28.0f + (i * 9), 0.0f, -64.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+        wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -28.0f + (i * 9), 0.0f, -58.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 		props->rotation[wallTemp].y = PI / 2.0f + PI;
 		ColliderSetup(props, wallTemp);
-		wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -28.0f + (i * 9), 5.0f, -64.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+		wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -28.0f + (i * 9), 5.0f, -58.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 		props->rotation[wallTemp].y = PI / 2.0f + PI;
 		ColliderSetup(props, wallTemp);
 
@@ -245,20 +229,6 @@ void LoadPropTest(Props* props)
         CreatePropFromPath(props, flatCeiling, flatCeiling, (Vector3) { -35.0f + (i * 9), 3.3f, -61.0f }, (Vector3) { 6.0f, 6.0f, 6.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 	}
 
-	//big room leftside
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { -33.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-
-
-    //big room rightside
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -32.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -37.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -42.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -47.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
-    //CreatePropFromPath(props, wall, wTexP, (Vector3) { 30.5f, 0.0f, -52.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
 
     //big room pillar
     CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
@@ -304,18 +274,18 @@ void LoadPropTest(Props* props)
         30, 0.0, -52.0f
     }, (Vector3) { 0.06, 0.01, 0.06 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-
+    //pushable cubes for the main puzzle
 	int pushCubeID = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb", "resources/global/models/pushBoulder/Push_Boulder.glb"
-		, (Vector3) { -19.0f, 2.0f, -45.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+		, (Vector3) { -19.0f, 2.0f, -46.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
 	int pushCubeID2 = CreatePropFromPath(props, "resources/global/models/pushBoulder/Push_Boulder.glb", "resources/global/models/pushBoulder/Push_Boulder.glb"
-		, (Vector3) { 12, 2.0f, -55.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
+		, (Vector3) { 11, 2.0f, -46.0f }, (Vector3) { 2.0f, 2.0, 2.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_PUSHABLE);
 	props->interactType[pushCubeID] = INTERACTABLE_PUSH;
 	props->interactType[pushCubeID2] = INTERACTABLE_PUSH;
 
 	//starting platform for first room
 	CreatePropFromPath(props, "resources/global/models/platform/platform2.glb", "resources/global/models/platform/platform2.glb",
 		(Vector3) {
-		-27.5, 0.5f, -60.0f
+		-30, 0.5f, -56.0f
 	},
 		(Vector3) {
 		3.0f, 3.0f, 3.0f
@@ -327,19 +297,19 @@ void LoadPropTest(Props* props)
 		0.5, 2.5f, -35.0f
 	},
 		(Vector3) {
-		3.0f, 3.0f, 3.0f
+		6.0f, 3.0f, 3.0f
 	}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
 	// End platform
 	CreatePropFromPath(props, "resources/global/models/platform/platform1.glb", "resources/global/models/platform/platform1.glb",
 		(Vector3) {
-		29.0f, 2.5f, -60.0f
+		29.0f, 2.5f, -56.0f
 	},
 		(Vector3) {
 		3.0f, 3.0f, 3.0f
 	}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
-	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -60.0f },
+	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -56.0f },
 		(Vector3) {
 		1.0f, 1.0f, 1.0f
 	}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
@@ -355,121 +325,142 @@ void LoadPropTest(Props* props)
 	props->textType[pickupID] = TEXTBOX_BOOK;
 	props->text[pickupID] = strdup("Where am I, I don't know what's going on! \n My feet still seem to work (WASD) and I can Jump pretty well.(Space) \n I need to Get out of here");
 
-	//int zoneID = AddZone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f }, TRIGGER_IMPAIRMENT);
-	//props->text[zoneID] = "I have entered a new area, I wonder if there is anything different here?";
-	//props->textType[zoneID] = TEXTBOX_PLAYER;
-	//props->ImpairmentType[zoneID] = 1;
+	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_IMPAIRMENT);
+	props->ImpairmentType[zoneID] = 0;
+
+    int zoneID2 = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 1.0f, 1.0f }, TRIGGER_TEXT);
+    props->textType[zoneID2] = TEXTBOX_PLAYER;
+	props->text[zoneID2] = strdup("This place is giving me a headache...");
 
 	int warpID = AddZone(props, (Vector3) { 0.0f, 0.0f, -4.0f }, (Vector3) { 2.0f, 5.0f, 2.0f }, TRIGGER_WARP);
-	props->warpTarget[warpID] = (Vector3){ -27.0f, 4.0f, -60.0f };
+	props->warpTarget[warpID] = (Vector3){ -30.0f, 4.0f, -56.0f };
 
 	char* ventModel = "resources/global/models/vent/scene.gltf";
 	char* ventTexture = "resources/global/models/vent/textures/Material_baseColor.png";
 
 	//fires for hallway puzzle
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
 	AddKillFlame((Vector3) { -2.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 	AddKillFlame((Vector3) { 1.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 	AddKillFlame((Vector3) { 4.0f, 0.0f, 40.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
-    
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -2.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 30.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -2.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 25.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -2.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 18.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
 
-    CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -2.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 10.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
-    CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { -3.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 0.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
-	CreatePropFromPath(props, ventModel, ventTexture,
-		(Vector3) { 3.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
     AddKillFlame((Vector3) { -2.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 1.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, true);
     AddKillFlame((Vector3) { 4.0f, 0.0f, 5.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, false);
 
     //fires for main room puzzle
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) {  18.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -58.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {-25.0f, 0.0f, -54.0f}, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, 
+        (Vector3) { -19.0f, 0.0f, -54.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, 
+        (Vector3) { -13.0f, 0.0f, -54.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        -13.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        -1.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        5.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        11.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        17.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture,
+        (Vector3) {
+        23.0f, 0.0f, -54.0f
+    }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -54.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 23.0f, 0.0f, -49.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
 
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 23.0f, 0.0f, -44.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -50.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    AddKillFlame((Vector3) { -25.0f, 0.0f, -39.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -25.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -19.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -19.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -13.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -13.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -7.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -7.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { -1.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { -1.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 5.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 5.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 11.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 11.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 17.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
+    CreatePropFromPath(props, ventModel, ventTexture, (Vector3) { 17.0f, 0.0f, -39.0f }, (Vector3) { 2.5f, 1.0f, 2.5f }, WHITE, PROP_VISIBILE);
+    AddKillFlame((Vector3) { 23.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
 
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -46.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
-
-    AddKillFlame((Vector3) { -22.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -14.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { -6.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 2.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 10.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 18.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, true);
-    AddKillFlame((Vector3) { 24.0f, 0.0f, -42.0f }, (Vector3) { 3.0f, 3.0f, 3.0f }, false);
 
     // Decorations ------------------------------------------------------------------------------------
 
@@ -786,26 +777,6 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
 
     if (rec->prim == NO_PRIM && rec->modelPath[0] != '\0')
     {
-        /*Model model = LoadModel(rec->modelPath);
-        if (&model == NULL)
-        {
-            TraceLog(LOG_WARNING, "Failed to load model '%s'. Using fallback cube.", rec->modelPath);
-            model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-        }
-        else if (rec->texturePath[0] != '\0')
-        {
-            Texture2D tex = LoadTexture(rec->texturePath);
-            if (&tex == NULL)
-            {
-                model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
-            }
-            else
-            {
-                TraceLog(LOG_WARNING, "Failed to load texture '%s' for model '%s'.", rec->texturePath, rec->modelPath);
-            }
-        }
-
-        props->model[props->count] = model;*/
         int id = CreatePropFromPath(props, rec->modelPath, rec->texturePath, rec->position, rec->size, rec->color, rec->components);
         if (id >= 0)
         {
@@ -829,7 +800,7 @@ static int RebuildPropFromRecord(Props* props, const PropRecord* rec)
     }
 
     Model fallback = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    return CreateProp(props, &fallback, rec->position, rec->size, rec->color, rec->components);
+    return CreateProp(props, &fallback, rec->position, rec->size, PURPLE, rec->components);
 }
 
 

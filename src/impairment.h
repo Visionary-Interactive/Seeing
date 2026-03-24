@@ -39,6 +39,8 @@ typedef struct {
 
     //runtime parameters
     float intensity;
+	float offsetIntensity; //used for temporary adjustments
+
     float angle;
     float radiusMajor;
     float radiusMinor;
@@ -64,7 +66,7 @@ void BeginImpairment(Impairment *vs);
 void IncreaseImpairmentIntensity(Impairment* vs);
 void SetImpairment(Impairment* vs, float value);
 void EndImpairment(Impairment *vs);
-void UpdateImpairment(Impairment *vs);
+void UpdateImpairment(Impairment *vs, float Intensity);
 void DestroyImpairment(Impairment *vs);
 
 #endif
