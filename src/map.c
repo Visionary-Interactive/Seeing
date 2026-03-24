@@ -332,7 +332,7 @@ void LoadPropTest(Props* props)
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[tutorialID] = INTERACTABLE_TEXT;
     props->textType[tutorialID] = TEXTBOX_BOOK;
-    props->text[tutorialID] = strdup("To move the character use the WASD Keys.\nInteract with objects using the E key.\n I've got to get out of this tower!");
+    props->text[tutorialID] = strdup("Oh gods, where am I? My legs still work - I can move with the WASD Keys.\nInteract with objects using the E key.\nI've got to get out of this tower!");
 
     int ventlidID = CreatePropFromPath(props, "resources/global/models/cauldron_lid/scene.gltf", "resources/global/models/cauldron_lid/textures/Material_baseColor.png",
         (Vector3) {
