@@ -167,7 +167,7 @@ int AddKillFlame(Vector3 position, Vector3 size, bool deadly)
     {
         InitParticleEmitter(pool, 20.0f, position, template, BLUE);
         int flame = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE, position, size, WHITE, 
-            PROP_VISIBILE | PROP_TRIGGERZONE | PROP_VENT);
+            PROP_VISIBILE | PROP_TRIGGERZONE| PROP_VENT);
 		props->triggerType[flame] = TRIGGER_DEADZONE;
 		return flame;
     }

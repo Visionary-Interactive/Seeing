@@ -615,6 +615,7 @@ void CheckTriggers(Props* obj)
 			{
 				player->position = obj->warpTarget[i]; // Warp player to prop position
 				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
+				player->spawnPosition = obj->warpTarget[i]; // Update spawn position to new location
 			}
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
