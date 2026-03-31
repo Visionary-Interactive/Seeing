@@ -195,13 +195,16 @@ void NetworkTick(bool isServer)
 			break;
 		case 3: // NBN_CLIENT_DISCONNECTED / NBN_DISCONNECTED
 		{
+			multiplayerSession = false;
 			printf("A player has disconnected.\n");
 			if (clientPlayerCount > 0)
 			{
 				RL_FREE(playerList[clientPlayerCount]);
 				playerList[clientPlayerCount] = NULL;
 				clientPlayerCount--;
-			}/*
+			}
+			return;
+			/*
 			if (!isServer)
 			{
 				SessionStateController_Init();

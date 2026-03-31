@@ -668,8 +668,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
+		SessionManager_Client_Disonnect();
 		RequestExit();
-
 	}
 	else if (interaction == text)
 	{

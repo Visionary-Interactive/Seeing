@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 	DestroyParticlePool(GetParticlePool());
 	DestroyProps(props);
 
-	for (int i = 0; i < clientPlayerCount; i++) {
+	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}
