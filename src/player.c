@@ -38,7 +38,8 @@ void InitPlayer()
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
 	player->activeImpairment = 0;
-	player->activeImpairmentIntensity = 0.0f
+	player->activeImpairmentIntensity = 0.0f;
+	player->allowControl = false;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -484,6 +485,7 @@ void UpdateInteractions(Props* obj)
 
 		if (player->input.E)
 		{
+			printf("Interacted with prop ID: %d\n", closestID);
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
@@ -524,6 +526,7 @@ void UpdateInteractions(Props* obj)
 			}
 
 			case INTERACTABLE_TEXT:
+				printf("Interacted with text prop: %s\n", obj->text[closestID]);
 				PlayerPropInteraction(obj, text, NULL, closestID);
 				break;
 
@@ -651,7 +654,7 @@ void CheckTriggers(Props* obj)
 	}
 }
 
-
+//runs through the actual interaction logic
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)
@@ -674,7 +677,16 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	else if (interaction == text)
 	{
 		if (!player->remotePlayer) // Only trigger text for local player
+		{
 			InitTextBox(obj->textType[propID], obj->text[propID]);
+			printf("Triggered text box: %s\n", obj->text[propID]);
+			//specific case for the book that gives you control over the impairment
+			if (obj->scriptID[propID] = 124)
+			{
+				player->allowControl = true;
+			}
+		}
+
 	}
 	else if (interaction == placed)
 	{

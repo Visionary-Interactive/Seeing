@@ -75,6 +75,7 @@ typedef struct Player {
 	Vector3 spawnPosition;
 	bool isGrounded; //checks if the player is on the ground
 	bool remotePlayer; // Is this a remote player?
+    bool allowControl; //allows impairment control for this player
 	InputState input; // Current input state
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;

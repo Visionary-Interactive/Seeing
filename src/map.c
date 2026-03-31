@@ -316,14 +316,14 @@ void LoadPropTest(Props* props)
 	props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
 
-	int pickupID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
+	int helpBookID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
 		(Vector3) {
 		1.5, 4.5f, -35.0f
 	}, (Vector3) { 0.03, 0.03, 0.03 },
 			WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
-	props->interactType[pickupID] = INTERACTABLE_TEXT;
-	props->textType[pickupID] = TEXTBOX_BOOK;
-	props->text[pickupID] = strdup("Gained the ability to control Tritanopia!\nUse the UP and DOWN arrow keys to increase and decrease the Impairment\nI think I can solve this maze now!");
+	props->interactType[helpBookID] = INTERACTABLE_TEXT;
+	props->textType[helpBookID] = TEXTBOX_BOOK;
+	props->text[helpBookID] = strdup("Gained the ability to control Tritanopia!\nUse the UP and DOWN arrow keys to increase and decrease the Impairment\nI think I can solve this maze now!");
 
     int tutorialID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {

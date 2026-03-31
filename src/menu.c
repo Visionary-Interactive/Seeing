@@ -462,7 +462,6 @@ void DrawInteractTextBox()
 
 void InitTextBox(TextboxType type, const char* tText)
 {
-	printf("Initializing TextBox of type %d with text: %s\n", type, tText);
     currentTextbox.type = type;
     currentTextbox.active = true;
     strncpy(currentTextbox.text, tText, sizeof(currentTextbox.text));
