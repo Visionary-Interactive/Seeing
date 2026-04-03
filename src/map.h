@@ -48,6 +48,7 @@ void SaveMapProgress(Map *map, Player *player, const char *mapPath);
 void LoadPropTest(Props* props);
 
 void LoadLevel2(Props* props);
+void LoadLevel4(Props* props);
 
 void GenerateCubePuzzle(Props* props, int count,
     float minX, float maxX,

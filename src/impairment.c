@@ -44,7 +44,7 @@ Impairment *LoadImpairment(Impairments type, int screenW, int screenH)
     im->samples = 15;
 
     //glaucoma
-    im->tunnelRadius = 0.35f;
+    im->tunnelRadius = 0.001f;
     im->blurStrength = 2.0f;
     im->contrastLoss = 0.4f;
     im->edgeDarkening = 0.8f;

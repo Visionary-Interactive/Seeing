@@ -46,7 +46,8 @@ typedef enum InteractableType {
 	INTERACTABLE_TEXT,
 	INTERACTABLE_PUSH,
 	INTERACTABLE_PUZZLE_ROTATATION_BLOCK,
-	INTERACTABLE_VENTLID
+	INTERACTABLE_VENTLID,
+	INTERACTABLE_DISAPPEARING_WALL
 } InteractableType;
 
 typedef enum TriggerType {
@@ -96,6 +97,8 @@ typedef struct Props {
 	Vector3 warpTarget[MAX_PROPS];
 
 } Props;
+
+extern int rotatingBlockIDs[6];
 
 void CreatePropStructure(void);
 Props* GetPropStructure(void);
