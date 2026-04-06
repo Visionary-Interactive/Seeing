@@ -13,13 +13,16 @@
 #include "particleEmitter.h"
 #include "sound.h"
 #include "modelPool.h"
+#include "prefs.h"
 
 int main(int argc, char** argv)
 {
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
 
-	//SetConfigFlags(FLAG_MSAA_4X_HINT);
+	PlayerPrefs* prefs = PrefsInit();
+
+	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	SetMasterVolume(0.0f);
 	InitWindow(screenWidth, screenHeight, "The Delian Problem");
 	SetExitKey(KEY_NULL);
