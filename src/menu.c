@@ -5,6 +5,7 @@
 #include "player.h"
 #include "sound.h"
 #include "menu.h"
+#include "prefs.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -18,6 +19,10 @@ Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
+Button fullscreenButton = { { 100, 200, 200, 50 }, "Fullscreen: Off" };
+Button vsyncButton = { { 100, 300, 200, 50 }, "VSync: Off" };
+Button msaaButton = { { 100, 400, 200, 50 }, "MSAA: Off" };
+Button fpsButton = { { 100, 500, 200, 50 }, "FPS: 120" };
 
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
@@ -29,6 +34,8 @@ Button saveSlots[SAVE_SLOT_COUNT];
 Rectangle ipAddressText = { 400, 200, 200, 50 };
 char ipAddress[32] = HOME_SERVER_IP;
 bool ipBoxFocused = false;
+
+const static char* pref = "pref/pref.bin";
 
 static MenuScreen currentScreen = menu_main;
 static MenuScreen lastScreen = menu_main;
@@ -70,6 +77,35 @@ static void RightMenuButton(Button* button, float y)
 
     button->bounds.x = screenWidth * 0.80f - button->bounds.width * 0.5f;
     button->bounds.y = y;
+}
+
+static void RefreshOptionLabels(void)
+{
+    int val;
+
+    if (PrefsGet("fullscreen", &val))
+        fullscreenButton.text = val ? "Fullscreen: On" : "Fullscreen: Off";
+    else
+        fullscreenButton.text = "Fullscreen: Off";
+
+    if (PrefsGet("vsync", &val))
+        vsyncButton.text = val ? "VSync: On" : "VSync: Off";
+    else
+        vsyncButton.text = "VSync: Off";
+
+    if (PrefsGet("msaa", &val))
+        msaaButton.text = val ? "MSAA: On" : "MSAA: Off";
+    else
+        msaaButton.text = "MSAA: Off";
+
+    if (PrefsGet("targetFps", &val))
+    {
+        static char fpsLabel[32];
+        snprintf(fpsLabel, sizeof(fpsLabel), "FPS: %d", val);
+        fpsButton.text = fpsLabel;
+    }
+    else
+        fpsButton.text = "FPS: 120";
 }
 
 void LoadMenuElements()
@@ -178,10 +214,31 @@ void DrawMenu()
         break;
 
     case menu_options:
-        DrawTextEx(romanica, "OPTIONS", (Vector2){100,40}, 90, 0, BLACK);
-        //DrawTextEx(romanican, "OPTIONS", (Vector2){100, 40}, 30, ORANGE);
-		DrawButton(menuButton, DARKGRAY);
-        break;
+    {
+        float screenH = GetScreenHeight();
+
+        float buttonHeight = 50;
+        float spacing = 20;
+        float totalHeight = (5 * buttonHeight) + (4 * spacing);
+        float startY = screenH * 0.5f - totalHeight * 0.5f;
+
+        DrawTextEx(romanica, "OPTIONS", (Vector2){100, 40}, 90, 0, BLACK);
+
+        RefreshOptionLabels();
+
+        CentreMenuButton(&fullscreenButton, startY + 0 * (buttonHeight + spacing));
+        CentreMenuButton(&vsyncButton,      startY + 1 * (buttonHeight + spacing));
+        CentreMenuButton(&msaaButton,       startY + 2 * (buttonHeight + spacing));
+        CentreMenuButton(&fpsButton,        startY + 3 * (buttonHeight + spacing));
+        CentreMenuButton(&menuButton,       startY + 4 * (buttonHeight + spacing));
+
+        DrawButton(fullscreenButton, DARKGRAY);
+        DrawButton(vsyncButton, DARKGRAY);
+        DrawButton(msaaButton, DARKGRAY);
+        DrawButton(fpsButton, DARKGRAY);
+        DrawButton(menuButton, DARKGRAY);
+    }
+    break;
 
     case menu_level_select:
        DrawTextEx(romanica, "LEVEL SELECT", (Vector2){100,40}, 90, 0, BLACK);
@@ -197,7 +254,6 @@ void DrawMenu()
 
     case menu_multi:
 		DrawTextEx(romanica, "MULTIPLAYER", (Vector2){100,40}, 90, 0, BLACK);
-		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
 		RightMenuButton(&multiConnectButton, multiConnectButton.bounds.y);
         RightMenuButton(&menuButton, menuButton.bounds.y);
         DrawButton(menuButton, DARKGRAY);
@@ -205,7 +261,6 @@ void DrawMenu()
         break;
     case menu_multi2:
 		DrawTextEx(romanica, "MULTIPLAYER", (Vector2){100,40}, 90, 0, BLACK);
-		//DrawTextBox(ipAddressText, ipAddress, strlen(ipAddress), 32, &ipBoxFocused);
         DrawButton(menuButton, DARKGRAY);
 		DrawText("Connecting to Game Server...", 100, 340, 30, DARKGRAY);
 		if (SessionManager_Client_IsConnected())
@@ -337,6 +392,45 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_level_select);
             else if (strcmp(button.text, "Save/Load") == 0)
                 SetCurrentScreen(menu_save);
+            else if (strcmp(button.text, "Fullscreen: On") == 0 ||
+                     strcmp(button.text, "Fullscreen: Off") == 0)
+            {
+                int val = 0;
+                ToggleFullscreen();
+                PrefsGet("fullscreen", &val);
+                PrefsSet("fullscreen", !val);
+                PrefsSave(pref);
+            }
+            else if (strcmp(button.text, "VSync: On") == 0 ||
+                     strcmp(button.text, "VSync: Off") == 0)
+            {
+                int val = 0;
+                PrefsGet("vsync", &val);
+                PrefsSet("vsync", !val);
+                PrefsSave(pref);
+            }
+            else if (strcmp(button.text, "MSAA: On") == 0 ||
+                     strcmp(button.text, "MSAA: Off") == 0)
+            {
+                int val = 0;
+                PrefsGet("msaa", &val);
+                PrefsSet("msaa", !val);
+                PrefsSave(pref);
+            }
+            else if (strncmp(button.text, "FPS:", 4) == 0)
+            {
+                int val = 120;
+                PrefsGet("targetFps", &val);
+
+                if      (val == 30)  val = 60;
+                else if (val == 60)  val = 120;
+                else if (val == 120) val = 144;
+                else if (val == 144) val = 240;
+                else                 val = 30;
+
+                PrefsSet("targetFps", val);
+                PrefsSave(pref);
+            }
         }
 
         float animationPadding = 20.0f; 
@@ -420,25 +514,15 @@ void DrawInteractTextBox()
 {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
-
-    // Size of the book page (80% of screen)
     int boxWidth = screenWidth * 0.8f;
     int boxHeight = screenHeight * 0.8f;
-
-    // Centered position
     int boxX = (screenWidth - boxWidth) / 2;
     int boxY = (screenHeight - boxHeight) / 2;
 
-    // Optional: darken background behind book
     DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
-
-    // White page
     DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
-
-    // Black border
     DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
 
-    // Text padding inside page
     int padding = 40;
 
     DrawText(
@@ -449,7 +533,6 @@ void DrawInteractTextBox()
         BLACK
     );
 
-    // Close hint
     DrawText(
         "",
         boxX + boxWidth - 200,
@@ -596,6 +679,11 @@ void SetCurrentScreen(MenuScreen newScreen) {
 			PlaySound(menuClose);
         }
         if (currentScreen == menu_game_paused)
+        {
+            PlaySound(menuOpen);
+        }
+
+        if (currentScreen == menu_options)
         {
             PlaySound(menuOpen);
         }

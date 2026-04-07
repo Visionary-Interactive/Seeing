@@ -23,5 +23,6 @@ int PrefsSet(const char *key, int value);
 int PrefsGet(const char *key, int *outValue);
 int PrefsSave(const char *path);
 int PrefsLoad(const char *path);
+int ApplyPreferences(void);
 
 #endif

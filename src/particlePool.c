@@ -6,7 +6,6 @@ ParticlePool* InitParticlePool(size_t capacity) {
     ParticlePool* pool = (ParticlePool*)malloc(sizeof(ParticlePool));
     M_ASSERT(pool, "Could not allocate space for particle pool. It's hosed.");
 
-    //change this later
     pool->texture = LoadTexture("resources/global/tex/flame3.png");
 
     pool->particles = (Particle*)calloc(capacity, sizeof(Particle));
@@ -98,4 +97,11 @@ void DestroyParticle(ParticlePool* pool, int handle) {
 
     particle->active = false;
     pool->freeList[pool->freeCount++] = handle;
+}
+
+void ResetPartcilePool(ParticlePool* pool)
+{
+    if (pool == NULL) return;
+    RL_FREE(pool);
+	pool = NULL;
 }

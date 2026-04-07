@@ -19,35 +19,18 @@ int main(int argc, char** argv)
 {
 	const int screenWidth = 1600;
 	const int screenHeight = 900;
+	int val;
 
 	PlayerPrefs* prefs = PrefsInit();
 	PrefsLoad("pref/pref.bin");
 
-	if (prefs->dirty)
-		{
-			int val;
-
-			if (PrefsGet("msaa", &val))
-				SetConfigFlags(FLAG_MSAA_4X_HINT);
-
-			if (PrefsGet("targetFps", &val))
-				SetTargetFPS(val);
-
-			if (PrefsGet("masterVolume", &val))
-				SetMasterVolume(val / 100.0f);
-
-			if (PrefsGet("vsync", &val)) {
-				if (val) SetWindowState(FLAG_VSYNC_HINT);
-				else ClearWindowState(FLAG_VSYNC_HINT);
-			}
-
-			prefs->dirty = false;
-		}
+	ApplyPreferences();
 
 	InitWindow(screenWidth, screenHeight, "The Delian Problem");
-	SetExitKey(KEY_NULL);
-	SetTargetFPS(120);
 
+	if (PrefsGet("fullscreen", &val)) ToggleFullscreen();
+
+	SetExitKey(KEY_NULL);
 	LoadMenuElements();
 
 	InitModelCache();

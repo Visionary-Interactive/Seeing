@@ -67,6 +67,8 @@ int PrefsSave(const char *path) {
         fprintf(f, "%s %d\n", tPrefs->entries[i].key, tPrefs->entries[i].value);
     }
 
+    TraceLog(LOG_INFO, "Wrote preferences to disk.");
+
     fclose(f);
     return 1;
 }
@@ -91,8 +93,29 @@ int PrefsLoad(const char *path) {
         }
     }
 
+    TraceLog(LOG_INFO, "Loaded preferences from disk.");
+
     tPrefs->dirty = true;
 
     fclose(f);
     return 1;
+}
+
+int ApplyPreferences(void)
+{
+    int val;
+
+    if (PrefsGet("msaa", &val))
+        SetConfigFlags(FLAG_MSAA_4X_HINT);
+
+    if (PrefsGet("targetFps", &val))
+        SetTargetFPS(val);
+
+    if (PrefsGet("masterVolume", &val))
+        SetMasterVolume(val / 100.0f);
+
+    if (PrefsGet("vsync", &val))
+        SetConfigFlags(FLAG_VSYNC_HINT);
+
+    return 0;
 }
