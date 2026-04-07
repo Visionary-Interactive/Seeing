@@ -622,11 +622,18 @@ void CheckTriggers(Props* obj)
 			{
 				player->position = obj->warpTarget[i]; // Warp player to prop position
 				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
-				player->spawnPosition = obj->warpTarget[i]; // Update spawn position to new location
+				ActivateCheckpoint(obj->warpTarget[i], player->yaw, player->pitch); // Set checkpoint at warp location
 			}
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
-				ResetPlayerToSpawn(player);
+				if (player->checkpoint.active)
+				{
+					RespawnAtCheckpoint(player);
+				}
+				else 
+				{
+					ResetPlayerToSpawn(player);
+				}
 			}
 			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
 			{
@@ -671,7 +678,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
-		RequestExit();
+		SetCurrentScreen(menu_level_complete);
 
 	}
 	else if (interaction == text)
@@ -796,6 +803,17 @@ void ResetPlayerToSpawn(Player* p)
 	GetPlayerCollision(player->position);
 
 	player->velocity = (Vector3){ 0 };
+}
+
+void ResetPlayer(Player* p)
+{
+	player->activeImpairment = 0;
+	player->activeImpairmentIntensity = 0.0f;
+	player->allowControl = false;
+	player->position = player->spawnPosition;
+	player->checkpoint.active = false;
+	player->pendingImpairment = 0;
+	player->pendingIntensity = 0.0f;
 }
 
 void DestroyPlayer()

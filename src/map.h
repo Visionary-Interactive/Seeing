@@ -42,17 +42,27 @@ typedef struct PropRecord {
     char texturePath[PROP_MODEL_PATH_MAX];
 } PropRecord;
 
+//static int PillarID;
+
 bool InitMap(Map *map, const char *mapPath);
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
-void LoadPropTest(Props* props);
 
-void LoadLevel2(Props* props);
+//Level 1
+void LoadPropTest();
+//Level 2
+void LoadLevel2();
+
+void (*currentLevelLoaded)();
 
 void GenerateCubePuzzle(Props* props, int count,
     float minX, float maxX,
     float minZ, float maxZ,
     Vector3 size, Color color, uint32_t components);
+
+void ResetLevel();
+
+void RetryLevel();
 
 void LoadMapFile(Map *map, const char *mapPath);
 void LoadMapProgress(Map *map, Player *player, const char *mapPath);

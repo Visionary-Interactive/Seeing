@@ -103,6 +103,8 @@ BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
 void RenderPlayer(Player* p, Props* props);
 void ResetPlayerToSpawn(Player* p);
+
+void ResetPlayer(Player* p);
 void DestroyPlayer();
 
 // Function pointer to send prop interactions to remote player through the SessionStateController

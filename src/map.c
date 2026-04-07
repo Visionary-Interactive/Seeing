@@ -3,13 +3,14 @@
 static char* pillar;
 static char* book;
 static char* wall;
+static char* wall1;
+static char* curvedCeiling;
 static char* wall2;
 static char* chair;
 static char* wTexP;
 static char* bTexP;
 static char* pTexP;
 static int puzzle1BlockIDs[3];
-
 bool InitMap(Map *map, const char *mapPath)
 {
     pillar = "resources/global/models/pillar/scene.gltf";
@@ -24,16 +25,23 @@ bool InitMap(Map *map, const char *mapPath)
     wall = "resources/global/models/wall/wall.glb";
     wall2 = "resources/global/models/wall2/wall2.glb";
 
+    wall1 = "resources/global/models/wall/wall1.glb";
+    curvedCeiling = "resources/global/models/ceiling/ceiling1.glb";
+
+	currentLevelLoaded = NULL;
+
     return true;
 }
 
-void DrawMap(void)
-{
-}
 
-void LoadLevel2 (Props* props)
+void LoadLevel2()
 {
 
+	GetPlayer()->spawnPosition = (Vector3){ -11.0f, 1.8f, 6.0f };
+	GetPlayer()->position = GetPlayer()->spawnPosition;
+	Props* props = GetPropStructure();
+
+	currentLevelLoaded = LoadLevel2;
 
     CreatePropFromPath(props, pillar, wTexP,
         (Vector3) {
@@ -130,8 +138,36 @@ void GenerateCubePuzzle(Props* props, int count, float minX, float maxX, float m
     }
 }
 
-void LoadPropTest(Props* props)
+//The reset function that happens when you move back to the menu
+//This takes away all props and resets the player for the next level
+void ResetLevel()
 {
+    ResetProps();
+	ResetPlayer(GetPlayer());
+    ResetParticlePool(GetParticlePool());
+
+}
+
+//The Retry Button to reset the level without going back to the menu, for quick retrying
+void RetryLevel()
+{
+    ResetLevel();
+	currentLevelLoaded();
+
+}
+
+void LoadPropTest()
+{
+
+
+	Props* props = GetPropStructure();
+
+	currentLevelLoaded = LoadPropTest;
+
+	GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
+
+	printf("Loading Prop Test Level\n");
+
     CreatePropFromPath(props, pillar, wTexP,
         (Vector3){40.0, 0.0, 40.0}, (Vector3) {0.15, 0.15, 0.15}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, pillar, wTexP,
@@ -167,8 +203,6 @@ void LoadPropTest(Props* props)
     //hallway leftside
 
     //hallway
-    char* wall1 = "resources/global/models/wall/wall1.glb";
-	char* curvedCeiling = "resources/global/models/ceiling/ceiling1.glb";
     int wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f,-5.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     props->rotation[wallTemp].y = PI / 2.0f + PI;
 	ColliderSetup(props, wallTemp);
@@ -309,13 +343,15 @@ void LoadPropTest(Props* props)
 		3.0f, 3.0f, 3.0f
 	}, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
+
+    //Door at the end of the puzzle, this will finish it and take the player to the level complete screen
 	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -56.0f },
 		(Vector3) {
 		1.0f, 1.0f, 1.0f
 	}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
 	props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
 
-
+	//This Book will give players the ability to control the impairment, its id is important as it gets called specifically in the code to check if the player has it or not, so be careful when changing it
 	int helpBookID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
 		(Vector3) {
 		1.5, 4.5f, -35.0f
@@ -325,6 +361,7 @@ void LoadPropTest(Props* props)
 	props->textType[helpBookID] = TEXTBOX_BOOK;
 	props->text[helpBookID] = strdup("Gained the ability to control Tritanopia!\nUse the UP and DOWN arrow keys to increase and decrease the Impairment\nI think I can solve this maze now!");
 
+	//This Book will give players the tutorial text when they first spawn in, its id is important as it gets called specifically in the code to check if the player has it or not, so be careful when changing it
     int tutorialID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {
         2.5f, 1.0f, 50.0f
@@ -348,6 +385,7 @@ void LoadPropTest(Props* props)
             WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_VENTLID);
     props->interactType[ventlidID2] = INTERACTABLE_VENTLID;
 
+    //These first two zones work together in the hallway
 	int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
 	props->ImpairmentType[zoneID] = 0;
 

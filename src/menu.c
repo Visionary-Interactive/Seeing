@@ -5,6 +5,7 @@
 #include "player.h"
 #include "sound.h"
 #include "menu.h"
+#include "map.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -14,10 +15,11 @@ Button compendiumButton = { { 100, 400, 200, 50 }, "Compendium" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
 Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
-Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
+Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu", ResetLevel };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
-Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
-Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
+Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
+Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
+Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
 
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
@@ -63,6 +65,7 @@ static void CentreMenuButton(Button* button, float y)
     button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
     button->bounds.y = y;
 }
+
 
 static void RightMenuButton(Button* button, float y)
 {
@@ -189,7 +192,17 @@ void DrawMenu()
 	   RightMenuButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
+	   DrawButton(level2Button, DARKGRAY);
 		break;
+
+    case menu_level_complete:
+		DrawTextEx(romanica, "LEVEL COMPLETE!", (Vector2) { 100, 40 }, 90, 0, BLACK);
+		CentreMenuButton(&menuButton, 300);
+		CentreMenuButton(&retryButton, 400);
+		DrawButton(menuButton, DARKGRAY);
+        DrawButton(retryButton, DARKGRAY);
+		break;
+        
 
     case menu_editor:
         DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
@@ -305,10 +318,20 @@ void DrawButton(Button button, Color color)
         {
             PlaySound(btnClick);
 
+            if (button.action)
+				button.action();
+
+
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Level 1") == 0)
+            {
                 SetCurrentScreen(menu_game);
+            }
+            else if (strcmp(button.text, "Level 2") == 0)
+            {
+                SetCurrentScreen(menu_game);
+            }
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Level Editor") == 0)
@@ -416,48 +439,7 @@ void DrawUI(InventoryItem *item, int selectedSlot)
     }
 }
 
-void DrawInteractTextBox()
-{
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
 
-    // Size of the book page (80% of screen)
-    int boxWidth = screenWidth * 0.8f;
-    int boxHeight = screenHeight * 0.8f;
-
-    // Centered position
-    int boxX = (screenWidth - boxWidth) / 2;
-    int boxY = (screenHeight - boxHeight) / 2;
-
-    // Optional: darken background behind book
-    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
-
-    // White page
-    DrawRectangle(boxX, boxY, boxWidth, boxHeight, RAYWHITE);
-
-    // Black border
-    DrawRectangleLines(boxX, boxY, boxWidth, boxHeight, BLACK);
-
-    // Text padding inside page
-    int padding = 40;
-
-    DrawText(
-        currentTextbox.text,
-        boxX + padding,
-        boxY + padding,
-        24,
-        BLACK
-    );
-
-    // Close hint
-    DrawText(
-        "",
-        boxX + boxWidth - 200,
-        boxY + boxHeight - 40,
-        18,
-        DARKGRAY
-    );
-}
 
 
 void InitTextBox(TextboxType type, const char* tText)
@@ -469,7 +451,7 @@ void InitTextBox(TextboxType type, const char* tText)
     if (type == TEXTBOX_PLAYER)
     {
         currentTextbox.timer = 0.0f;
-        currentTextbox.duration = 4.0f; // lasts 4 seconds
+        currentTextbox.duration = 5.0f; // lasts 5 seconds
     }
 }
 

@@ -74,6 +74,7 @@ int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, V
 
     int id = CreateProp(obj, model, position, size, color, components);
     Texture2D* tex = GetCachedTexture(texPath);
+    Model* m = obj->model[id];
     obj->model[id]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = *tex;
     if (id >= 0) {
         strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
@@ -415,13 +416,17 @@ void RenderLensProps(const Props * obj)
 
 void ResetProps()
 {
-	if (props == NULL) return;
+    if (props == NULL) return;
 
-    for (int i = 0; i < MAX_PROPS; i++) {
-        free(props->text[i]);
-        props->text[i] = NULL;
+    for (int i = 0; i < props->count; i++)
+    {
+        if (props->text[i] != NULL)
+        {
+            free(props->text[i]);
+            props->text[i] = NULL;
+        }
     }
-	memset(props, 0, sizeof(Props));
+    props->count = 0;
 }
 
 void DestroyProps(Props* obj)

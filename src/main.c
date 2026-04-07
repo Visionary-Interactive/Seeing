@@ -53,11 +53,14 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 
+
+	//LoadTestLevel(props);
 	//InitSaveSlots();
-	LoadPropTest(props);
+	//LoadPropTest(props);
 	//LoadLevel2(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
+
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -65,6 +68,7 @@ int main(int argc, char** argv)
 	int swap = 0;
 
 	float intensity = 0;
+	printf("Props count: %d\n", props->count);
 
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
