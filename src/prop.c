@@ -368,7 +368,6 @@ void RenderProps(Props* obj) {
                 {
                     allBlocksAligned = true;
                 }
-                allBlocksAligned = true;
 			}
             else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL2)
             {
@@ -396,7 +395,6 @@ void RenderProps(Props* obj) {
                 {
                     allBlocksAligned = true;
                 }
-                allBlocksAligned = true;
 			}
 
 			// If all blocks are aligned, disable the collider and make the wall invisible

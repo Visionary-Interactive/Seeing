@@ -216,21 +216,38 @@ void LoadLevel4()
     hint = CreatePropFromPath(props, hintTriangle, hintTriangle,
         (Vector3) { 4.38f, 2.0f, 50.0f }, 
         (Vector3) { 1.0f, 1.0f, 1.0f },
-        CLITERAL(Color) { 255, 173, 176, 255 }, PROP_VISIBILE | PROP_COLLIDER);
+        CLITERAL(Color) { 255, 173, 176, 255 }, PROP_VISIBILE);
     props->rotation[hint].y = PI / 2.0f;
     ColliderSetup(props, hint);
     hint = CreatePropFromPath(props, hintCircle, hintCircle,
         (Vector3) { -17.88f, 4.0f, 43.0f },
         (Vector3) { 1.0f, 1.0f, 1.0f },
-        CLITERAL(Color) { 173, 251, 151, 255 }, PROP_VISIBILE | PROP_COLLIDER);
+        CLITERAL(Color) { 173, 251, 151, 255 }, PROP_VISIBILE);
     props->rotation[hint].y = PI;
     ColliderSetup(props, hint);
     hint = CreatePropFromPath(props, hintSquare, hintSquare,
         (Vector3) {  -9.5f, 3.0f, 58.35f },
         (Vector3) { 1.0f, 1.0f, 1.0f },
-        CLITERAL(Color) { 173, 223, 255, 255 }, PROP_VISIBILE | PROP_COLLIDER);
+        CLITERAL(Color) { 173, 223, 255, 255 }, PROP_VISIBILE);
     props->rotation[hint].y = PI / 2.0f + PI;
     ColliderSetup(props, hint);
+
+    // Hints 2 - Circle, Triangle, Circle
+    char* hintTriangleGround = "resources/global/models/puzzleBlock/triangleHintGround.glb";
+    char* hintCircleGround = "resources/global/models/puzzleBlock/circleHintGround.glb";
+    hint = CreatePropFromPath(props, hintCircleGround, hintCircleGround,
+        (Vector3) { -16.5f, 0.1f, 18.1f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 255, 173, 176, 255 }, PROP_VISIBILE);
+    hint = CreatePropFromPath(props, hintCircleGround, hintCircleGround,
+        (Vector3) { 0.9f, 0.1f, -1.5f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 223, 255, 255 }, PROP_VISIBILE);
+    hint = CreatePropFromPath(props, hintTriangleGround, hintTriangleGround,
+        (Vector3) { -0.5f, 0.1f, 12.5f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 251, 151, 255 }, PROP_VISIBILE);
+
 
     // Wall - Disappearing 1
     wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
