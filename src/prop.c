@@ -489,6 +489,7 @@ void ResetProps()
 
     for (int i = 0; i < props->count; i++)
     {
+		props->interactType[i] = 0;
         if (props->text[i] != NULL)
         {
             free(props->text[i]);

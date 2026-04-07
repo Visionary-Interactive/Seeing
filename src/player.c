@@ -681,7 +681,6 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	{
 		SetCurrentScreen(menu_level_complete);
 		SessionManager_Client_Disonnect();
-		RequestExit();
 	}
 	else if (interaction == text)
 	{

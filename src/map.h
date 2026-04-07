@@ -7,6 +7,7 @@
 #include "player.h"
 #include "lens.h"
 #include "floor.h"
+#include "sessionStateController.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40
@@ -54,8 +55,8 @@ void LoadPropTest();
 void LoadLevel2();
 
 void (*currentLevelLoaded)();
-void LoadLevel2(Props* props);
-void LoadLevel4(Props* props);
+
+void LoadLevel4();
 
 void GenerateCubePuzzle(Props* props, int count,
     float minX, float maxX,
@@ -68,7 +69,5 @@ void RetryLevel();
 
 void LoadMapFile(Map *map, const char *mapPath);
 void LoadMapProgress(Map *map, Player *player, const char *mapPath);
-void UnloadMap(Map *map);
-void BuildTransforms(Map *map);
 
 #endif

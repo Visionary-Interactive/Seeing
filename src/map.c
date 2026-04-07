@@ -5,6 +5,7 @@ static char* book;
 static char* wall;
 static char* wall1;
 static char* curvedCeiling;
+static char* flatCeiling;
 static char* wall2;
 static char* chair;
 static char* wTexP;
@@ -27,6 +28,8 @@ bool InitMap(Map *map, const char *mapPath)
 
     wall1 = "resources/global/models/wall/wall1.glb";
     curvedCeiling = "resources/global/models/ceiling/ceiling1.glb";
+
+    flatCeiling = "resources/global/models/ceiling/FlatCeiling.glb";
 
 	currentLevelLoaded = NULL;
 
@@ -118,10 +121,11 @@ void LoadLevel2()
    
 }
 
-void LoadLevel4(Props* props)
+void LoadLevel4()
 {
-    char* wall1 = "resources/global/models/wall/wall1.glb";
-    char* flatCeiling = "resources/global/models/ceiling/FlatCeiling.glb";
+    Props* props = GetPropStructure();
+
+    currentLevelLoaded = LoadLevel4;
 
     // Back Walls
     int wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, -15.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
@@ -358,7 +362,10 @@ void GenerateCubePuzzle(Props* props, int count, float minX, float maxX, float m
 void ResetLevel()
 {
     ResetProps();
-	ResetPlayer(GetPlayer());
+    for (int i = 0; i < clientPlayerCount + 1; i++)
+    {
+        ResetPlayer(&playerList[i]);
+	}
     ResetParticlePool(GetParticlePool());
 
 }
@@ -835,28 +842,6 @@ void LoadPropTest()
 
     // Spawning rotating puzzle blocks for testing
     
-    char* blockLetters[3];
-    for (int i = 0; i < 3; i++)
-    {
-        int puzzleBlock1 = CreatePropFromPath(props, 
-            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
-            "resources/global/models/puzzleBlock/PuzzleBlock1.glb",
-            (Vector3) {
-			4.75f, 1.8f, -19.0f + i
-        },
-            (Vector3) {
-			0.5f, 0.5f, 0.5f
-		},
-			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
-		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
-		//pre-compiler
-		blockLetters[i] = calloc(2, sizeof(char));
-        blockLetters[i][0] = (char)('0' + i);
-		blockLetters[i][1] = '\0';
-		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.
-		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
-        rotatingBlockIDs[i] = puzzleBlock1;
-	}
     
 
 	// Pickup blocks for testing

@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 	//InitSaveSlots();
 	//LoadPropTest(props);
 	//LoadLevel2(props);
-	LoadLevel4(props);
+	//LoadLevel4(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 

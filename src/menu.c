@@ -19,6 +19,7 @@ Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu", ResetLevel };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
 Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
+Button level4Button = { { 200, 200, 200, 50 }, "Level 4", LoadLevel4 };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
 
 #define SAVE_COLS 4
@@ -193,6 +194,7 @@ void DrawMenu()
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 	   DrawButton(level2Button, DARKGRAY);
+       DrawButton(level4Button, DARKGRAY);
 		break;
 
     case menu_level_complete:
@@ -229,6 +231,7 @@ void DrawMenu()
 		if (AssignMultiplayerStatus()) // get multiplayer status from lobby query
 		{
 			multiplayerSession = true;
+            LoadPropTest();
 			SetCurrentScreen(menu_game);
 		}
 		break;
@@ -329,6 +332,10 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_game);
             }
             else if (strcmp(button.text, "Level 2") == 0)
+            {
+                SetCurrentScreen(menu_game);
+            }
+            else if (strcmp(button.text, "Level 4") == 0)
             {
                 SetCurrentScreen(menu_game);
             }
