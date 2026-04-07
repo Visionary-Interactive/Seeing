@@ -4,6 +4,8 @@ static Props* props;
 static ParticlePool* pool;
 static ParticleTemplate* template;
 
+int rotatingBlockIDs[6] = { 0 };
+
 void CreatePropStructure(void)
 {
 	props = (Props*)malloc(sizeof(Props));
@@ -151,7 +153,7 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 
 int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 {
-    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE);
+    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE | PROP_VISIBILE);
 
     obj->triggerType[id] = type;
     obj->Triggered[id] = false;
@@ -327,11 +329,79 @@ void RenderProps(Props* obj) {
                 else 
                 {
                     obj->components[i] |= PROP_INTERACTABLE; // re-enable interaction when done rotating
+                    obj->text[i][2] = 'd';
+					//printf("%s\n", obj->text[i]);
 				}
                 // Rotating Cubes have their own rendering.
                 DrawModelEx( *obj->model[i],obj->position[i],
                     (Vector3){0, 1, 0},obj->rotation[i].y,obj->size[i],obj->color[i]);
                 continue;
+            }
+
+            // LEVEL 4 ONLY
+            // Disappearing Walls
+            bool allBlocksAligned = false;
+            if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL)
+            {
+                // 1st Puzzle -----------------------------------------------
+                // Left to Right - Triangle, Circle, Square
+                printf("%s, %s, %s\n", obj->text[rotatingBlockIDs[0]], obj->text[rotatingBlockIDs[1]], obj->text[rotatingBlockIDs[2]]);
+                if (!obj->text[rotatingBlockIDs[0]] ||
+                    obj->text[rotatingBlockIDs[0]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[0]][0] != '2')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[1]] ||
+                    obj->text[rotatingBlockIDs[1]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[1]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[2]] ||
+                    obj->text[rotatingBlockIDs[2]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[2]][0] != '1')
+                {
+                    allBlocksAligned = false;
+                }
+                else
+                {
+                    allBlocksAligned = true;
+                }
+			}
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL2)
+            {
+                // 2nd Puzzle -----------------------------------------------
+                // Left to Right - Circle, Triangle, Circle
+                if (!obj->text[rotatingBlockIDs[3]] ||
+                    obj->text[rotatingBlockIDs[3]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[3]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[4]] ||
+                    obj->text[rotatingBlockIDs[4]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[4]][0] != '2')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[5]] ||
+                    obj->text[rotatingBlockIDs[5]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[5]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else
+                {
+                    allBlocksAligned = true;
+                }
+			}
+
+			// If all blocks are aligned, disable the collider and make the wall invisible
+            if (allBlocksAligned)
+            {
+                obj->components[i] &= ~PROP_COLLIDER; // Disable collider
+                obj->components[i] &= ~PROP_VISIBILE; // Make invisible
             }
 
 			// Push Block Animation
