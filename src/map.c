@@ -127,6 +127,8 @@ void LoadLevel2()
 
 void LoadLevel4()
 {
+    GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
+    GetPlayer()->position = GetPlayer()->spawnPosition;
     Props* props = GetPropStructure();
 
     currentLevelLoaded = LoadLevel4;
