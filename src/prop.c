@@ -345,7 +345,6 @@ void RenderProps(Props* obj) {
             {
                 // 1st Puzzle -----------------------------------------------
                 // Left to Right - Triangle, Circle, Square
-                printf("%s, %s, %s\n", obj->text[rotatingBlockIDs[0]], obj->text[rotatingBlockIDs[1]], obj->text[rotatingBlockIDs[2]]);
                 if (!obj->text[rotatingBlockIDs[0]] ||
                     obj->text[rotatingBlockIDs[0]][2] != 'd' ||
                     obj->text[rotatingBlockIDs[0]][0] != '2')
