@@ -58,6 +58,7 @@ int main(int argc, char** argv)
 	//InitSaveSlots();
 	//LoadPropTest(props);
 	//LoadLevel2(props);
+	LoadLevel4(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
@@ -86,9 +87,6 @@ int main(int argc, char** argv)
 			playerList[0]->activeImpairmentIntensity = intensity; // store current
 
 			playerList[0]->pendingImpairment = -1; // reset ONLY pending
-
-			
-
 		}
 
 		MenuScreen currentScreen = GetCurrentScreen();
@@ -121,7 +119,7 @@ int main(int argc, char** argv)
 	DestroyParticlePool(GetParticlePool());
 	DestroyProps(props);
 
-	for (int i = 0; i < clientPlayerCount; i++) {
+	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}

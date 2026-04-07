@@ -54,6 +54,8 @@ void LoadPropTest();
 void LoadLevel2();
 
 void (*currentLevelLoaded)();
+void LoadLevel2(Props* props);
+void LoadLevel4(Props* props);
 
 void GenerateCubePuzzle(Props* props, int count,
     float minX, float maxX,
