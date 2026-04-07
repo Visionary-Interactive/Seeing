@@ -21,9 +21,29 @@ int main(int argc, char** argv)
 	const int screenHeight = 900;
 
 	PlayerPrefs* prefs = PrefsInit();
+	PrefsLoad("pref/pref.bin");
 
-	SetConfigFlags(FLAG_MSAA_4X_HINT);
-	SetMasterVolume(0.0f);
+	if (prefs->dirty)
+		{
+			int val;
+
+			if (PrefsGet("msaa", &val))
+				SetConfigFlags(FLAG_MSAA_4X_HINT);
+
+			if (PrefsGet("targetFps", &val))
+				SetTargetFPS(val);
+
+			if (PrefsGet("masterVolume", &val))
+				SetMasterVolume(val / 100.0f);
+
+			if (PrefsGet("vsync", &val)) {
+				if (val) SetWindowState(FLAG_VSYNC_HINT);
+				else ClearWindowState(FLAG_VSYNC_HINT);
+			}
+
+			prefs->dirty = false;
+		}
+
 	InitWindow(screenWidth, screenHeight, "The Delian Problem");
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(120);
@@ -79,15 +99,9 @@ int main(int argc, char** argv)
 		if (playerList[0]->pendingImpairment != -1)
 		{
 			swap = playerList[0]->pendingImpairment;
-
 			intensity = playerList[0]->pendingIntensity;
-
 			playerList[0]->activeImpairmentIntensity = intensity; // store current
-
 			playerList[0]->pendingImpairment = -1; // reset ONLY pending
-
-			
-
 		}
 
 		MenuScreen currentScreen = GetCurrentScreen();
@@ -105,6 +119,37 @@ int main(int argc, char** argv)
 			}
 
 			RefreshCamera(playerList[0]);
+		}
+
+		if (prefs->dirty)
+		{
+			int val;
+
+			if (PrefsGet("targetFps", &val))
+				SetTargetFPS(val);
+
+			if (PrefsGet("masterVolume", &val))
+				SetMasterVolume(val / 100.0f);  // assuming stored as 0–100
+
+			if (PrefsGet("fullscreen", &val)) {
+				if (val && !IsWindowFullscreen())
+				{
+					TraceLog(LOG_INFO, "Setting fullscreen to on.");
+					ToggleFullscreen();
+				} 
+				else if (!val && IsWindowFullscreen())
+				{
+					TraceLog(LOG_INFO, "Setting fullscreen to off.");
+					ToggleFullscreen();
+				}
+			}
+
+			if (PrefsGet("vsync", &val)) {
+				if (val) SetWindowState(FLAG_VSYNC_HINT);
+				else ClearWindowState(FLAG_VSYNC_HINT);
+			}
+
+			prefs->dirty = false;
 		}
 
 		RenderSceneToTexture(currentScreen, sceneColorRT, camera, props, GetParticlePool());

@@ -1,3 +1,5 @@
-fullscreen 0
-mxaa 0
+fullscreen 1
+msaa 0
 volume 0
+vsync 1
+targetFps 120

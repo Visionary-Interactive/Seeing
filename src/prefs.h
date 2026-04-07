@@ -15,12 +15,13 @@ typedef struct {
 typedef struct {
     PrefEntry entries[PREFS_MAX_ENTRIES];
     size_t count;
+    bool dirty;
 } PlayerPrefs;
 
 PlayerPrefs* PrefsInit();
-int PrefsSet(PlayerPrefs *prefs, const char *key, int value);
-int PrefsGet(const PlayerPrefs *prefs, const char *key, int *outValue);
-int PrefsSave(const PlayerPrefs *prefs, const char *path);
-int PrefsLoad(PlayerPrefs *prefs, const char *path);
+int PrefsSet(const char *key, int value);
+int PrefsGet(const char *key, int *outValue);
+int PrefsSave(const char *path);
+int PrefsLoad(const char *path);
 
 #endif
