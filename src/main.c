@@ -77,8 +77,9 @@ int main(int argc, char** argv)
 	InitMap(&gameMap, "resources/maps/pz_1");
 
 	//InitSaveSlots();
-	LoadPropTest(props);
+	//LoadPropTest(props);
 	//LoadLevel2(props);
+	LoadLevel4(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
@@ -165,7 +166,7 @@ int main(int argc, char** argv)
 	DestroyParticlePool(GetParticlePool());
 	DestroyProps(props);
 
-	for (int i = 0; i < clientPlayerCount; i++) {
+	for (int i = 0; i < clientPlayerCount + 1; i++) {
 		if (playerList[i] == NULL) continue;
 		RL_FREE(playerList[i]);
 	}

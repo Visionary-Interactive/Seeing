@@ -405,7 +405,7 @@ void RenderPlayer(Player* p, Props* props)
 			float spinAngle = (float)GetTime() * 1.5f;
 			Matrix itemSpin = MatrixRotateY(spinAngle);
 
-			Matrix itemLocalOffset = MatrixTranslate(0.3f, 0.0f, -1.3f);
+			Matrix itemLocalOffset = MatrixTranslate(0.0f, 0.0f, -0.5f);
 			Matrix itemScale = MatrixScale(0.5f, 0.5f, 0.5f);
 			Matrix itemTransform = MatrixMultiply(
 				itemSpin,
@@ -644,7 +644,8 @@ void CheckTriggers(Props* obj)
 				//printf("Triggered impairment: %d\n", obj->ImpairmentType[i]);
 				//obj->Triggered[i] = true;
 				player->pendingImpairment = obj->ImpairmentType[i];
-				player->pendingIntensity = 0.9f; // Example intensity
+				
+				player->pendingIntensity = (obj->lightIntensity[i] != 0.0f) ? obj->lightIntensity[i] : 0.9f;
 			}
 
 		}
@@ -668,12 +669,13 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
+		SessionManager_Client_Disonnect();
 		RequestExit();
-
 	}
 	else if (interaction == text)
 	{
-		InitTextBox(obj->textType[propID], obj->text[propID]);
+		if (!player->remotePlayer) // Only trigger text for local player
+			InitTextBox(obj->textType[propID], obj->text[propID]);
 	}
 	else if (interaction == placed)
 	{
@@ -737,12 +739,15 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		obj->rotation[propID].y += 5.0f;
 		if (!player->remotePlayer)
 			PlaySound(rotatingPuzzleBlock);
-		int blockNum = atoi(obj->text[propID]);
+
+		char x,z;
+		sscanf(obj->text[propID], "%c,%c", &x, &z);
+
+		int blockNum = (int)x;
 		blockNum = (blockNum + 1) % 4;
 
-		char buf[2];
-		sprintf(buf, "%d", blockNum);
-		obj->text[propID] = strdup(buf);
+		obj->text[propID][0] = (char)('0' + blockNum);
+		obj->text[propID][2] = 'r';
 		printf("Rotated puzzle block %d to orientation %d\n", propID, blockNum);
 	}
 	//use vent lid on a fire vent

@@ -8,7 +8,6 @@ static char* chair;
 static char* wTexP;
 static char* bTexP;
 static char* pTexP;
-static int puzzle1BlockIDs[3];
 
 bool InitMap(Map *map, const char *mapPath)
 {
@@ -108,6 +107,221 @@ void LoadLevel2 (Props* props)
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 6.0f, 0.0f, 2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
     CreatePropFromPath(props, wall2, wTexP, (Vector3) { 16.0f, 0.0f, 2.0f }, (Vector3) { 1.0f, 1.0f, 1.0f }, BEIGE, PROP_VISIBILE | PROP_COLLIDER);
    
+}
+
+void LoadLevel4(Props* props)
+{
+    char* wall1 = "resources/global/models/wall/wall1.glb";
+    char* flatCeiling = "resources/global/models/ceiling/FlatCeiling.glb";
+
+    // Back Walls
+    int wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, -15.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -8.0f, 0.0f, -15.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -16.0f, 0.0f, -15.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+
+    // Room 1
+    for (int i = 0; i < 9; i++)
+    {
+        // Walls
+        CreatePropFromPath(props, wall1, wall1, (Vector3) { -18.5f, 0.0f, 54.0f - (i * 9) }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+        wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 5.0f, 0.0f, 54.0f - (i * 9) }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+        props->rotation[wallTemp].y = PI;
+
+        // Ceiling
+        CreatePropFromPath(props, flatCeiling, flatCeiling, (Vector3) { -3.0f, -1.7f, 54.0f - (i * 9) }, (Vector3) { 6.0f, 6.0f, 6.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+        CreatePropFromPath(props, flatCeiling, flatCeiling, (Vector3) { -11.0f, -1.7f, 54.0f - (i * 9) }, (Vector3) { 6.0f, 6.0f, 6.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+        CreatePropFromPath(props, flatCeiling, flatCeiling, (Vector3) { -19.0f, -1.7f, 54.0f - (i * 9) }, (Vector3) { 6.0f, 6.0f, 6.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    }
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 59.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f;
+    ColliderSetup(props, wallTemp);
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -8.0f, 0.0f, 59.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f;
+    ColliderSetup(props, wallTemp);
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -16.0f, 0.0f, 59.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f;
+    ColliderSetup(props, wallTemp);
+
+	// Impairment Zone ---------------------------------------------------------------
+    int zoneID = AddZone(props, (Vector3) { -5.0f, 0.0f, 25.0f }, (Vector3) { 30.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
+    props->ImpairmentType[zoneID] = 1;
+    props->lightIntensity[zoneID] = 1.9f;
+
+    int zoneID2 = AddZone(props, (Vector3) { -5.0f, 0.0f, 25.0f }, (Vector3) { 30.0f, 4.0f, 1.0f }, TRIGGER_TEXT);
+    props->textType[zoneID2] = TEXTBOX_PLAYER;
+    props->text[zoneID2] = strdup("My eyes! It's getting dark... I can barely see.");
+
+    // Books --------------------------------------------------------------------------
+    // 1st
+    int book = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
+        (Vector3) {
+        0.5f, 1.0f, 45.0f
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[book] = INTERACTABLE_TEXT;
+    props->textType[book] = TEXTBOX_BOOK;
+    props->text[book] = strdup("A room with a shape matching puzzle. What could it mean?");
+    // Pillar
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        -2.0f, 0.0f, 20.0f
+    }, (Vector3) { 0.02, 0.0033, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+    // 2nd
+    book = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
+        (Vector3) {
+        -2.0f, 1.0f, 20.0f
+    }, (Vector3) { 0.03, 0.03, 0.03 },
+            WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
+    props->interactType[book] = INTERACTABLE_TEXT;
+    props->textType[book] = TEXTBOX_BOOK;
+    props->text[book] = strdup("There seems to be some trickery at play here... There has to be more shapes to find.\n Perhaps hidden in the grass somewhere...");
+    // Pillar
+    CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+        (Vector3) {
+        0.5f, 0.0f, 45.0f
+    }, (Vector3) { 0.02, 0.0033, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+	// Rotating Blocks ----------------------------------------------------------------
+    // Wall - Disappearing 1
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+	props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -8.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -16.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL;
+
+    // Wall - Disappearing 2
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -8.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -16.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+
+    // Block puzzle 1
+    char* blockLetters[6];
+    for (int i = 0; i < 3; i++)
+    {
+		int puzzleBlock1 = CreatePropFromPath(props,
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			(Vector3) {
+			-10.5f + i * 5, 3.0f, 37.0f
+		},
+			(Vector3) {
+			1.5f, 1.5f, 1.5f
+		},
+			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
+        // Pillar
+        CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+            (Vector3) {
+            -10.5f + i * 5, 0.0f, 37.0f
+        }, (Vector3) { 0.02, 0.0072, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+		//pre-compiler
+		blockLetters[i] = calloc(255, sizeof(char));
+		blockLetters[i][0] = (char)('0' + i);
+		blockLetters[i][1] = ',';
+		blockLetters[i][2] = 'd';
+		blockLetters[i][3] = '\0';
+		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.
+		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
+        rotatingBlockIDs[i] = puzzleBlock1;
+    }
+
+	// Block puzzle 2
+    for (int i = 0; i < 3; i++)
+    {
+		int puzzleBlock1 = CreatePropFromPath(props,
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			(Vector3) {
+			-10.5f + i * 5, 3.0f, -8.0f
+		},
+			(Vector3) {
+			1.5f, 1.5f, 1.5f
+		},
+			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
+        // Pillar
+        CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+            (Vector3) {
+            -10.5f + i * 5, 0.0f, -8.0f
+        }, (Vector3) { 0.02, 0.0072, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+		//pre-compiler
+		blockLetters[i + 3] = calloc(255, sizeof(char));
+		blockLetters[i + 3][0] = (char)('0' + i);
+		blockLetters[i + 3][1] = ',';
+		blockLetters[i + 3][2] = 'd';
+		blockLetters[i + 3][3] = '\0';
+		props->text[puzzleBlock1] = blockLetters[i + 3]; // Set this so we can tell where the block is facing.
+		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
+        rotatingBlockIDs[i + 3] = puzzleBlock1;
+    }
+
+	// Exit Door
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { -6.0f, 2.0f, -13.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
+    props->interactType[doorID] = INTERACTABLE_DOOR;
+
+	// Decorations ----------------------------------------------------------------------
+    // Grass
+    char* grassModel = "resources/global/models/grass/grass1.glb";
+    for (int i = 0; i < 100; i++)
+    {
+        int maxX = 3;
+        int minX = -16;
+        int maxZ = 59;
+        int minZ = 26;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) {
+            (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ)
+        }, (Vector3) { 1.0f, 1.0f, 1.0f },
+                CLITERAL(Color) {
+                0, 117, 44, 150
+            }, PROP_VISIBILE);
+            props->rotation[grassTemp].y = rand() % 360;
+    }
+
+	// Tall Grass
+    for (int i = 0; i < 150; i++)
+    {
+        int maxX = 3;
+        int minX = -16;
+        int maxZ = 26;
+        int minZ = -10;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) {
+            (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ)
+        }, (Vector3) { 2.0f, 3.0f, 2.0f },
+                CLITERAL(Color) {
+                0, 117, 44, 225
+            }, PROP_VISIBILE);
+            props->rotation[grassTemp].y = rand() % 360;
+    }
 }
 
 void GenerateCubePuzzle(Props* props, int count, float minX, float maxX, float minZ, float maxZ, Vector3 size, Color color, uint32_t components)
@@ -581,7 +795,7 @@ void LoadPropTest(Props* props)
 	//AddDeadzone(props, (Vector3) { 0.0f, 0.0f, -20.0f }, (Vector3) { 10.0f, 10.0f, 10.0f });
 
     // Spawning rotating puzzle blocks for testing
-    /*
+    
     char* blockLetters[3];
     for (int i = 0; i < 3; i++)
     {
@@ -602,9 +816,9 @@ void LoadPropTest(Props* props)
 		blockLetters[i][1] = '\0';
 		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.
 		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
-		puzzle1BlockIDs[i] = puzzleBlock1;
+        rotatingBlockIDs[i] = puzzleBlock1;
 	}
-    */
+    
 
 	// Pickup blocks for testing
 	int testCube = CreatePropPrimitive(props, PRIMITIVE_MODEL_CUBE,
