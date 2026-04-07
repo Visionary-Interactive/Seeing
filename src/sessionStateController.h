@@ -24,6 +24,7 @@ void SendPlayerDataToRemote();
 void UpdatePlayerPosition();
 void PropInteractionRPC();
 void SendPropInteraction(InteractionType interaction, int selectedSlot, int propID);
+void SendRetryLevel();
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);
 

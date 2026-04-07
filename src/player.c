@@ -801,23 +801,23 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 void ResetPlayerToSpawn(Player* p)
 {
-	player->position = player->spawnPosition;
+	p->position = p->spawnPosition;
 
 	// Rebuild collider
-	GetPlayerCollision(player->position);
+	GetPlayerCollision(p->position);
 
-	player->velocity = (Vector3){ 0 };
+	p->velocity = (Vector3){ 0 };
 }
 
 void ResetPlayer(Player* p)
 {
-	player->activeImpairment = 0;
-	player->activeImpairmentIntensity = 0.0f;
-	player->allowControl = false;
-	player->position = player->spawnPosition;
-	player->checkpoint.active = false;
-	player->pendingImpairment = 0;
-	player->pendingIntensity = 0.0f;
+	p->activeImpairment = 0;
+	p->activeImpairmentIntensity = 0.0f;
+	p->allowControl = false;
+	p->position = p->spawnPosition;
+	p->checkpoint.active = false;
+	p->pendingImpairment = 0;
+	p->pendingIntensity = 0.0f;
 }
 
 void DestroyPlayer()

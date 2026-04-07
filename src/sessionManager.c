@@ -23,6 +23,7 @@ void (*CreatePlayer)() = NULL;
 void (*InitalizeRemotePlayer)() = NULL;
 void (*PlayerDesyncCorrection)() = NULL;
 void (*PropInteractionCallback)() = NULL;
+void (*ResetLevelCallback)() = NULL;
 
 void SessionManager_Init()
 {
@@ -384,6 +385,14 @@ int SessionManager_Client_HandleEvents()
 							printf("Sending player data across...\n");
 						#endif
 					}
+				}
+				break;
+			case Retry:
+				if (bmsg->length >= 1 + sizeof(struct RetryPacket)) {
+					struct RetryPacket recv_RetryPacket;
+					memcpy(&recv_RetryPacket, bmsg->bytes + 1, sizeof(struct RetryPacket));
+					printf("Received Reset packet\n");
+					ResetLevelCallback();
 				}
 				break;
 			default:

@@ -183,6 +183,21 @@ void SendPropInteraction(InteractionType interaction, int selectedSlot, int prop
 	}
 }
 
+void SendRetryLevel()
+{
+	if (multiplayerSession)
+	{
+		struct RetryPacket retryPacket;
+		retryPacket.auth = 1;
+
+		// Send Reset packet
+		uint8_t buffer[1 + sizeof(struct RetryPacket)];
+		buffer[0] = Retry; // Set message type
+		memcpy(buffer + 1, &retryPacket, sizeof(struct RetryPacket));
+		SendPlayerData(buffer, sizeof(buffer), isServer);
+	}
+}
+
 // Network tick function - runs often
 void NetworkTick(bool isServer)
 {

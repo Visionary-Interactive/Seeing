@@ -32,6 +32,7 @@ typedef struct Button
 	Rectangle bounds;
 	const char* text;
 	ButtonAction action;
+	ButtonAction action2;
 } Button;
 
 

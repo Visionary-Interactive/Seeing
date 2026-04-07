@@ -14,6 +14,8 @@ static char* pTexP;
 
 bool InitMap(Map *map, const char *mapPath)
 {
+	ResetLevelCallback = RetryLevel; // To be called when retrying the level remotely (multiplayer)
+
     pillar = "resources/global/models/pillar/scene.gltf";
     wTexP = "resources/global/models/pillar/textures/Material_baseColor.png";
 
@@ -364,10 +366,9 @@ void ResetLevel()
     ResetProps();
     for (int i = 0; i < clientPlayerCount + 1; i++)
     {
-        ResetPlayer(&playerList[i]);
+        ResetPlayer(playerList[i]);
 	}
     ResetParticlePool(GetParticlePool());
-
 }
 
 //The Retry Button to reset the level without going back to the menu, for quick retrying
@@ -375,7 +376,6 @@ void RetryLevel()
 {
     ResetLevel();
 	currentLevelLoaded();
-
 }
 
 void LoadPropTest()

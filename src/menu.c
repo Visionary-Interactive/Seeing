@@ -20,7 +20,7 @@ Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
 Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
 Button level4Button = { { 200, 200, 200, 50 }, "Level 4", LoadLevel4 };
-Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
+Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel, SendRetryLevel};
 
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
@@ -323,6 +323,9 @@ void DrawButton(Button button, Color color)
 
             if (button.action)
 				button.action();
+
+            if (button.action2)
+				button.action2();
 
 
             if (strcmp(button.text, "Play") == 0)

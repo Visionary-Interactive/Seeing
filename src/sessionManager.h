@@ -39,7 +39,8 @@ typedef enum {
 	PositionSnapshot,
 	IncomingPlayer,
 	PropInteraction,
-	LobbyQuery
+	LobbyQuery,
+	Retry
 } MsgType;
 
 struct SessionVec3 {
@@ -95,6 +96,10 @@ struct LobbyQuery { // Sent upon joining lobby
 	uint16_t hostPort;
 };
 
+struct RetryPacket { // Sent upon joining lobby
+	uint8_t auth : 1;
+};
+
 extern clock_t lastNetworkTick;
 extern bool isServer;
 extern bool isHost;
@@ -139,5 +144,6 @@ extern void (*CreatePlayer)();
 extern void (*InitalizeRemotePlayer)();
 extern void (*PlayerDesyncCorrection)();
 extern void (*PropInteractionCallback)();
+extern void (*ResetLevelCallback)();
 
 #endif // SESSIONMANAGER_H
