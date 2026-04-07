@@ -340,36 +340,69 @@ void RenderProps(Props* obj) {
 
             // LEVEL 4 ONLY
             // Disappearing Walls
+            bool allBlocksAligned = false;
             if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL)
             {
                 // 1st Puzzle -----------------------------------------------
                 // Left to Right - Triangle, Circle, Square
-                bool allBlocksAligned = true;
+                printf("%s, %s, %s\n", obj->text[rotatingBlockIDs[0]], obj->text[rotatingBlockIDs[1]], obj->text[rotatingBlockIDs[2]]);
                 if (!obj->text[rotatingBlockIDs[0]] ||
                     obj->text[rotatingBlockIDs[0]][2] != 'd' ||
                     obj->text[rotatingBlockIDs[0]][0] != '2')
                 {
                     allBlocksAligned = false;
                 }
-                if (!obj->text[rotatingBlockIDs[1]] ||
+                else if (!obj->text[rotatingBlockIDs[1]] ||
                     obj->text[rotatingBlockIDs[1]][2] != 'd' ||
                     obj->text[rotatingBlockIDs[1]][0] != '3')
                 {
                     allBlocksAligned = false;
                 }
-                if (!obj->text[rotatingBlockIDs[2]] ||
+                else if (!obj->text[rotatingBlockIDs[2]] ||
                     obj->text[rotatingBlockIDs[2]][2] != 'd' ||
                     obj->text[rotatingBlockIDs[2]][0] != '1')
                 {
                     allBlocksAligned = false;
                 }
-
-                if (allBlocksAligned)
+                else
                 {
-                    obj->components[i] &= ~PROP_COLLIDER; // Disable collider
-                    obj->components[i] &= ~PROP_VISIBILE; // Make invisible
-				}
+                    allBlocksAligned = true;
+                }
 			}
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL2)
+            {
+                // 2nd Puzzle -----------------------------------------------
+                // Left to Right - Circle, Triangle, Circle
+                if (!obj->text[rotatingBlockIDs[3]] ||
+                    obj->text[rotatingBlockIDs[3]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[3]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[4]] ||
+                    obj->text[rotatingBlockIDs[4]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[4]][0] != '2')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[5]] ||
+                    obj->text[rotatingBlockIDs[5]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[5]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else
+                {
+                    allBlocksAligned = true;
+                }
+			}
+
+			// If all blocks are aligned, disable the collider and make the wall invisible
+            if (allBlocksAligned)
+            {
+                obj->components[i] &= ~PROP_COLLIDER; // Disable collider
+                obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+            }
 
 			// Push Block Animation
 			if (obj->components[i] & PROP_PUSHABLE)

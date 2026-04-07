@@ -189,7 +189,7 @@ void LoadLevel4(Props* props)
     }, (Vector3) { 0.02, 0.0033, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
 	// Rotating Blocks ----------------------------------------------------------------
-    // Wall - Disappearing
+    // Wall - Disappearing 1
     wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     props->rotation[wallTemp].y = PI / 2.0f + PI;
     ColliderSetup(props, wallTemp);
@@ -203,7 +203,22 @@ void LoadLevel4(Props* props)
     ColliderSetup(props, wallTemp);
     props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL;
 
-    char* blockLetters[3];
+    // Wall - Disappearing 2
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -8.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+    wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { -16.0f, 0.0f, -10.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+    props->rotation[wallTemp].y = PI / 2.0f + PI;
+    ColliderSetup(props, wallTemp);
+    props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
+
+    // Block puzzle 1
+    char* blockLetters[6];
     for (int i = 0; i < 3; i++)
     {
 		int puzzleBlock1 = CreatePropFromPath(props,
@@ -232,6 +247,80 @@ void LoadLevel4(Props* props)
 		props->text[puzzleBlock1] = blockLetters[i]; // Set this so we can tell where the block is facing.
 		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
         rotatingBlockIDs[i] = puzzleBlock1;
+    }
+
+	// Block puzzle 2
+    for (int i = 0; i < 3; i++)
+    {
+		int puzzleBlock1 = CreatePropFromPath(props,
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			"resources/global/models/puzzleBlock/PuzzleBlock1.glb",
+			(Vector3) {
+			-10.5f + i * 5, 3.0f, -8.0f
+		},
+			(Vector3) {
+			1.5f, 1.5f, 1.5f
+		},
+			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
+        // Pillar
+        CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
+            (Vector3) {
+            -10.5f + i * 5, 0.0f, -8.0f
+        }, (Vector3) { 0.02, 0.0072, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
+
+		//pre-compiler
+		blockLetters[i + 3] = calloc(255, sizeof(char));
+		blockLetters[i + 3][0] = (char)('0' + i);
+		blockLetters[i + 3][1] = ',';
+		blockLetters[i + 3][2] = 'd';
+		blockLetters[i + 3][3] = '\0';
+		props->text[puzzleBlock1] = blockLetters[i + 3]; // Set this so we can tell where the block is facing.
+		props->rotation[puzzleBlock1].y = 0.0f + (90.0f * i);
+        rotatingBlockIDs[i + 3] = puzzleBlock1;
+    }
+
+	// Exit Door
+    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { -6.0f, 2.0f, -13.0f },
+        (Vector3) {
+        1.0f, 1.0f, 1.0f
+    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
+    props->interactType[doorID] = INTERACTABLE_DOOR;
+
+	// Decorations ----------------------------------------------------------------------
+    // Grass
+    char* grassModel = "resources/global/models/grass/grass1.glb";
+    for (int i = 0; i < 100; i++)
+    {
+        int maxX = 3;
+        int minX = -16;
+        int maxZ = 59;
+        int minZ = 26;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) {
+            (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ)
+        }, (Vector3) { 1.0f, 1.0f, 1.0f },
+                CLITERAL(Color) {
+                0, 117, 44, 150
+            }, PROP_VISIBILE);
+            props->rotation[grassTemp].y = rand() % 360;
+    }
+
+	// Tall Grass
+    for (int i = 0; i < 150; i++)
+    {
+        int maxX = 3;
+        int minX = -16;
+        int maxZ = 26;
+        int minZ = -10;
+        int grassTemp = CreatePropFromPath(props, grassModel, grassModel,
+            (Vector3) {
+            (float)(rand() % (maxX - minX + 1) + minX), -0.2f, (float)(rand() % (maxZ - minZ + 1) + minZ)
+        }, (Vector3) { 2.0f, 3.0f, 2.0f },
+                CLITERAL(Color) {
+                0, 117, 44, 225
+            }, PROP_VISIBILE);
+            props->rotation[grassTemp].y = rand() % 360;
     }
 }
 
