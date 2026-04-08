@@ -154,7 +154,7 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 
 int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 {
-    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE | PROP_VISIBILE);
+    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE);
 
     obj->triggerType[id] = type;
     obj->Triggered[id] = false;
@@ -339,9 +339,10 @@ void RenderProps(Props* obj) {
                 continue;
             }
 
-            // LEVEL 4 ONLY
+            // LEVEL 4 + LEVEL 2ONLY
             // Disappearing Walls
             bool allBlocksAligned = false;
+			bool allBlocksAligned2 = false;
             if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL)
             {
                 // 1st Puzzle -----------------------------------------------
@@ -396,12 +397,50 @@ void RenderProps(Props* obj) {
                     allBlocksAligned = true;
                 }
 			}
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+            {
+
+                // 3rd Puzzle from level 2-----------------------------------------------
+                // Left to Right - Based on code
+                if (!obj->text[rotatingBlockIDs[0]] ||
+                    obj->text[rotatingBlockIDs[0]][2] != 'd' ||
+					obj->text[rotatingBlockIDs[0]][0] != (char)('0' + code[0]))
+                {
+                    allBlocksAligned2 = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[1]] ||
+                    obj->text[rotatingBlockIDs[1]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[1]][0] != (char)('0' + code[1])
+					)
+                {
+                    allBlocksAligned2 = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[2]] ||
+                    obj->text[rotatingBlockIDs[2]][2] != 'd' ||
+					obj->text[rotatingBlockIDs[2]][0] != (char)('0' + code[2]))
+                {
+                    allBlocksAligned2 = false;
+                }
+                else
+                {
+                    allBlocksAligned2 = true;
+                }
+            }
 
 			// If all blocks are aligned, disable the collider and make the wall invisible
             if (allBlocksAligned)
             {
                 obj->components[i] &= ~PROP_COLLIDER; // Disable collider
                 obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+            }
+
+            if (allBlocksAligned2)
+            {
+				printf("puzzle is solved, door should be open now\n");
+
+                obj->components[i] &= ~PROP_COLLIDER; // Disable collider
+				obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+
             }
 
 			// Push Block Animation

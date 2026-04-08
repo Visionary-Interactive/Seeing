@@ -432,7 +432,6 @@ void RenderPlayer(Player* p, Props* props)
 	}
 }
 
-//this sucks dude!
 static int FindNearestActiveVent(Props* obj, float maxRange)
 {
 	int closestVent = -1;
@@ -527,7 +526,7 @@ void UpdateInteractions(Props* obj)
 			}
 
 			case INTERACTABLE_TEXT:
-				printf("Interacted with text prop: %s\n", obj->text[closestID]);
+				//printf("Interacted with text prop: %s\n", obj->text[closestID]);
 				PlayerPropInteraction(obj, text, NULL, closestID);
 				break;
 
@@ -819,7 +818,7 @@ void ResetPlayer(Player* p)
 {
 	p->activeImpairment = 0;
 	p->activeImpairmentIntensity = 0.0f;
-	p->allowControl = false;
+	p->allowControl = true;
 	p->position = p->spawnPosition;
 	p->checkpoint.active = false;
 	p->pendingImpairment = 0;

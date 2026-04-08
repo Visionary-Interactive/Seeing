@@ -43,6 +43,15 @@ typedef struct PropRecord {
     char texturePath[PROP_MODEL_PATH_MAX];
 } PropRecord;
 
+typedef enum Level2Patterns{
+    PATTERN_CIRCLE,
+	PATTERN_X,
+	PATTERN_SQUARE,
+    PATTERN_TRIANGLE
+} Level2Patterns;
+
+//code for level 2 puzzle needed to be passed to player
+
 //static int PillarID;
 
 bool InitMap(Map *map, const char *mapPath);
@@ -54,14 +63,28 @@ void LoadPropTest();
 //Level 2
 void LoadLevel2();
 
+//Level 2 PatternTypes for puzzle blocks
+
+bool isCircle(int x, int z);
+bool isTriangle(int x, int z);
+bool isSquare(int x, int z);
+bool isX(int x, int z);
+
 void (*currentLevelLoaded)();
 
 void LoadLevel4();
 
-void GenerateCubePuzzle(Props* props, int count,
+void GenerateCubePuzzle(Props* props, int gridX, int gridZ,
     float minX, float maxX,
     float minZ, float maxZ,
-    Vector3 size, Color color, uint32_t components);
+    Vector3 size, Color color, uint32_t components, Level2Patterns pattern);
+
+void GenerateCubePuzzle2(Props* props, int gridX, int gridZ,
+    float minZ, float maxZ,
+    float minY, float maxY,
+    Vector3 size, Color color, uint32_t components, Level2Patterns pattern);
+
+void GenerateLevel2Code(int *code);
 
 void ResetLevel();
 
