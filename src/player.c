@@ -431,7 +431,6 @@ void RenderPlayer(Player* p, Props* props)
 	}
 }
 
-//this sucks dude!
 static int FindNearestActiveVent(Props* obj, float maxRange)
 {
 	int closestVent = -1;

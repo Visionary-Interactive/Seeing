@@ -111,8 +111,6 @@ int main(int argc, char** argv)
 
 		if (prefs->dirty)
 		{
-			int val;
-
 			if (PrefsGet("targetFps", &val))
 				SetTargetFPS(val);
 

@@ -21,8 +21,8 @@ typedef enum MenuScreen {
 	menu_level_complete,
 	menu_multi,
 	menu_multi2,
-	menu_save
-
+	menu_save,
+	menu_compendium
 } MenuScreen;
 
 typedef void (*ButtonAction)(void);
@@ -49,7 +49,6 @@ void LoadMenuElements();
 void DrawMenu();
 void DrawUI(InventoryItem *item, int selectedSlot);
 void DrawButton(struct Button button, Color color);
-void DrawTextBox(Rectangle bounds, char* buffer, int currentSize, int maxSize, bool* focused);
 void InitTextBox(TextboxType type, const char* tText);
 void UpdateTextBox(float deltaTime);
 void DrawCharacterbox();

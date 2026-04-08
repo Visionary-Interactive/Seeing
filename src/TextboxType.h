@@ -5,7 +5,8 @@
 typedef enum {
     TEXTBOX_NONE = 0,
     TEXTBOX_PLAYER,
-    TEXTBOX_BOOK
+    TEXTBOX_BOOK,
+    TEXTBOX_COMP
 } TextboxType;
 
 #endif

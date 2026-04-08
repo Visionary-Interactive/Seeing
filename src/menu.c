@@ -22,11 +22,15 @@ Button fullscreenButton = { { 100, 200, 200, 50 }, "Fullscreen: Off" };
 Button vsyncButton = { { 100, 300, 200, 50 }, "VSync: Off" };
 Button msaaButton = { { 100, 400, 200, 50 }, "MSAA: Off" };
 Button fpsButton = { { 100, 500, 200, 50 }, "FPS: 120" };
+Button compBackButton = { { 0, 0, 200, 50 }, "Go Backward" };
+Button compMenuButton = { { 0, 0, 200, 50 }, "Back to Menu" };
+Button compForwardButton = { { 0, 0, 200, 50 }, "Go Forward" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
 Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
 Button level4Button = { { 200, 400, 200, 50 }, "Level 4", LoadLevel4 };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
 
+#define COMPENDIUM_COUNT 5
 #define SAVE_COLS 4
 #define SAVE_ROWS 3
 #define SAVE_SLOT_COUNT (SAVE_COLS * SAVE_ROWS)
@@ -66,6 +70,24 @@ static Texture2D bigTextbox;
 static float hoverAnimTimer = 0.0f;
 static int hoverFrameIndex = 0;
 
+static int compendiumIndex = 0;
+
+static const char *compendiumTitles[COMPENDIUM_COUNT] = {
+    "Astigmatism",
+    "Glaucoma",
+    "Protanopia",
+    "Deuteranopa",
+    "Tritanopia"
+};
+
+static const char *compendiumDescriptions[COMPENDIUM_COUNT] = {
+    "Astigmatism is a condition in which the eye, especially the cornea, isn't completely round. Symptoms of severe astigmatism include blurred vision, eyestrain, and headaches - most obvious when staring into bright objects in dark environments, such as car headlights on the freeway at night. Almost everyone has some degree of astigmatism.",
+    "Glaucoma is a group of eye conditions that damage the optic nerve, often caused by increased pressure inside the eye. It typically develops slowly and may not show symptoms until significant vision loss has occurred. Early signs can include patchy blind spots in peripheral vision, eventually leading to tunnel vision if untreated.",
+    "Protanopia is a type of red-green colour blindness in which the eye lacks functioning red cone cells. People with this condition have difficulty distinguishing between red and green hues, often perceiving them as dull or brownish. Colours that rely heavily on red light can appear darker than normal. Protanopia is a genetic condition and affects daily tasks that rely on accurate colour perception. It affects about 1% of males and 0.02% of females.",
+    "Deuteranopia is a form of red-green colour blindness caused by the absence of functioning green cone cells in the eye. Individuals with this condition struggle to differentiate between red, green, and certain brown or yellow shades. Unlike normal vision, these colours may appear muted or indistinct. Deuteranopia is inherited and is one of the most common types of colour vision deficiency. It affects about 6% of males and 0.4% of females.",
+    "Tritanopia is a rare type of colour blindness involving a deficiency of blue cone cells in the retina. People with tritanopia have difficulty distinguishing between blue and green, as well as yellow and violet hues. Colours may appear faded or shifted, making certain shades hard to identify. Unlike other forms of colour blindness, tritanopia is rarely inherited and can sometimes be acquired later in life through complications with other impairments. It impacts men and women equally for this reason. About 0.01% of people worldwide are affected by tritanopia."
+};
+
 static void CentreMenuButton(Button* button, float y)
 {
     float screenWidth = (float)GetScreenWidth();
@@ -81,6 +103,64 @@ static void RightMenuButton(Button* button, float y)
 
     button->bounds.x = screenWidth * 0.80f - button->bounds.width * 0.5f;
     button->bounds.y = y;
+}
+
+void DrawTextBoxed(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint)
+{
+    float scaleFactor = fontSize / (float)font.baseSize;
+
+    float x = 0;
+    float y = 0;
+
+    const char *ptr = text;
+
+    while (*ptr)
+    {
+        char word[256] = {0};
+        int len = 0;
+
+        while (*ptr && *ptr != ' ' && *ptr != '\n' && len < 255)
+        {
+            word[len++] = *ptr;
+            ptr++;
+        }
+        word[len] = '\0';
+
+        float wordWidth = MeasureTextEx(font, word, fontSize, spacing).x;
+
+        if (x + wordWidth > rec.width)
+        {
+            x = 0;
+            y += fontSize + spacing;
+        }
+
+        if (y + fontSize > rec.height)
+            break;
+
+        DrawTextEx(
+            font,
+            word,
+            (Vector2){ rec.x + x, rec.y + y },
+            fontSize,
+            spacing,
+            tint
+        );
+
+        x += wordWidth;
+
+        if (*ptr == ' ')
+        {
+            float spaceWidth = MeasureTextEx(font, " ", fontSize, spacing).x;
+            x += spaceWidth;
+            ptr++;
+        }
+        else if (*ptr == '\n')
+        {
+            x = 0;
+            y += fontSize + spacing;
+            ptr++;
+        }
+    }
 }
 
 static void RefreshOptionLabels(void)
@@ -231,10 +311,10 @@ void DrawMenu()
         RefreshOptionLabels();
 
         CentreMenuButton(&fullscreenButton, startY + 0 * (buttonHeight + spacing));
-        CentreMenuButton(&vsyncButton,      startY + 1 * (buttonHeight + spacing));
-        CentreMenuButton(&msaaButton,       startY + 2 * (buttonHeight + spacing));
-        CentreMenuButton(&fpsButton,        startY + 3 * (buttonHeight + spacing));
-        CentreMenuButton(&menuButton,       startY + 4 * (buttonHeight + spacing));
+        CentreMenuButton(&vsyncButton, startY + 1 * (buttonHeight + spacing));
+        CentreMenuButton(&msaaButton, startY + 2 * (buttonHeight + spacing));
+        CentreMenuButton(&fpsButton, startY + 3 * (buttonHeight + spacing));
+        CentreMenuButton(&menuButton, startY + 4 * (buttonHeight + spacing));
 
         DrawButton(fullscreenButton, DARKGRAY);
         DrawButton(vsyncButton, DARKGRAY);
@@ -326,7 +406,65 @@ void DrawMenu()
         DrawButton(menuButton, DARKGRAY);
     }
     break;
+    case menu_compendium:
+    {
+        float screenW = GetScreenWidth();
+        float screenH = GetScreenHeight();
 
+        DrawTextEx(romanica, "COMPENDIUM", (Vector2){ 100, 40 }, 90, 0, BLACK);
+
+        char pageLabel[32];
+        snprintf(pageLabel, sizeof(pageLabel), "%d / %d", compendiumIndex + 1, COMPENDIUM_COUNT);
+        Vector2 pageSize = MeasureTextEx(romanica, pageLabel, 30, 0);
+        DrawTextEx(romanica, pageLabel,
+                   (Vector2){ screenW * 0.5f - pageSize.x * 0.5f, 140 },
+                   30, 0, GRAY);
+
+        const char *title = compendiumTitles[compendiumIndex];
+        Vector2 titleSize = MeasureTextEx(romanica, title, 50, 0);
+        DrawTextEx(romanica, title,
+                   (Vector2){ screenW * 0.5f - titleSize.x * 0.5f, 180 },
+                   50, 0, BLACK);
+
+        float boxMargin = 80;
+        float boxTop    = 250;
+        float boxBottom = screenH - 140;
+        float boxWidth  = screenW - boxMargin * 2;
+        float boxHeight = boxBottom - boxTop;
+
+        Rectangle textBox = { boxMargin, boxTop, boxWidth, boxHeight };
+        DrawRectangleRec(textBox, Fade(LIGHTGRAY, 0.4f));
+        DrawRectangleLinesEx(textBox, 2, DARKGRAY);
+
+        float textPadding = 16;
+        Rectangle textArea = {
+            textBox.x + textPadding,
+            textBox.y + textPadding,
+            textBox.width  - textPadding * 2,
+            textBox.height - textPadding * 2
+        };
+
+        DrawTextBoxed(romanica, compendiumDescriptions[compendiumIndex], textArea, 36, 0, true, BLACK);
+
+        float buttonW  = 200;
+        float buttonH  = 50;
+        float buttonY = screenH - 100;
+        float gap = 40;
+        float totalW = 3 * buttonW + 2 * gap;
+        float startX = screenW * 0.5f - totalW * 0.5f;
+
+        compBackButton.bounds = (Rectangle){ startX, buttonY, buttonW, buttonH };
+        compMenuButton.bounds = (Rectangle){ startX + buttonW + gap, buttonY, buttonW, buttonH };
+        compForwardButton.bounds = (Rectangle){ startX + 2*(buttonW + gap), buttonY, buttonW, buttonH };
+
+        Color backColor = (compendiumIndex > 0) ? DARKGRAY : GRAY;
+        Color forwardColor = (compendiumIndex < COMPENDIUM_COUNT - 1) ? DARKGRAY : GRAY;
+
+        DrawButton(compBackButton, backColor);
+        DrawButton(compMenuButton, DARKGRAY);
+        DrawButton(compForwardButton, forwardColor);
+    }
+    break;
 
     default:
         DrawText("UNKNOWN SCREEN", 100, 40, 30, RED);
@@ -422,6 +560,18 @@ void DrawButton(Button button, Color color)
                 SetCurrentScreen(menu_level_select);
             else if (strcmp(button.text, "Save/Load") == 0)
                 SetCurrentScreen(menu_save);
+            else if (strcmp(button.text, "Compendium") == 0)
+                SetCurrentScreen(menu_compendium);
+            else if (strcmp(button.text, "Go Backward") == 0)
+            {
+                if (compendiumIndex > 0)
+                    compendiumIndex--;
+            }
+            else if (strcmp(button.text, "Go Forward") == 0)
+            {
+                if (compendiumIndex < COMPENDIUM_COUNT - 1)
+                    compendiumIndex++;
+            }
             else if (strcmp(button.text, "Fullscreen: On") == 0 ||
                      strcmp(button.text, "Fullscreen: Off") == 0)
             {
@@ -452,11 +602,11 @@ void DrawButton(Button button, Color color)
                 int val = 120;
                 PrefsGet("targetFps", &val);
 
-                if      (val == 30)  val = 60;
-                else if (val == 60)  val = 120;
+                if (val == 30) val = 60;
+                else if (val == 60) val = 120;
                 else if (val == 120) val = 144;
                 else if (val == 144) val = 240;
-                else                 val = 30;
+                else val = 30;
 
                 PrefsSet("targetFps", val);
                 PrefsSave(pref);
