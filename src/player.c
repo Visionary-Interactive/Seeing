@@ -13,6 +13,7 @@ int selectedSlot = 0;
 Player* playerList[MAX_PLAYERS];
 
 void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
+void (*SendCompleteLevelToRemote)() = NULL;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -24,7 +25,11 @@ void InitPlayer()
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
-	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
+	for (int i = 0; i < ANIMATION_STATES; i++)
+	{
+		player->animData.animFrame[i] = 0;
+		player->animData.animFrameAccum[i] = 0.0f;
+	}
 	player->speed = 7.0f;
 	player->yaw = PI;
 	player->pitch = 0.0f;
@@ -345,9 +350,9 @@ void RenderPlayer(Player* p, Props* props)
 	int animState = 0; // Default to idle
 	if (!p->remotePlayer)
 	{
-		if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+		if (p->input.E || p->animData.animFrameAccum[1] > 0.0f)
 			animState = 1; // Interact
-		else if (p->input.R || p->animData.animFrame[2] > 0)
+		else if (p->input.R || p->animData.animFrameAccum[2] > 0.0f)
 			animState = 2; // Place
 	}
 	else
@@ -358,11 +363,28 @@ void RenderPlayer(Player* p, Props* props)
 	animState %= p->animData.animsCount; // Ensure valid index
 
 	if (animState != 0)
+	{
 		p->animData.animFrame[0] = 0; // Reset idle animation
+		p->animData.animFrameAccum[0] = 0.0f;
+	}
 
 	anim = p->animData.animations[animState];
 
-	p->animData.animFrame[animState] = ((p->animData.animFrame[animState] + 1) % anim.frameCount);
+	p->animData.animFrameAccum[animState] += GetFrameTime() * 120.0f;
+
+	if ((int)p->animData.animFrameAccum[animState] >= anim.frameCount)
+	{
+		// Animation finished
+		p->animData.animFrameAccum[animState] = 0.0f;
+		p->animData.animFrame[animState] = 0;
+	}
+	else
+	{
+		p->animData.animFrame[animState] = (int)p->animData.animFrameAccum[animState];
+	}
+
+	p->animData.animFrame[animState] = (int)p->animData.animFrameAccum[animState];
+
 	UpdateModelAnimation(p->model, anim, p->animData.animFrame[animState]);
 
 	// Draw player model with proper transformations
@@ -678,8 +700,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
-		SetCurrentScreen(menu_level_complete);
-		SessionManager_Client_Disonnect();
+		SendCompleteLevelToRemote();
+		CompleteLevel();
 	}
 	else if (interaction == text)
 	{
@@ -800,23 +822,28 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 void ResetPlayerToSpawn(Player* p)
 {
-	player->position = player->spawnPosition;
+	p->position = p->spawnPosition;
 
 	// Rebuild collider
-	GetPlayerCollision(player->position);
+	GetPlayerCollision(p->position);
 
-	player->velocity = (Vector3){ 0 };
+	p->velocity = (Vector3){ 0 };
+}
+
+void CompleteLevel()
+{
+	SetCurrentScreen(menu_level_complete);
 }
 
 void ResetPlayer(Player* p)
 {
-	player->activeImpairment = 0;
-	player->activeImpairmentIntensity = 0.0f;
-	player->allowControl = true;
-	player->position = player->spawnPosition;
-	player->checkpoint.active = false;
-	player->pendingImpairment = 0;
-	player->pendingIntensity = 0.0f;
+	p->activeImpairment = 0;
+	p->activeImpairmentIntensity = 0.0f;
+	p->allowControl = true;
+	p->position = p->spawnPosition;
+	p->checkpoint.active = false;
+	p->pendingImpairment = 0;
+	p->pendingIntensity = 0.0f;
 }
 
 void DestroyPlayer()

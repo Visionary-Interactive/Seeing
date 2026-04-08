@@ -517,6 +517,9 @@ void DrawButton(Button button, Color color)
             if (button.action)
 				button.action();
 
+            if (button.action2)
+				button.action2();
+
 
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);

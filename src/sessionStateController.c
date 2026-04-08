@@ -18,9 +18,11 @@ void SessionStateController_Init()
 	HostPlayerCallback = SendPlayerDataToRemote; // To be called to send player data
 	ClientPlayerCallback = SendPlayerDataToRemote;
 	PropInteractionCallback = PropInteractionRPC; // To be called when a prop interaction occurs
+	FinishLevelCallback = CompleteLevel; // To be called when a level is finished
 
 	// Player Callback
 	SendPropInteractionToRemote = SendPropInteraction;
+	SendCompleteLevelToRemote = SendFinishLevel;
 
 	playerColor = RED;
 	remoteColor = BLACK;
@@ -183,6 +185,37 @@ void SendPropInteraction(InteractionType interaction, int selectedSlot, int prop
 	}
 }
 
+void SendRetryLevel()
+{
+	if (multiplayerSession)
+	{
+		struct RetryPacket retryPacket;
+		retryPacket.auth = 1;
+
+		// Send Reset packet
+		uint8_t buffer[1 + sizeof(struct RetryPacket)];
+		buffer[0] = Retry; // Set message type
+		memcpy(buffer + 1, &retryPacket, sizeof(struct RetryPacket));
+		SendPlayerData(buffer, sizeof(buffer), isServer);
+	}
+}
+
+void SendFinishLevel()
+{
+	if (multiplayerSession)
+	{
+		struct FinishPacket finishPacket;
+		finishPacket.auth = 1;
+
+		// Send Reset packet
+		uint8_t buffer[1 + sizeof(struct FinishPacket)];
+		buffer[0] = Finished; // Set message type
+		memcpy(buffer + 1, &finishPacket, sizeof(struct FinishPacket));
+		SendPlayerData(buffer, sizeof(buffer), isServer);
+		SessionManager_Client_SendPackets();
+	}
+}
+
 // Network tick function - runs often
 void NetworkTick(bool isServer)
 {
@@ -259,9 +292,7 @@ void NetworkTick(bool isServer)
 	memcpy(buffer + 1, &movementSnapshot, sizeof(struct MovementSnapshot));
 	SendPlayerData(buffer, sizeof(buffer), isServer);
 
-	if (isServer)
-		SessionManager_Server_SendPackets();
-	else
+	if (!isServer)
 		SessionManager_Client_SendPackets();
 }
 
@@ -282,9 +313,7 @@ void NetworkCorrectionTick(bool isServer)
 	memcpy(buffer + 1, &positionSnapshot, sizeof(struct PositionSnapshot));
 	SendPlayerData(buffer, sizeof(buffer), isServer);
 
-	if (isServer)
-		SessionManager_Server_SendPackets();
-	else
+	if (!isServer)
 		SessionManager_Client_SendPackets();
 }
 

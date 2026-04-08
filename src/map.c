@@ -14,11 +14,15 @@ static char* chair;
 static char* wTexP;
 static char* bTexP;
 static char* pTexP;
+static char* door1;
 //used in level code for random code generation
 
 
 bool InitMap(Map *map, const char *mapPath)
 {
+	ResetLevelCallback = RetryLevel; // To be called when retrying the level remotely (multiplayer)
+
+    door1 = "resources/global/models/door/door1.glb";
     pillar = "resources/global/models/pillar/scene.gltf";
     wTexP = "resources/global/models/pillar/textures/Material_baseColor.png";
 
@@ -695,7 +699,6 @@ void LoadLevel4()
 {
     GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
     GetPlayer()->position = GetPlayer()->spawnPosition;
-
     Props* props = GetPropStructure();
 
     currentLevelLoaded = LoadLevel4;
@@ -775,6 +778,47 @@ void LoadLevel4()
     }, (Vector3) { 0.02, 0.0033, 0.02 }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 
 	// Rotating Blocks ----------------------------------------------------------------
+    // Hints 1 - Triangle, Circle, Square
+    char* hintTriangle = "resources/global/models/puzzleBlock/triangleHint.glb";
+    char* hintCircle = "resources/global/models/puzzleBlock/circleHint.glb";
+    char* hintSquare = "resources/global/models/puzzleBlock/squareHint.glb";
+    int hint;
+    hint = CreatePropFromPath(props, hintTriangle, hintTriangle,
+        (Vector3) { 4.38f, 2.0f, 50.0f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 255, 173, 176, 255 }, PROP_VISIBILE);
+    props->rotation[hint].y = PI / 2.0f;
+    ColliderSetup(props, hint);
+    hint = CreatePropFromPath(props, hintCircle, hintCircle,
+        (Vector3) { -17.88f, 4.0f, 43.0f },
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 251, 151, 255 }, PROP_VISIBILE);
+    props->rotation[hint].y = PI;
+    ColliderSetup(props, hint);
+    hint = CreatePropFromPath(props, hintSquare, hintSquare,
+        (Vector3) {  -9.5f, 3.0f, 58.35f },
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 223, 255, 255 }, PROP_VISIBILE);
+    props->rotation[hint].y = PI / 2.0f + PI;
+    ColliderSetup(props, hint);
+
+    // Hints 2 - Circle, Triangle, Circle
+    char* hintTriangleGround = "resources/global/models/puzzleBlock/triangleHintGround.glb";
+    char* hintCircleGround = "resources/global/models/puzzleBlock/circleHintGround.glb";
+    hint = CreatePropFromPath(props, hintCircleGround, hintCircleGround,
+        (Vector3) { -16.5f, 0.1f, 18.1f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 255, 173, 176, 255 }, PROP_VISIBILE);
+    hint = CreatePropFromPath(props, hintCircleGround, hintCircleGround,
+        (Vector3) { 0.9f, 0.1f, -1.5f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 223, 255, 255 }, PROP_VISIBILE);
+    hint = CreatePropFromPath(props, hintTriangleGround, hintTriangleGround,
+        (Vector3) { -0.5f, 0.1f, 12.5f }, 
+        (Vector3) { 1.0f, 1.0f, 1.0f },
+        CLITERAL(Color) { 173, 251, 151, 255 }, PROP_VISIBILE);
+
+
     // Wall - Disappearing 1
     wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, 35.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
     props->rotation[wallTemp].y = PI / 2.0f + PI;
@@ -802,7 +846,13 @@ void LoadLevel4()
     props->rotation[wallTemp].y = PI / 2.0f + PI;
     ColliderSetup(props, wallTemp);
     props->interactType[wallTemp] = INTERACTABLE_DISAPPEARING_WALL2;
-
+    
+    // Block Colors
+    Color blockColors[3] = {
+        CLITERAL(Color) { 255, 173, 176, 255 },
+        CLITERAL(Color) { 173, 251, 151, 255 },
+        CLITERAL(Color) { 173, 223, 255, 255 }
+	};
     // Block puzzle 1
     char* blockLetters[6];
     for (int i = 0; i < 3; i++)
@@ -816,7 +866,7 @@ void LoadLevel4()
 			(Vector3) {
 			1.5f, 1.5f, 1.5f
 		},
-			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+			blockColors[i], PROP_VISIBILE | PROP_INTERACTABLE);
 		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
         // Pillar
         CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
@@ -847,7 +897,7 @@ void LoadLevel4()
 			(Vector3) {
 			1.5f, 1.5f, 1.5f
 		},
-			WHITE, PROP_VISIBILE | PROP_INTERACTABLE);
+            blockColors[i], PROP_VISIBILE | PROP_INTERACTABLE);
 		props->interactType[puzzleBlock1] = INTERACTABLE_PUZZLE_ROTATATION_BLOCK;
         // Pillar
         CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
@@ -866,11 +916,12 @@ void LoadLevel4()
         rotatingBlockIDs[i + 3] = puzzleBlock1;
     }
 
+
 	// Exit Door
-    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { -6.0f, 2.0f, -13.0f },
-        (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
+    int doorID = CreatePropFromPath(props, door1, door1, 
+        (Vector3) { -6.0f, 0.0f, -14.0f },
+        (Vector3) {2.0f, 2.0f, 2.0f },
+        WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
     props->interactType[doorID] = INTERACTABLE_DOOR;
 
 	// Decorations ----------------------------------------------------------------------
@@ -1051,10 +1102,9 @@ void ResetLevel()
     ResetProps();
     for (int i = 0; i < clientPlayerCount + 1; i++)
     {
-        ResetPlayer(&playerList[i]);
+        ResetPlayer(playerList[i]);
 	}
     ResetParticlePool(GetParticlePool());
-
 }
 
 //The Retry Button to reset the level without going back to the menu, for quick retrying
@@ -1062,7 +1112,6 @@ void RetryLevel()
 {
     ResetLevel();
 	currentLevelLoaded();
-
 }
 
 void LoadPropTest()
@@ -1255,11 +1304,15 @@ void LoadPropTest()
 
 
     //Door at the end of the puzzle, this will finish it and take the player to the level complete screen
-	int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { 29.0f, 5.0f, -56.0f },
-		(Vector3) {
-		1.0f, 1.0f, 1.0f
-	}, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR); //holy hell change this
-	props->interactType[doorID] = INTERACTABLE_DOOR; //this sucks
+    int doorID = CreatePropFromPath(props, door1, door1,
+        (Vector3) {
+        29.0f, 3.0f, -57.0f
+    },
+        (Vector3) {
+        2.0f, 2.0f, 2.0f
+    },
+        WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
+    props->interactType[doorID] = INTERACTABLE_DOOR;
 
 	//This Book will give players the ability to control the impairment, its id is important as it gets called specifically in the code to check if the player has it or not, so be careful when changing it
 	int helpBookID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
