@@ -33,6 +33,7 @@ typedef struct AnimationData {
     ModelAnimation* animations; // Player's animations
 	int animsCount; // Number of animations
     int animFrame[ANIMATION_STATES]; // Current animation frame for each state
+	float animFrameAccum[ANIMATION_STATES]; // Accumulated time for animation frame updates
 } AnimationData;
 
 typedef enum {
