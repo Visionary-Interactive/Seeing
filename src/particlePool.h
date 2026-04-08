@@ -30,5 +30,6 @@ void ResetParticle(Particle* particle);
 int SpawnParticle(ParticlePool* pool, Vector3 position, Color tint, Vector3 velocity, Vector3 size, float lifetime);
 void UpdateParticlePool(ParticlePool* pool, float dt);
 void DestroyParticle(ParticlePool* pool, int handle);
+void ResetPartcielPool(ParticlePool* pool);
 
 #endif
