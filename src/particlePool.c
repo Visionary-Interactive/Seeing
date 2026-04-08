@@ -99,7 +99,7 @@ void DestroyParticle(ParticlePool* pool, int handle) {
     pool->freeList[pool->freeCount++] = handle;
 }
 
-void ResetPartcilePool(ParticlePool* pool)
+void ResetParticlePool(ParticlePool* pool)
 {
     if (pool == NULL) return;
     RL_FREE(pool);
