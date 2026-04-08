@@ -1116,7 +1116,8 @@ void RetryLevel()
 
 void LoadPropTest()
 {
-
+    GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
+    GetPlayer()->position = GetPlayer()->spawnPosition;
 
 	Props* props = GetPropStructure();
 

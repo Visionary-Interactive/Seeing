@@ -27,7 +27,7 @@ Button compMenuButton = { { 0, 0, 200, 50 }, "Back to Menu" };
 Button compForwardButton = { { 0, 0, 200, 50 }, "Go Forward" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
 Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
-Button level4Button = { { 200, 400, 200, 50 }, "Level 4", LoadLevel4 };
+Button level4Button = { { 200, 400, 200, 50 }, "Level 3", LoadLevel4 };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
 
 #define COMPENDIUM_COUNT 5
@@ -531,7 +531,7 @@ void DrawButton(Button button, Color color)
             {
                 SetCurrentScreen(menu_game);
             }
-            else if (strcmp(button.text, "Level 4") == 0)
+            else if (strcmp(button.text, "Level 3") == 0)
             {
                 SetCurrentScreen(menu_game);
             }
