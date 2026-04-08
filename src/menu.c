@@ -19,7 +19,7 @@ Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu", ResetLevel };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
 Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
 Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
-Button level4Button = { { 200, 200, 200, 50 }, "Level 4", LoadLevel4 };
+Button level4Button = { { 200, 400, 200, 50 }, "Level 4", LoadLevel4 };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
 
 #define SAVE_COLS 4

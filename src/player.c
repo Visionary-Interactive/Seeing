@@ -526,7 +526,7 @@ void UpdateInteractions(Props* obj)
 			}
 
 			case INTERACTABLE_TEXT:
-				printf("Interacted with text prop: %s\n", obj->text[closestID]);
+				//printf("Interacted with text prop: %s\n", obj->text[closestID]);
 				PlayerPropInteraction(obj, text, NULL, closestID);
 				break;
 
@@ -813,7 +813,7 @@ void ResetPlayer(Player* p)
 {
 	player->activeImpairment = 0;
 	player->activeImpairmentIntensity = 0.0f;
-	player->allowControl = false;
+	player->allowControl = true;
 	player->position = player->spawnPosition;
 	player->checkpoint.active = false;
 	player->pendingImpairment = 0;
