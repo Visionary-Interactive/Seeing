@@ -592,7 +592,7 @@ void LoadLevel2()
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[riddleBookID] = INTERACTABLE_TEXT;
     props->textType[riddleBookID] = TEXTBOX_BOOK;
-    props->text[riddleBookID] = strdup("To leave this level, solve the block puzzle by searching for symbols around the map.\n 1. Look to the skies in the Observatory\n 2. Find the book on top of the Library.\n 3. Finally to to the Horizon between two pillars.\n Match them on the rotating blocks to pass!\n if there's any eye issues, please look in the library for answers.");
+    props->text[riddleBookID] = strdup("To leave this level, solve the block puzzle by searching for symbols and colours around the map.\n 1. Look to the skies in the Observatory\n 2. Find the book on top of the Library.\n 3. Finally to the Horizon between two pillars.\n Match them on the rotating blocks to pass!\n if there's any eye issues, please look in the library for answers.");
 
     /*
     int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
