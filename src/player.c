@@ -13,6 +13,7 @@ int selectedSlot = 0;
 Player* playerList[MAX_PLAYERS];
 
 void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
+void (*SendCompleteLevelToRemote)() = NULL;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -679,8 +680,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
-		SetCurrentScreen(menu_level_complete);
-		SessionManager_Client_Disonnect();
+		SendCompleteLevelToRemote();
+		CompleteLevel();
 	}
 	else if (interaction == text)
 	{
@@ -807,6 +808,11 @@ void ResetPlayerToSpawn(Player* p)
 	GetPlayerCollision(p->position);
 
 	p->velocity = (Vector3){ 0 };
+}
+
+void CompleteLevel()
+{
+	SetCurrentScreen(menu_level_complete);
 }
 
 void ResetPlayer(Player* p)

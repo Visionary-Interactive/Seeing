@@ -40,7 +40,8 @@ typedef enum {
 	IncomingPlayer,
 	PropInteraction,
 	LobbyQuery,
-	Retry
+	Retry,
+	Finished
 } MsgType;
 
 struct SessionVec3 {
@@ -100,6 +101,10 @@ struct RetryPacket { // Sent upon joining lobby
 	uint8_t auth : 1;
 };
 
+struct FinishPacket { // Sent upon a level being finished
+	uint8_t auth : 1;
+};
+
 extern clock_t lastNetworkTick;
 extern bool isServer;
 extern bool isHost;
@@ -114,14 +119,6 @@ extern uint16_t peerPort;
 
 
 void SessionManager_Init();
-
-// Server functions
-bool SessionManager_CreateServer(const char* protocol, uint16_t port);
-void SessionManager_StopServer();
-int SessionManager_Server_HandleEvents();
-bool SessionManager_Server_SendReliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length);
-bool SessionManager_Server_SendUnreliableByteArray(NBN_ConnectionHandle conn, uint8_t* data, unsigned int length);
-int SessionManager_Server_SendPackets();
 
 // Client functions
 bool SessionManager_CreateClient(const char* protocol, const char* host, uint16_t port);
@@ -145,5 +142,6 @@ extern void (*InitalizeRemotePlayer)();
 extern void (*PlayerDesyncCorrection)();
 extern void (*PropInteractionCallback)();
 extern void (*ResetLevelCallback)();
+extern void (*FinishLevelCallback)();
 
 #endif // SESSIONMANAGER_H
