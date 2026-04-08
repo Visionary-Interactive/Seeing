@@ -528,7 +528,7 @@ void DrawButton(Button button, Color color)
             {
                 SetCurrentScreen(menu_game);
             }
-            else if (strcmp(button.text, "Level 4") == 0)
+            else if (strcmp(button.text, "Level 3") == 0)
             {
                 SetCurrentScreen(menu_game);
             }
