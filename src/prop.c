@@ -5,6 +5,7 @@ static ParticlePool* pool;
 static ParticleTemplate* template;
 
 int rotatingBlockIDs[6] = { 0 };
+int code[3] = {0};
 
 void CreatePropStructure(void)
 {

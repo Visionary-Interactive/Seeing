@@ -102,7 +102,7 @@ typedef struct Props {
 
 extern int rotatingBlockIDs[6];
 
-int code[3];
+extern int code[3];
 
 void CreatePropStructure(void);
 Props* GetPropStructure(void);

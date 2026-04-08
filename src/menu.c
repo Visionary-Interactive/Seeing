@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "prefs.h"
 #include "map.h"
+#include "particleEmitter.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -545,6 +546,7 @@ void DrawButton(Button button, Color color)
             {
                 SessionManager_Client_Disonnect();
                 multiplayerSession = false;
+                ClearAllEmitters();
                 SetCurrentScreen(menu_main);
             }
             else if (strcmp(button.text, "Multiplayer") == 0)

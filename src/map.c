@@ -17,6 +17,8 @@ static char* pTexP;
 static char* door1;
 //used in level code for random code generation
 
+void (*currentLevelLoaded)() = NULL;
+
 
 bool InitMap(Map *map, const char *mapPath)
 {

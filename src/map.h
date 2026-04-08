@@ -70,7 +70,7 @@ bool isTriangle(int x, int z);
 bool isSquare(int x, int z);
 bool isX(int x, int z);
 
-void (*currentLevelLoaded)();
+//void (*currentLevelLoaded)();
 
 void LoadLevel4();
 

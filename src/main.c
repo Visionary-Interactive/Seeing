@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 				SetTargetFPS(val);
 
 			if (PrefsGet("masterVolume", &val))
-				SetMasterVolume(val / 100.0f);  // assuming stored as 0–100
+				SetMasterVolume(val / 100.0f);
 
 			if (PrefsGet("fullscreen", &val)) {
 				if (val && !IsWindowFullscreen())
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, intensity,screenWidth, screenHeight);
 	}
 
-	SaveMapFile(&gameMap, "resources/maps/pz_1");
+	//SaveMapFile(&gameMap, "resources/maps/pz_1");
 	//SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
