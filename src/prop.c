@@ -227,7 +227,7 @@ void RemovePropComponent(Props* obj, int id, uint32_t componentMask)
 void RenderProps(Props* obj) {
     for (size_t i = 0; i < obj->count; i++) {
         if ((obj->components[i] & PROP_LENS)) continue;
-        if (!(obj->components[i] & PROP_VISIBILE)) continue;
+        if (!(obj->components[i] & PROP_VISIBILE) && obj->interactType[i] != INTERACTABLE_APPEARING_DOOR) continue;
 
 		// Special rendering for deadzones for debugging sake
         /*if (obj->components[i] & PROP_DEADZONE)
@@ -397,7 +397,8 @@ void RenderProps(Props* obj) {
                     allBlocksAligned = true;
                 }
 			}
-            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3 ||
+                obj->interactType[i] == INTERACTABLE_APPEARING_DOOR)
             {
 
                 // 3rd Puzzle from level 2-----------------------------------------------
@@ -436,11 +437,22 @@ void RenderProps(Props* obj) {
 
             if (allBlocksAligned2)
             {
-				printf("puzzle is solved, door should be open now\n");
-
-                obj->components[i] &= ~PROP_COLLIDER; // Disable collider
-				obj->components[i] &= ~PROP_VISIBILE; // Make invisible
-
+                if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+                {
+                    obj->components[i] &= ~PROP_COLLIDER; // Disable collider
+                    obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+                }
+                if (obj->interactType[i] == INTERACTABLE_APPEARING_DOOR)
+                {
+                    obj->components[i] |= PROP_COLLIDER; // Enable collider
+                    obj->components[i] |= PROP_VISIBILE; // Make visible
+					obj->components[i] |= PROP_INTERACTABLE; // Make interactable
+				}
+            }
+            else
+            {
+                if (obj->interactType[i] == INTERACTABLE_APPEARING_DOOR)
+                    continue;
             }
 
 			// Push Block Animation

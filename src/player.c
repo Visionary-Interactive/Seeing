@@ -510,6 +510,7 @@ void UpdateInteractions(Props* obj)
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
+			case INTERACTABLE_APPEARING_DOOR:
 				PlayerPropInteraction(obj, door, NULL, closestID);
 				break;
 

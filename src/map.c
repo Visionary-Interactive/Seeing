@@ -529,16 +529,19 @@ void LoadLevel2()
 
     //Gameplay Props
 
-
-    int doorID = CreatePropPrimitive(props, PRIMITIVE_MODEL_DOOR, (Vector3) { -24.5f, 2.0f, 7.0f },
+    int doorID = CreatePropFromPath(props, door1, door1,
         (Vector3) {
-        1.0f, 1.0f, 1.0f
-    }, GREEN, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE | PROP_DOOR);
-    props->interactType[doorID] = INTERACTABLE_DOOR;
-    props->rotation[doorID].y = PI / 2.0f + PI;
+        -24.0f, 0.0f, 7.0f
+    },
+        (Vector3) {
+        2.0f, 2.0f, 2.0f
+    },
+        WHITE, PROP_DOOR);
+    props->interactType[doorID] = INTERACTABLE_APPEARING_DOOR;
+    props->rotation[doorID].y = PI / 2.0f;
     ColliderSetup(props, doorID);
 
-    int fakeWallID = CreatePropFromPath(props, wall1, wTexP, (Vector3) { -24.5f, 0.0f, 7.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER | PROP_INTERACTABLE);
+    int fakeWallID = CreatePropFromPath(props, wall1, wTexP, (Vector3) { -24.5f, 0.0f, 7.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
 	props->interactType[fakeWallID] = INTERACTABLE_DISAPPEARING_WALL3;
 
     //platforms for code 2
@@ -958,6 +961,49 @@ void LoadLevel4()
                 0, 117, 44, 225
             }, PROP_VISIBILE);
             props->rotation[grassTemp].y = rand() % 360;
+    }
+
+    // Deocrations
+    char* vaseModel = "resources/global/models/vase/vase1.glb";
+    int vaseTemp;
+
+    // Vases
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+        (Vector3) {
+        0.4f, 0.0f, 55.5f
+    }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+        (Vector3) {
+        -15.1f, 0.0f, 49.0f
+    }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+        (Vector3) {
+        -12.1f, 0.0f, 55.8f
+    }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+    vaseTemp = CreatePropFromPath(props, vaseModel, vaseModel,
+        (Vector3) {
+        2.7f, 0.0f, 39.0f
+    }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+    props->rotation[vaseTemp].y = rand() % 360;
+
+    // Wall Torches
+    char* wallTorch = "resources/global/models/wallTorch/wallTorch1.glb";
+    for (int i = 0; i < 6; i++)
+    {
+        int torchTemp;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) {
+            -17.3f, 3.5f, 25.0f + (i * -9.0f)
+        }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI / 2.0f;
+        torchTemp = CreatePropFromPath(props, wallTorch, wallTorch,
+            (Vector3) {
+            3.8f, 3.5f, 25.0f + (i * -9.0f)
+        }, (Vector3) { 1.0f, 1.0f, 1.0f }, WHITE, PROP_VISIBILE);
+        props->rotation[torchTemp].y = PI + PI / 2.0f;
     }
 }
 
