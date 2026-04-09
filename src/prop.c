@@ -325,7 +325,7 @@ void RenderProps(Props* obj) {
             {
                 if ((int)obj->rotation[i].y % 90 != 0)
                 {
-                    obj->rotation[i].y += 90 * GetFrameTime();
+                    obj->rotation[i].y += (int)(90 * GetFrameTime());
                     obj->components[i] &= ~PROP_INTERACTABLE;
                 }
                 else
