@@ -17,6 +17,8 @@ static char* pTexP;
 static char* door1;
 //used in level code for random code generation
 
+void (*currentLevelLoaded)() = NULL;
+static int currentLevel = {0};
 
 bool InitMap(Map *map, const char *mapPath)
 {
@@ -46,7 +48,7 @@ bool InitMap(Map *map, const char *mapPath)
 
 	telescope = "resources/global/models/telescope/telescope.glb";
 
-	currentLevelLoaded = NULL;
+	//currentLevelLoaded = NULL;
 
 	currentLevel = 0;
 

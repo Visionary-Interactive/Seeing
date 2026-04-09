@@ -51,7 +51,7 @@ typedef enum Level2Patterns{
 } Level2Patterns;
 
 
-int currentLevel;
+static int currentLevel;
 //code for level 2 puzzle needed to be passed to player
 
 //static int PillarID;
@@ -74,7 +74,7 @@ bool isX(int x, int z);
 
 
 //holds the value of the current level
-void (*currentLevelLoaded)();
+extern void (*currentLevelLoaded)();
 void LoadLevel4();
 
 void GenerateCubePuzzle(Props* props, int gridX, int gridZ,
