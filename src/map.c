@@ -17,8 +17,6 @@ static char* pTexP;
 static char* door1;
 //used in level code for random code generation
 
-void (*currentLevelLoaded)() = NULL;
-
 
 bool InitMap(Map *map, const char *mapPath)
 {
@@ -50,6 +48,8 @@ bool InitMap(Map *map, const char *mapPath)
 
 	currentLevelLoaded = NULL;
 
+	currentLevel = 0;
+
     return true;
 }
 
@@ -63,6 +63,7 @@ void LoadLevel2()
 	Props* props = GetPropStructure();
 
 	currentLevelLoaded = LoadLevel2;
+	currentLevel = 2;
 
     printf("Level 2 code: %d %d %d\n", code[0], code[1], code[2]);
 
@@ -645,7 +646,7 @@ void LoadLevel2()
     //Astigmatism control book
     int helpBookID = CreatePropFromPath(props, "resources/global/models/book/scene.gltf", "resources/global/models/book/textures/01_-_Default_baseColor.png",
         (Vector3) {
-        -22, 10.8f, 35.0f
+        -22, 10.0f, 35.0f
     }, (Vector3) { 0.03, 0.03, 0.03 },
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[helpBookID] = INTERACTABLE_TEXT;
@@ -704,6 +705,7 @@ void LoadLevel4()
     Props* props = GetPropStructure();
 
     currentLevelLoaded = LoadLevel4;
+	currentLevel = 3;
 
     // Back Walls
     int wallTemp = CreatePropFromPath(props, wall1, wall1, (Vector3) { 0.0f, 0.0f, -15.0f }, (Vector3) { 5.0f, 5.0f, 5.0f }, WHITE, PROP_VISIBILE | PROP_COLLIDER);
@@ -1124,6 +1126,7 @@ void LoadPropTest()
 	Props* props = GetPropStructure();
 
 	currentLevelLoaded = LoadPropTest;
+    currentLevel = 1;
 
 	GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
 

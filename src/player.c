@@ -1,5 +1,6 @@
 #include "player.h"
 #include "prop.h"
+#include "prefs.h"
 #include "sound.h"
 #include "map.h"
 
@@ -702,6 +703,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	{
 		SendCompleteLevelToRemote();
 		CompleteLevel();
+
 	}
 	else if (interaction == text)
 	{
@@ -771,8 +773,8 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 			PlaySound(pushBoulder);
 		// Notify prop to move towards new position over time in the render update
 		snprintf(obj->text[propID], 255, "%d,%d",
-						(int)newPos.x,
-						(int)newPos.z);
+			(int)newPos.x,
+			(int)newPos.z);
 	}
 	else if (interaction == rotate_puzzle_block)
 	{
@@ -780,7 +782,7 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 		if (!player->remotePlayer)
 			PlaySound(rotatingPuzzleBlock);
 
-		char x,z;
+		char x, z;
 		sscanf(obj->text[propID], "%c,%c", &x, &z);
 
 		int blockNum = (int)x;
@@ -832,6 +834,18 @@ void ResetPlayerToSpawn(Player* p)
 
 void CompleteLevel()
 {
+	if (currentLevel == 1)
+	{
+		PrefsSet("level1", 1);
+	}
+	else if (currentLevel == 2)
+	{
+		PrefsSet("level2", 1);
+	}
+	else if (currentLevel == 3)
+	{
+		PrefsSet("level3", 1);
+	}
 	SetCurrentScreen(menu_level_complete);
 }
 

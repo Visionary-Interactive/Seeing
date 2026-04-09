@@ -26,10 +26,14 @@ Button fpsButton = { { 100, 500, 200, 50 }, "FPS: 120" };
 Button compBackButton = { { 0, 0, 200, 50 }, "Go Backward" };
 Button compMenuButton = { { 0, 0, 200, 50 }, "Back to Menu" };
 Button compForwardButton = { { 0, 0, 200, 50 }, "Go Forward" };
-Button level1Button = { { 100, 100, 200, 50 }, "Level 1", LoadPropTest};
-Button level2Button = { { 100, 200, 200, 50 }, "Level 2", LoadLevel2 };
-Button level4Button = { { 200, 400, 200, 50 }, "Level 3", LoadLevel4 };
+Button level1Button = { { 550, 600, 200, 50 }, "Level 1", LoadPropTest};
+Button level2Button = { { 550, 400, 200, 50 }, "Level 2", LoadLevel2 };
+Button level4Button = { { 550, 200, 200, 50 }, "Level 3", LoadLevel4 };
 Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
+
+
+
+// Center it
 
 #define COMPENDIUM_COUNT 5
 #define SAVE_COLS 4
@@ -243,6 +247,8 @@ void LoadMenuElements()
 void DrawMenu()
 {
     MenuScreen screen = GetCurrentScreen();
+    float screenW = GetScreenWidth();
+    float screenH = GetScreenHeight();
 
     hoverAnimTimer += GetFrameTime();
 
@@ -259,8 +265,6 @@ void DrawMenu()
     {
     case menu_main:
     {
-        float screenW = GetScreenWidth();
-        float screenH = GetScreenHeight();
 
         float buttonHeight = 100;
         float spacing = 20;
@@ -326,13 +330,32 @@ void DrawMenu()
     break;
 
     case menu_level_select:
+        
+        float menuWidth = screenW * 0.4f;
+
+		float menuHeight = screenH * 0.7f;
+
+        Rectangle menuPanel = {
+           (screenW - menuWidth) / 2,
+           (screenH - menuHeight) / 2,
+           menuWidth,
+           menuHeight
+        };
+        // Draw main panel
+        DrawRectangleRec(menuPanel, BLACK);
+
+		DrawLine(menuPanel.x, menuPanel.y + 200, menuPanel.x + menuPanel.width, menuPanel.y + 200, WHITE);
+        DrawLine(menuPanel.x, menuPanel.y + 400, menuPanel.x + menuPanel.width, menuPanel.y + 400, WHITE);
+        DrawLine(menuPanel.x, menuPanel.y + 600, menuPanel.x + menuPanel.width, menuPanel.y + 600, WHITE);
+
        DrawTextEx(romanica, "LEVEL SELECT", (Vector2){100,40}, 90, 0, BLACK);
-	   RightMenuButton(&level1Button, 200);
+	   //RightMenuButton(&level1Button, 200);
 	   RightMenuButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
 	   DrawButton(level2Button, DARKGRAY);
        DrawButton(level4Button, DARKGRAY);
+
 		break;
 
     case menu_level_complete:
@@ -508,6 +531,45 @@ void DrawButton(Button button, Color color)
         spacing,
         BLACK
     );
+
+    float circleRadius = button.bounds.height * 0.4f; // circle size relative to button height
+    Vector2 circlePos = {
+        button.bounds.x + button.bounds.width + circleRadius + 10, // 10 px gap to the right
+        button.bounds.y + button.bounds.height / 2               // vertically centered
+    };
+    //if it is a level
+    int val;
+    Color level1Complete = BLACK;
+    Color level2Complete = BLACK;
+    Color level3Complete = BLACK;
+    if (strcmp(button.text, "Level 1") == 0)
+    {
+        if (PrefsGet("level1", &val) == 1)
+        {
+            level1Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level1Complete);
+    }
+
+    if (strcmp(button.text, "Level 2") == 0)
+    {
+        if (PrefsGet("level2", &val) == 1)
+        {
+            level2Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level2Complete);
+
+    }
+
+    if (strcmp(button.text, "Level 3") == 0)
+    {
+        if (PrefsGet("level2", &val) == 1)
+        {
+            level3Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level3Complete);
+    }
+
 
     if (hovered)
     {
