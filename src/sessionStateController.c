@@ -314,6 +314,7 @@ void NetworkCorrectionTick(bool isServer)
 
 void OnPlayerDisconnect()
 {
+	lastLobbyQuery.auth = 0;
 	if (clientPlayerCount > 0)
 	{
 		RL_FREE(playerList[clientPlayerCount]);
