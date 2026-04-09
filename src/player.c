@@ -856,7 +856,7 @@ void ResetPlayer(Player* p)
 {
 	p->activeImpairment = 0;
 	p->activeImpairmentIntensity = 0.0f;
-	p->allowControl = true;
+	p->allowControl = false;
 	p->position = p->spawnPosition;
 	p->checkpoint.active = false;
 	p->pendingImpairment = 0;
