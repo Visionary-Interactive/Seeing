@@ -870,28 +870,28 @@ void LoadLevel4()
 
     hint = CreatePropFromPath(props, painting1, painting1,
         (Vector3) {
-        -18.0f, 0.0f, -29.0f
+        -17.8f, 0.0f, -29.0f
     },
         (Vector3) {
-        3.0f, 3.0f, 3.0f
+        2.0f, 2.0f, 2.0f
     }, WHITE, PROP_VISIBILE);
     props->rotation[hint].y = PI / 2.0f;
     ColliderSetup(props, hint);
     hint = CreatePropFromPath(props, painting2, painting2,
         (Vector3) {
-        4.5f, 0.0f, -36.0f
+        4.3f, 0.0f, -36.0f
     },
         (Vector3) {
-        3.0f, 3.0f, 3.0f
+        2.0f, 2.0f, 2.0f
     }, WHITE, PROP_VISIBILE);
     props->rotation[hint].y = PI / 2.0f + PI;
     ColliderSetup(props, hint);
     hint = CreatePropFromPath(props, painting3, painting3,
         (Vector3) {
-        -18.0f, 0.0f, -41.0f
+        -17.8f, 0.0f, -41.0f
     },
         (Vector3) {
-        3.0f, 3.0f, 3.0f
+        2.0f, 2.0f, 2.0f
     }, WHITE, PROP_VISIBILE);
     props->rotation[hint].y = PI / 2.0f;
     ColliderSetup(props, hint);

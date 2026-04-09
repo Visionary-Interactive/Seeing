@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
 	PlayerPrefs* prefs = PrefsInit();
 	PrefsLoad("pref/pref.bin");
-
+	srand(1);
 	ApplyPreferences();
 
 	InitWindow(screenWidth, screenHeight, "The Delian Problem");
