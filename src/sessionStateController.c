@@ -230,12 +230,7 @@ void NetworkTick(bool isServer)
 		{
 			multiplayerSession = false;
 			printf("A player has disconnected.\n");
-			if (clientPlayerCount > 0)
-			{
-				RL_FREE(playerList[clientPlayerCount]);
-				playerList[clientPlayerCount] = NULL;
-				clientPlayerCount--;
-			}
+			OnPlayerDisconnect();
 			return;
 			/*
 			if (!isServer)
@@ -315,6 +310,16 @@ void NetworkCorrectionTick(bool isServer)
 
 	if (!isServer)
 		SessionManager_Client_SendPackets();
+}
+
+void OnPlayerDisconnect()
+{
+	if (clientPlayerCount > 0)
+	{
+		RL_FREE(playerList[clientPlayerCount]);
+		playerList[clientPlayerCount] = NULL;
+		clientPlayerCount--;
+	}
 }
 
 // Stores float into a quantized int16_t based on max absolute value

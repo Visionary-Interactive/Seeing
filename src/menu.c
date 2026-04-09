@@ -614,6 +614,7 @@ void DrawButton(Button button, Color color)
             {
                 SessionManager_Client_Disonnect();
                 multiplayerSession = false;
+                OnPlayerDisconnect();
                 ClearAllEmitters();
                 SetCurrentScreen(menu_main);
             }

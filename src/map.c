@@ -60,8 +60,8 @@ void LoadLevel2()
 {
     GenerateLevel2Code(code);
 
-	GetPlayer()->spawnPosition = (Vector3){ -11.0f, 1.8f, 6.0f };
-	GetPlayer()->position = GetPlayer()->spawnPosition;
+	playerList[0]->spawnPosition = (Vector3){-11.0f, 1.8f, 6.0f};
+	playerList[0]->position = playerList[0]->spawnPosition;
 	Props* props = GetPropStructure();
 
 	currentLevelLoaded = LoadLevel2;
@@ -706,8 +706,8 @@ bool isX(int x, int z)
 
 void LoadLevel4()
 {
-    GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
-    GetPlayer()->position = GetPlayer()->spawnPosition;
+    playerList[0]->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
+    playerList[0]->position = playerList[0]->spawnPosition;
     Props* props = GetPropStructure();
 
     currentLevelLoaded = LoadLevel4;

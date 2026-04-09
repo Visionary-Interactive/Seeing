@@ -140,7 +140,7 @@ void UpdateImpairment(Impairment *im, float intensity)
     float speed = 0.5f;
 
  
-    if (GetPlayer()->allowControl == true)
+    if (playerList[0]->allowControl == true)
     {
         if (IsKeyDown(KEY_UP))
             im->offsetIntensity += speed * dt;
