@@ -13,6 +13,7 @@ int selectedSlot = 0;
 Player* playerList[MAX_PLAYERS];
 
 void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID) = NULL;
+void (*SendCompleteLevelToRemote)() = NULL;
 
 //initializes the player struct with default values
 void InitPlayer()
@@ -24,7 +25,11 @@ void InitPlayer()
 	player->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
 	player->model = LoadModel(PLAYER_FP_MODEL_PATH);
 	player->animData.animations = LoadModelAnimations(PLAYER_FP_MODEL_PATH, &player->animData.animsCount);
-	for (int i = 0; i < ANIMATION_STATES; i++) player->animData.animFrame[i] = 0;
+	for (int i = 0; i < ANIMATION_STATES; i++)
+	{
+		player->animData.animFrame[i] = 0;
+		player->animData.animFrameAccum[i] = 0.0f;
+	}
 	player->speed = 7.0f;
 	player->yaw = PI;
 	player->pitch = 0.0f;
@@ -38,7 +43,8 @@ void InitPlayer()
 	player->checkpoint.yaw = player->yaw;
 	player->checkpoint.pitch = player->pitch;
 	player->activeImpairment = 0;
-	player->activeImpairmentIntensity = 0.0f
+	player->activeImpairmentIntensity = 0.0f;
+	player->allowControl = false;
 ;
 memset(player->inventory, 0, sizeof(player->inventory));
 	player->selectedSlot = 0;
@@ -344,9 +350,9 @@ void RenderPlayer(Player* p, Props* props)
 	int animState = 0; // Default to idle
 	if (!p->remotePlayer)
 	{
-		if (p->input.E || p->animData.animFrame[1] > 0) // animation is not finished
+		if (p->input.E || p->animData.animFrameAccum[1] > 0.0f)
 			animState = 1; // Interact
-		else if (p->input.R || p->animData.animFrame[2] > 0)
+		else if (p->input.R || p->animData.animFrameAccum[2] > 0.0f)
 			animState = 2; // Place
 	}
 	else
@@ -357,11 +363,28 @@ void RenderPlayer(Player* p, Props* props)
 	animState %= p->animData.animsCount; // Ensure valid index
 
 	if (animState != 0)
+	{
 		p->animData.animFrame[0] = 0; // Reset idle animation
+		p->animData.animFrameAccum[0] = 0.0f;
+	}
 
 	anim = p->animData.animations[animState];
 
-	p->animData.animFrame[animState] = ((p->animData.animFrame[animState] + 1) % anim.frameCount);
+	p->animData.animFrameAccum[animState] += GetFrameTime() * 120.0f;
+
+	if ((int)p->animData.animFrameAccum[animState] >= anim.frameCount)
+	{
+		// Animation finished
+		p->animData.animFrameAccum[animState] = 0.0f;
+		p->animData.animFrame[animState] = 0;
+	}
+	else
+	{
+		p->animData.animFrame[animState] = (int)p->animData.animFrameAccum[animState];
+	}
+
+	p->animData.animFrame[animState] = (int)p->animData.animFrameAccum[animState];
+
 	UpdateModelAnimation(p->model, anim, p->animData.animFrame[animState]);
 
 	// Draw player model with proper transformations
@@ -483,6 +506,7 @@ void UpdateInteractions(Props* obj)
 
 		if (player->input.E)
 		{
+			printf("Interacted with prop ID: %d\n", closestID);
 			switch (obj->interactType[closestID])
 			{
 			case INTERACTABLE_DOOR:
@@ -523,6 +547,7 @@ void UpdateInteractions(Props* obj)
 			}
 
 			case INTERACTABLE_TEXT:
+				//printf("Interacted with text prop: %s\n", obj->text[closestID]);
 				PlayerPropInteraction(obj, text, NULL, closestID);
 				break;
 
@@ -618,11 +643,18 @@ void CheckTriggers(Props* obj)
 			{
 				player->position = obj->warpTarget[i]; // Warp player to prop position
 				player->velocity = (Vector3){ 0 }; // Stop any existing velocity
-				player->spawnPosition = obj->warpTarget[i]; // Update spawn position to new location
+				ActivateCheckpoint(obj->warpTarget[i], player->yaw, player->pitch); // Set checkpoint at warp location
 			}
 			else if (obj->triggerType[i] == TRIGGER_DEADZONE)
 			{
-				ResetPlayerToSpawn(player);
+				if (player->checkpoint.active)
+				{
+					RespawnAtCheckpoint(player);
+				}
+				else 
+				{
+					ResetPlayerToSpawn(player);
+				}
 			}
 			else if (obj->triggerType[i] == TRIGGER_CHECKPOINT)
 			{
@@ -651,7 +683,7 @@ void CheckTriggers(Props* obj)
 	}
 }
 
-
+//runs through the actual interaction logic
 bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryItem* slot, int propID)
 {
 	if (interaction == pickup)
@@ -668,13 +700,22 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 	}
 	if (interaction == door)
 	{
-		SessionManager_Client_Disonnect();
-		RequestExit();
+		SendCompleteLevelToRemote();
+		CompleteLevel();
 	}
 	else if (interaction == text)
 	{
 		if (!player->remotePlayer) // Only trigger text for local player
+		{
 			InitTextBox(obj->textType[propID], obj->text[propID]);
+			printf("Triggered text box: %s\n", obj->text[propID]);
+			//specific case for the book that gives you control over the impairment
+			if (obj->scriptID[propID] = 124)
+			{
+				player->allowControl = true;
+			}
+		}
+
 	}
 	else if (interaction == placed)
 	{
@@ -781,12 +822,28 @@ bool PlayerPropInteraction(Props* obj, InteractionType interaction, InventoryIte
 
 void ResetPlayerToSpawn(Player* p)
 {
-	player->position = player->spawnPosition;
+	p->position = p->spawnPosition;
 
 	// Rebuild collider
-	GetPlayerCollision(player->position);
+	GetPlayerCollision(p->position);
 
-	player->velocity = (Vector3){ 0 };
+	p->velocity = (Vector3){ 0 };
+}
+
+void CompleteLevel()
+{
+	SetCurrentScreen(menu_level_complete);
+}
+
+void ResetPlayer(Player* p)
+{
+	p->activeImpairment = 0;
+	p->activeImpairmentIntensity = 0.0f;
+	p->allowControl = true;
+	p->position = p->spawnPosition;
+	p->checkpoint.active = false;
+	p->pendingImpairment = 0;
+	p->pendingIntensity = 0.0f;
 }
 
 void DestroyPlayer()

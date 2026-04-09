@@ -33,6 +33,7 @@ typedef struct AnimationData {
     ModelAnimation* animations; // Player's animations
 	int animsCount; // Number of animations
     int animFrame[ANIMATION_STATES]; // Current animation frame for each state
+	float animFrameAccum[ANIMATION_STATES]; // Accumulated time for animation frame updates
 } AnimationData;
 
 typedef enum {
@@ -75,6 +76,7 @@ typedef struct Player {
 	Vector3 spawnPosition;
 	bool isGrounded; //checks if the player is on the ground
 	bool remotePlayer; // Is this a remote player?
+    bool allowControl; //allows impairment control for this player
 	InputState input; // Current input state
 	InventoryItem inventory[INVENTORY_SIZE];
 	int selectedSlot;
@@ -102,9 +104,13 @@ BoundingBox GetPlayerCollision(Vector3 position);
 bool CheckPlatformCollision(BoundingBox playerBox, float prevFeetY, BoundingBox platformBox);
 void RenderPlayer(Player* p, Props* props);
 void ResetPlayerToSpawn(Player* p);
+void CompleteLevel();
+
+void ResetPlayer(Player* p);
 void DestroyPlayer();
 
 // Function pointer to send prop interactions to remote player through the SessionStateController
 extern void (*SendPropInteractionToRemote)(InteractionType interaction, int selectedSlot, int propID);  
+extern void (*SendCompleteLevelToRemote)();  
 
 #endif // PLAYER_H

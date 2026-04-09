@@ -90,17 +90,6 @@ void BeginImpairment(Impairment *im)
     ClearBackground(RAYWHITE);
 }
 
-void SetImpairment(Impairment* vs, float value)
-{
-    if (!vs) return;
-
-    if (value < 0.0f) value = 0.0f;
-    if (value > 2.0f) value = 2.0f;
-
-    vs->intensity = value;
-
-}
-
 void EndImpairment(Impairment *im)
 {
     if (!im) return;
@@ -150,14 +139,17 @@ void UpdateImpairment(Impairment *im, float intensity)
     float dt = GetFrameTime();
     float speed = 0.5f;
 
-    // accumulate offset over time
-    if (IsKeyDown(KEY_UP))
-        im->offsetIntensity += speed * dt;
+ 
+    if (GetPlayer()->allowControl == true)
+    {
+        if (IsKeyDown(KEY_UP))
+            im->offsetIntensity += speed * dt;
 
-    if (IsKeyDown(KEY_DOWN))
-        im->offsetIntensity -= speed * dt;
+        if (IsKeyDown(KEY_DOWN))
+            im->offsetIntensity -= speed * dt;
 
-    // combine base + offset
+    }
+
     im->intensity = intensity + im->offsetIntensity;
 
     if (im->type == Astigmatism)

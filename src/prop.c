@@ -5,6 +5,7 @@ static ParticlePool* pool;
 static ParticleTemplate* template;
 
 int rotatingBlockIDs[6] = { 0 };
+int code[3] = {0};
 
 void CreatePropStructure(void)
 {
@@ -76,6 +77,7 @@ int CreatePropFromPath(Props* obj, const char* modelPath, const char* texPath, V
 
     int id = CreateProp(obj, model, position, size, color, components);
     Texture2D* tex = GetCachedTexture(texPath);
+    Model* m = obj->model[id];
     obj->model[id]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = *tex;
     if (id >= 0) {
         strncpy(obj->modelPath[id], modelPath, PROP_MODEL_PATH_MAX);
@@ -153,7 +155,7 @@ BoundingBox ReBuildCollider(Props* obj, int id, Vector3 futurepos)
 
 int AddZone(Props* obj, Vector3 position, Vector3 size, TriggerType type)
 {
-    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE | PROP_VISIBILE);
+    int id = CreatePropPrimitive(obj, PRIMITIVE_MODEL_CUBE, position, size, WHITE, PROP_TRIGGERZONE);
 
     obj->triggerType[id] = type;
     obj->Triggered[id] = false;
@@ -338,9 +340,10 @@ void RenderProps(Props* obj) {
                 continue;
             }
 
-            // LEVEL 4 ONLY
+            // LEVEL 4 + LEVEL 2ONLY
             // Disappearing Walls
             bool allBlocksAligned = false;
+			bool allBlocksAligned2 = false;
             if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL)
             {
                 // 1st Puzzle -----------------------------------------------
@@ -395,12 +398,50 @@ void RenderProps(Props* obj) {
                     allBlocksAligned = true;
                 }
 			}
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+            {
+
+                // 3rd Puzzle from level 2-----------------------------------------------
+                // Left to Right - Based on code
+                if (!obj->text[rotatingBlockIDs[0]] ||
+                    obj->text[rotatingBlockIDs[0]][2] != 'd' ||
+					obj->text[rotatingBlockIDs[0]][0] != (char)('0' + code[0]))
+                {
+                    allBlocksAligned2 = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[1]] ||
+                    obj->text[rotatingBlockIDs[1]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[1]][0] != (char)('0' + code[1])
+					)
+                {
+                    allBlocksAligned2 = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[2]] ||
+                    obj->text[rotatingBlockIDs[2]][2] != 'd' ||
+					obj->text[rotatingBlockIDs[2]][0] != (char)('0' + code[2]))
+                {
+                    allBlocksAligned2 = false;
+                }
+                else
+                {
+                    allBlocksAligned2 = true;
+                }
+            }
 
 			// If all blocks are aligned, disable the collider and make the wall invisible
             if (allBlocksAligned)
             {
                 obj->components[i] &= ~PROP_COLLIDER; // Disable collider
                 obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+            }
+
+            if (allBlocksAligned2)
+            {
+				printf("puzzle is solved, door should be open now\n");
+
+                obj->components[i] &= ~PROP_COLLIDER; // Disable collider
+				obj->components[i] &= ~PROP_VISIBILE; // Make invisible
+
             }
 
 			// Push Block Animation
@@ -484,13 +525,18 @@ void RenderLensProps(const Props * obj)
 
 void ResetProps()
 {
-	if (props == NULL) return;
+    if (props == NULL) return;
 
-    for (int i = 0; i < MAX_PROPS; i++) {
-        free(props->text[i]);
-        props->text[i] = NULL;
+    for (int i = 0; i < props->count; i++)
+    {
+		props->interactType[i] = 0;
+        if (props->text[i] != NULL)
+        {
+            free(props->text[i]);
+            props->text[i] = NULL;
+        }
     }
-	memset(props, 0, sizeof(Props));
+    props->count = 0;
 }
 
 void DestroyProps(Props* obj)

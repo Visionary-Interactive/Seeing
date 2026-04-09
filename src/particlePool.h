@@ -25,6 +25,7 @@ typedef void (*ParticleVisitor)(const Particle* particle, void* userData);
 
 ParticlePool* InitParticlePool(size_t capacity);
 void DestroyParticlePool(ParticlePool* pool);
+void ResetParticlePool(ParticlePool* pool);
 void ResetParticle(Particle* particle);
 int SpawnParticle(ParticlePool* pool, Vector3 position, Color tint, Vector3 velocity, Vector3 size, float lifetime);
 void UpdateParticlePool(ParticlePool* pool, float dt);
