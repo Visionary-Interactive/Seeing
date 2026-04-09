@@ -110,7 +110,7 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 			UpdateInteractions(props);
 		}
 
-		DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
+		/*DrawText("WASD to move, MOUSE to look, ESC to quit", 10, 10, 20, DARKGRAY);
 		DrawText("SHIFT to sprint, SPACE to jump", 10, 40, 20, DARKGRAY);
 		if (!swap) DrawText("Current Impairment Loaded: Astigmatism", 10, 70, 20, DARKGRAY);
 		else DrawText("Current Impairment Loaded: Tritanopia", 10, 70, 20, DARKGRAY);
@@ -120,7 +120,7 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 			10, 130, 20, DARKGRAY);
 		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
 			camera->target.x, camera->target.y, camera->target.z),
-			10, 160, 20, DARKGRAY);
+			10, 160, 20, DARKGRAY);*/
 		DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
 	}
 
