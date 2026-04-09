@@ -839,14 +839,15 @@ void CompleteLevel()
 	{
 		PrefsSet("level1", 1);
 	}
-	else if (currentLevel == 2)
+	if (currentLevel == 2)
 	{
 		PrefsSet("level2", 1);
 	}
-	else if (currentLevel == 3)
+	if (currentLevel == 3)
 	{
 		PrefsSet("level3", 1);
 	}
+	printf("Level %d complete!\n", currentLevel);
 	SetCurrentScreen(menu_level_complete);
 }
 

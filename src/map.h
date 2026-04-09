@@ -51,7 +51,7 @@ typedef enum Level2Patterns{
 } Level2Patterns;
 
 
-static int currentLevel;
+ int currentLevel;
 //code for level 2 puzzle needed to be passed to player
 
 //static int PillarID;

@@ -542,9 +542,9 @@ void DrawButton(Button button, Color color)
     };
     //if it is a level
     int val;
-    Color level1Complete = BLACK;
-    Color level2Complete = BLACK;
-    Color level3Complete = BLACK;
+    Color level1Complete = WHITE;
+    Color level2Complete = WHITE;
+    Color level3Complete = WHITE;
     if (strcmp(button.text, "Level 1") == 0)
     {
         if (PrefsGet("level1", &val) == 1)
@@ -566,7 +566,7 @@ void DrawButton(Button button, Color color)
 
     if (strcmp(button.text, "Level 3") == 0)
     {
-        if (PrefsGet("level2", &val) == 1)
+        if (PrefsGet("level3", &val) == 1)
         {
             level3Complete = YELLOW;
         }

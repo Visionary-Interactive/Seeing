@@ -18,7 +18,7 @@ static char* door1;
 //used in level code for random code generation
 
 void (*currentLevelLoaded)() = NULL;
-static int currentLevel = {0};
+int currentLevel = 0;
 
 bool InitMap(Map *map, const char *mapPath)
 {
@@ -66,6 +66,7 @@ void LoadLevel2()
 
 	currentLevelLoaded = LoadLevel2;
 	currentLevel = 2;
+    printf("current level is: %d\n", currentLevel);
 
     printf("Level 2 code: %d %d %d\n", code[0], code[1], code[2]);
 
@@ -711,6 +712,7 @@ void LoadLevel4()
 
     currentLevelLoaded = LoadLevel4;
 	currentLevel = 3;
+    printf("current level is: %d\n", currentLevel);
 
     // Back Walls
     int wallTemp;
@@ -1288,6 +1290,7 @@ void LoadPropTest()
 
 	currentLevelLoaded = LoadPropTest;
     currentLevel = 1;
+    printf("current level is: %d\n", currentLevel);
 
 	GetPlayer()->spawnPosition = (Vector3){ 0.0f, 1.8f, 47.0f };
 
