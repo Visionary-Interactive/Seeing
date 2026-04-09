@@ -23,6 +23,7 @@ Button fullscreenButton = { { 100, 200, 200, 50 }, "Fullscreen: Off" };
 Button vsyncButton = { { 100, 300, 200, 50 }, "VSync: Off" };
 Button msaaButton = { { 100, 400, 200, 50 }, "MSAA: Off" };
 Button fpsButton = { { 100, 500, 200, 50 }, "FPS: 120" };
+Button resetButton = { { 100, 700, 200, 50 }, "Reset to Default" };
 Button compBackButton = { { 0, 0, 200, 50 }, "Go Backward" };
 Button compMenuButton = { { 0, 0, 200, 50 }, "Back to Menu" };
 Button compForwardButton = { { 0, 0, 200, 50 }, "Go Forward" };
@@ -303,9 +304,9 @@ void DrawMenu()
         float screenH = GetScreenHeight();
 
         float buttonHeight = 50;
-        float spacing = 20;
-        float totalHeight = (5 * buttonHeight) + (4 * spacing);
-        float startY = screenH * 0.5f - totalHeight * 0.5f;
+        float spacing = 30;
+        float totalHeight = (6 * buttonHeight) + (4 * spacing);
+        float startY = screenH * 0.45f - totalHeight * 0.5f;
 
         DrawTextEx(romanica, "OPTIONS", (Vector2){100, 40}, 90, 0, BLACK);
 
@@ -315,12 +316,14 @@ void DrawMenu()
         CentreMenuButton(&vsyncButton, startY + 1 * (buttonHeight + spacing));
         CentreMenuButton(&msaaButton, startY + 2 * (buttonHeight + spacing));
         CentreMenuButton(&fpsButton, startY + 3 * (buttonHeight + spacing));
-        CentreMenuButton(&menuButton, startY + 4 * (buttonHeight + spacing));
+        CentreMenuButton(&resetButton, startY + 5 * (buttonHeight + spacing));
+        CentreMenuButton(&menuButton, startY + 6 * (buttonHeight + spacing));
 
         DrawButton(fullscreenButton, DARKGRAY);
         DrawButton(vsyncButton, DARKGRAY);
         DrawButton(msaaButton, DARKGRAY);
         DrawButton(fpsButton, DARKGRAY);
+        DrawButton(resetButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
     }
     break;
@@ -614,6 +617,11 @@ void DrawButton(Button button, Color color)
                 else val = 30;
 
                 PrefsSet("targetFps", val);
+                PrefsSave(pref);
+            }
+            else if (strcmp(button.text, "Reset to Default") == 0)
+            {
+                PrefsReset();
                 PrefsSave(pref);
             }
         }

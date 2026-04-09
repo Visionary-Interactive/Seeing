@@ -112,6 +112,7 @@ int main(int argc, char** argv)
 		if (prefs->dirty)
 		{
 			if (PrefsGet("targetFps", &val))
+				if (val == 0 ) SetTargetFPS(60);
 				SetTargetFPS(val);
 
 			if (PrefsGet("masterVolume", &val))

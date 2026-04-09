@@ -109,7 +109,8 @@ int ApplyPreferences(void)
         SetConfigFlags(FLAG_MSAA_4X_HINT);
 
     if (PrefsGet("targetFps", &val))
-        SetTargetFPS(val);
+        if (val == 0 ) SetTargetFPS(60);
+			SetTargetFPS(val);
 
     if (PrefsGet("masterVolume", &val))
         SetMasterVolume(val / 100.0f);
@@ -118,4 +119,19 @@ int ApplyPreferences(void)
         SetConfigFlags(FLAG_VSYNC_HINT);
 
     return 0;
+}
+
+int PrefsReset(void) {
+    if (!tPrefs) return 0;
+
+    for (size_t i = 0; i < tPrefs->count; ++i) {
+        tPrefs->entries[i].value = 0;
+    }
+
+    tPrefs->count = 0;
+    tPrefs->dirty = true;
+
+    TraceLog(LOG_INFO, "All preferences have been reset to 0.");
+
+    return 1;
 }
