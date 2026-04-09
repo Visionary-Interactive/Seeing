@@ -120,8 +120,8 @@ void RenderFinalFrame(MenuScreen currentScreen, RenderTexture2D sceneColorRT, Ca
 			10, 130, 20, DARKGRAY);
 		DrawText(TextFormat("Camera Target: (%.3f, %.3f, %.3f)",
 			camera->target.x, camera->target.y, camera->target.z),
-			10, 160, 20, DARKGRAY);
-		DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);*/
+			10, 160, 20, DARKGRAY);*/
+		DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
 	}
 
 	DrawMenu();

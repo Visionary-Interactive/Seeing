@@ -38,6 +38,23 @@ void DestroyParticlePool(ParticlePool* pool) {
     RL_FREE(pool);
 }
 
+void ResetParticlePool(ParticlePool* pool)
+{
+    if (!pool) return;
+
+    pool->freeCount = pool->capacity;
+
+    for (size_t i = 0; i < pool->capacity; ++i)
+    {
+        // Reset particle data
+        ResetParticle(&pool->particles[i]);
+
+        // Rebuild free list (same pattern as init)
+        pool->freeList[i] = (int)(pool->capacity - 1 - i);
+    }
+}
+
+
 void ResetParticle(Particle* particle) {
     memset(particle, 0, sizeof(*particle));
     particle->active = false;
@@ -99,9 +116,9 @@ void DestroyParticle(ParticlePool* pool, int handle) {
     pool->freeList[pool->freeCount++] = handle;
 }
 
-void ResetPartcilePool(ParticlePool* pool)
+/*void ResetParticlePool(ParticlePool* pool)
 {
     if (pool == NULL) return;
     RL_FREE(pool);
 	pool = NULL;
-}
+}*/

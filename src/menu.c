@@ -6,6 +6,8 @@
 #include "sound.h"
 #include "menu.h"
 #include "prefs.h"
+#include "map.h"
+#include "particleEmitter.h"
 
 // Define buttons for various menu options
 Button playButton = { { 100, 100, 200, 50 }, "Play" };
@@ -15,17 +17,24 @@ Button compendiumButton = { { 100, 400, 200, 50 }, "Compendium" };
 Button multiMenuButton = { { 100, 600, 200, 50 }, "Multiplayer" };
 Button optionsButton = { { 100, 500, 200, 50 }, "Options" };
 Button exitButton = { { 100, 700, 200, 50 }, "Exit Game" };
-Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu" };
+Button menuButton = { { 100, 600, 200, 50 }, "Back to Menu", ResetLevel };
 Button multiConnectButton = { { 100, 200, 200, 50 }, "Connect" };
-Button level1Button = { { 100, 100, 200, 50 }, "Level 1" };
-Button retryButton = { { 100, 100, 200, 50 }, "Retry" };
 Button fullscreenButton = { { 100, 200, 200, 50 }, "Fullscreen: Off" };
 Button vsyncButton = { { 100, 300, 200, 50 }, "VSync: Off" };
 Button msaaButton = { { 100, 400, 200, 50 }, "MSAA: Off" };
 Button fpsButton = { { 100, 500, 200, 50 }, "FPS: 120" };
+Button resetButton = { { 100, 700, 200, 50 }, "Reset to Default" };
 Button compBackButton = { { 0, 0, 200, 50 }, "Go Backward" };
 Button compMenuButton = { { 0, 0, 200, 50 }, "Back to Menu" };
 Button compForwardButton = { { 0, 0, 200, 50 }, "Go Forward" };
+Button level1Button = { { 550, 600, 200, 50 }, "Level 1", LoadPropTest};
+Button level2Button = { { 550, 400, 200, 50 }, "Level 2", LoadLevel2 };
+Button level4Button = { { 550, 200, 200, 50 }, "Level 3", LoadLevel4 };
+Button retryButton = { { 100, 100, 200, 50 }, "Retry", RetryLevel};
+
+
+
+// Center it
 
 #define COMPENDIUM_COUNT 5
 #define SAVE_COLS 4
@@ -92,6 +101,7 @@ static void CentreMenuButton(Button* button, float y)
     button->bounds.x = screenWidth * 0.5f - button->bounds.width * 0.5f;
     button->bounds.y = y;
 }
+
 
 static void RightMenuButton(Button* button, float y)
 {
@@ -238,6 +248,8 @@ void LoadMenuElements()
 void DrawMenu()
 {
     MenuScreen screen = GetCurrentScreen();
+    float screenW = GetScreenWidth();
+    float screenH = GetScreenHeight();
 
     hoverAnimTimer += GetFrameTime();
 
@@ -254,8 +266,6 @@ void DrawMenu()
     {
     case menu_main:
     {
-        float screenW = GetScreenWidth();
-        float screenH = GetScreenHeight();
 
         float buttonHeight = 100;
         float spacing = 20;
@@ -298,9 +308,9 @@ void DrawMenu()
         float screenH = GetScreenHeight();
 
         float buttonHeight = 50;
-        float spacing = 20;
-        float totalHeight = (5 * buttonHeight) + (4 * spacing);
-        float startY = screenH * 0.5f - totalHeight * 0.5f;
+        float spacing = 30;
+        float totalHeight = (6 * buttonHeight) + (4 * spacing);
+        float startY = screenH * 0.45f - totalHeight * 0.5f;
 
         DrawTextEx(romanica, "OPTIONS", (Vector2){100, 40}, 90, 0, BLACK);
 
@@ -310,23 +320,55 @@ void DrawMenu()
         CentreMenuButton(&vsyncButton, startY + 1 * (buttonHeight + spacing));
         CentreMenuButton(&msaaButton, startY + 2 * (buttonHeight + spacing));
         CentreMenuButton(&fpsButton, startY + 3 * (buttonHeight + spacing));
-        CentreMenuButton(&menuButton, startY + 4 * (buttonHeight + spacing));
+        CentreMenuButton(&resetButton, startY + 5 * (buttonHeight + spacing));
+        CentreMenuButton(&menuButton, startY + 6 * (buttonHeight + spacing));
 
         DrawButton(fullscreenButton, DARKGRAY);
         DrawButton(vsyncButton, DARKGRAY);
         DrawButton(msaaButton, DARKGRAY);
         DrawButton(fpsButton, DARKGRAY);
+        DrawButton(resetButton, DARKGRAY);
         DrawButton(menuButton, DARKGRAY);
     }
     break;
 
     case menu_level_select:
+        
+        float menuWidth = screenW * 0.4f;
+
+		float menuHeight = screenH * 0.7f;
+
+        Rectangle menuPanel = {
+           (screenW - menuWidth) / 2,
+           (screenH - menuHeight) / 2,
+           menuWidth,
+           menuHeight
+        };
+        // Draw main panel
+        DrawRectangleRec(menuPanel, BLACK);
+
+		DrawLine(menuPanel.x, menuPanel.y + 200, menuPanel.x + menuPanel.width, menuPanel.y + 200, WHITE);
+        DrawLine(menuPanel.x, menuPanel.y + 400, menuPanel.x + menuPanel.width, menuPanel.y + 400, WHITE);
+        DrawLine(menuPanel.x, menuPanel.y + 600, menuPanel.x + menuPanel.width, menuPanel.y + 600, WHITE);
+
        DrawTextEx(romanica, "LEVEL SELECT", (Vector2){100,40}, 90, 0, BLACK);
-	   RightMenuButton(&level1Button, 200);
+	   //RightMenuButton(&level1Button, 200);
 	   RightMenuButton(&menuButton, 600);
        DrawButton(menuButton, DARKGRAY);
 	   DrawButton(level1Button, DARKGRAY);
+	   DrawButton(level2Button, DARKGRAY);
+       DrawButton(level4Button, DARKGRAY);
+
 		break;
+
+    case menu_level_complete:
+		DrawTextEx(romanica, "LEVEL COMPLETE!", (Vector2) { 100, 40 }, 90, 0, BLACK);
+		CentreMenuButton(&menuButton, 300);
+		CentreMenuButton(&retryButton, 400);
+		DrawButton(menuButton, DARKGRAY);
+        DrawButton(retryButton, DARKGRAY);
+		break;
+        
 
     case menu_editor:
         DrawUI(playerList[0]->inventory, playerList[0]->selectedSlot);
@@ -351,6 +393,7 @@ void DrawMenu()
 		if (AssignMultiplayerStatus()) // get multiplayer status from lobby query
 		{
 			multiplayerSession = true;
+            LoadPropTest();
 			SetCurrentScreen(menu_game);
 		}
 		break;
@@ -492,16 +535,75 @@ void DrawButton(Button button, Color color)
         BLACK
     );
 
+    float circleRadius = button.bounds.height * 0.4f; // circle size relative to button height
+    Vector2 circlePos = {
+        button.bounds.x + button.bounds.width + circleRadius + 10, // 10 px gap to the right
+        button.bounds.y + button.bounds.height / 2               // vertically centered
+    };
+    //if it is a level
+    int Levelval;
+    Color level1Complete = WHITE;
+    Color level2Complete = WHITE;
+    Color level3Complete = WHITE;
+    if (strcmp(button.text, "Level 1") == 0)
+    {
+        PrefsGet("level1", &Levelval);
+        if (Levelval == 1)
+        {
+            level1Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level1Complete);
+    }
+
+    if (strcmp(button.text, "Level 2") == 0)
+    {
+        PrefsGet("level2", &Levelval);
+        if (Levelval == 1)
+        {
+            level2Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level2Complete);
+
+    }
+
+    if (strcmp(button.text, "Level 3") == 0)
+    {
+        PrefsGet("level3", &Levelval);
+        if (Levelval == 1)
+        {
+            level3Complete = YELLOW;
+        }
+        DrawCircleV(circlePos, circleRadius, level3Complete);
+    }
+
+
     if (hovered)
     {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             PlaySound(btnClick);
 
+            if (button.action)
+				button.action();
+
+            if (button.action2)
+				button.action2();
+
+
             if (strcmp(button.text, "Play") == 0)
                 SetCurrentScreen(menu_game);
             else if (strcmp(button.text, "Level 1") == 0)
+            {
                 SetCurrentScreen(menu_game);
+            }
+            else if (strcmp(button.text, "Level 2") == 0)
+            {
+                SetCurrentScreen(menu_game);
+            }
+            else if (strcmp(button.text, "Level 3") == 0)
+            {
+                SetCurrentScreen(menu_game);
+            }
             else if (strcmp(button.text, "Options") == 0)
                 SetCurrentScreen(menu_options);
             else if (strcmp(button.text, "Level Editor") == 0)
@@ -512,6 +614,8 @@ void DrawButton(Button button, Color color)
             {
                 SessionManager_Client_Disonnect();
                 multiplayerSession = false;
+                OnPlayerDisconnect();
+                ClearAllEmitters();
                 SetCurrentScreen(menu_main);
             }
             else if (strcmp(button.text, "Multiplayer") == 0)
@@ -579,6 +683,11 @@ void DrawButton(Button button, Color color)
                 else val = 30;
 
                 PrefsSet("targetFps", val);
+                PrefsSave(pref);
+            }
+            else if (strcmp(button.text, "Reset to Default") == 0)
+            {
+                PrefsReset();
                 PrefsSave(pref);
             }
         }
@@ -695,7 +804,6 @@ void DrawInteractTextBox()
 
 void InitTextBox(TextboxType type, const char* tText)
 {
-	printf("Initializing TextBox of type %d with text: %s\n", type, tText);
     currentTextbox.type = type;
     currentTextbox.active = true;
     strncpy(currentTextbox.text, tText, sizeof(currentTextbox.text));
@@ -703,7 +811,7 @@ void InitTextBox(TextboxType type, const char* tText)
     if (type == TEXTBOX_PLAYER)
     {
         currentTextbox.timer = 0.0f;
-        currentTextbox.duration = 4.0f; // lasts 4 seconds
+        currentTextbox.duration = 5.0f; // lasts 5 seconds
     }
 }
 

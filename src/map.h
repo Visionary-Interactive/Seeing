@@ -7,6 +7,7 @@
 #include "player.h"
 #include "lens.h"
 #include "floor.h"
+#include "sessionStateController.h"
 
 #define MAX_MAP_X 100
 #define MAX_MAP_Y 40
@@ -42,22 +43,57 @@ typedef struct PropRecord {
     char texturePath[PROP_MODEL_PATH_MAX];
 } PropRecord;
 
+typedef enum Level2Patterns{
+    PATTERN_CIRCLE,
+	PATTERN_X,
+	PATTERN_SQUARE,
+    PATTERN_TRIANGLE
+} Level2Patterns;
+
+
+ int currentLevel;
+//code for level 2 puzzle needed to be passed to player
+
+//static int PillarID;
+
 bool InitMap(Map *map, const char *mapPath);
 void SaveMapFile(Map *map, const char *mapPath);
 void SaveMapProgress(Map *map, Player *player, const char *mapPath);
-void LoadPropTest(Props* props);
 
-void LoadLevel2(Props* props);
-void LoadLevel4(Props* props);
+//Level 1
+void LoadPropTest();
+//Level 2
+void LoadLevel2();
 
-void GenerateCubePuzzle(Props* props, int count,
+//Level 2 PatternTypes for puzzle blocks
+
+bool isCircle(int x, int z);
+bool isTriangle(int x, int z);
+bool isSquare(int x, int z);
+bool isX(int x, int z);
+
+
+//holds the value of the current level
+extern void (*currentLevelLoaded)();
+void LoadLevel4();
+
+void GenerateCubePuzzle(Props* props, int gridX, int gridZ,
     float minX, float maxX,
     float minZ, float maxZ,
-    Vector3 size, Color color, uint32_t components);
+    Vector3 size, Color color, uint32_t components, Level2Patterns pattern);
+
+void GenerateCubePuzzle2(Props* props, int gridX, int gridZ,
+    float minZ, float maxZ,
+    float minY, float maxY,
+    Vector3 size, Color color, uint32_t components, Level2Patterns pattern);
+
+void GenerateLevel2Code(int *code);
+
+void ResetLevel();
+
+void RetryLevel();
 
 void LoadMapFile(Map *map, const char *mapPath);
 void LoadMapProgress(Map *map, Player *player, const char *mapPath);
-void UnloadMap(Map *map);
-void BuildTransforms(Map *map);
 
 #endif

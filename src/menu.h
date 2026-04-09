@@ -18,17 +18,21 @@ typedef enum MenuScreen {
 	menu_options,
 	menu_editor,
 	menu_level_select,
+	menu_level_complete,
 	menu_multi,
 	menu_multi2,
 	menu_save,
 	menu_compendium
 } MenuScreen;
 
+typedef void (*ButtonAction)(void);
+
 typedef struct Button
 {
 	Rectangle bounds;
 	const char* text;
-
+	ButtonAction action;
+	ButtonAction action2;
 } Button;
 
 

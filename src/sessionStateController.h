@@ -24,8 +24,11 @@ void SendPlayerDataToRemote();
 void UpdatePlayerPosition();
 void PropInteractionRPC();
 void SendPropInteraction(InteractionType interaction, int selectedSlot, int propID);
+void SendRetryLevel();
+void SendFinishLevel();
 void NetworkTick(bool isServer);
 void NetworkCorrectionTick(bool isServer);
+void OnPlayerDisconnect();
 
 
 int16_t QuantizeFloat(float value, float max_abs);

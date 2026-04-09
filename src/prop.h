@@ -48,7 +48,10 @@ typedef enum InteractableType {
 	INTERACTABLE_PUZZLE_ROTATATION_BLOCK,
 	INTERACTABLE_VENTLID,
 	INTERACTABLE_DISAPPEARING_WALL,
-	INTERACTABLE_DISAPPEARING_WALL2
+	INTERACTABLE_DISAPPEARING_WALL2,
+	INTERACTABLE_DISAPPEARING_WALL3,
+	INTERACTABLE_DISAPPEARING_WALL4,
+	INTERACTABLE_APPEARING_DOOR
 } InteractableType;
 
 typedef enum TriggerType {
@@ -99,7 +102,9 @@ typedef struct Props {
 
 } Props;
 
-extern int rotatingBlockIDs[6];
+extern int rotatingBlockIDs[9];
+
+extern int code[3];
 
 void CreatePropStructure(void);
 Props* GetPropStructure(void);

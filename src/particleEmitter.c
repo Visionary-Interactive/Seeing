@@ -91,3 +91,11 @@ void RenderParticlePool(const ParticlePool* pool, Camera3D camera, Color tint) {
     rlDrawRenderBatchActive();
     rlEnableDepthMask();
 }
+
+void ClearAllEmitters(void) {
+    gEmitterCount = 0;
+    
+    for (size_t i = 0; i < MAX_EMITTERS; ++i) {
+        gEmitters[i] = (ParticleEmitter){ 0 };
+    }
+}

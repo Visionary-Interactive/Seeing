@@ -28,5 +28,6 @@ ParticleEmitter* GetParticleEmitter(void);
 ParticleTemplate* GetParticleTemplate(void);
 void UpdateParticleEmitter(float dt);
 void RenderParticlePool(const ParticlePool* pool, Camera3D camera, Color tint);
+void ClearAllEmitters(void);
 
 #endif

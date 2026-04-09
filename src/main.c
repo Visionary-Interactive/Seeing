@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
 	PlayerPrefs* prefs = PrefsInit();
 	PrefsLoad("pref/pref.bin");
-
+	srand(1);
 	ApplyPreferences();
 
 	InitWindow(screenWidth, screenHeight, "The Delian Problem");
@@ -59,12 +59,15 @@ int main(int argc, char** argv)
 	Map gameMap;
 	InitMap(&gameMap, "resources/maps/pz_1");
 
+
+	//LoadTestLevel(props);
 	//InitSaveSlots();
 	//LoadPropTest(props);
 	//LoadLevel2(props);
-	LoadLevel4(props);
+	//LoadLevel4(props);
 	//LoadMapFile(&gameMap, "resources/maps/pz_1");
 	//LoadMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
+
 
 	SessionManager_Init();
 	SessionStateController_Init();
@@ -72,6 +75,7 @@ int main(int argc, char** argv)
 	int swap = 0;
 
 	float intensity = 0;
+	printf("Props count: %d\n", props->count);
 
 	while (!WindowShouldClose() && !IsExitRequested())
 	{
@@ -108,10 +112,11 @@ int main(int argc, char** argv)
 		if (prefs->dirty)
 		{
 			if (PrefsGet("targetFps", &val))
+				if (val == 0 ) SetTargetFPS(60);
 				SetTargetFPS(val);
 
 			if (PrefsGet("masterVolume", &val))
-				SetMasterVolume(val / 100.0f);  // assuming stored as 0–100
+				SetMasterVolume(val / 100.0f);
 
 			if (PrefsGet("fullscreen", &val)) {
 				if (val && !IsWindowFullscreen())
@@ -138,7 +143,7 @@ int main(int argc, char** argv)
 		RenderFinalFrame(currentScreen, sceneColorRT, camera, props, swap, intensity,screenWidth, screenHeight);
 	}
 
-	SaveMapFile(&gameMap, "resources/maps/pz_1");
+	//SaveMapFile(&gameMap, "resources/maps/pz_1");
 	//SaveMapProgress(&gameMap, playerList[0], "resources/maps/pz_1");
 
 	UnloadRenderTexture(sceneColorRT);
