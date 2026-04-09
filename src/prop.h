@@ -50,6 +50,7 @@ typedef enum InteractableType {
 	INTERACTABLE_DISAPPEARING_WALL,
 	INTERACTABLE_DISAPPEARING_WALL2,
 	INTERACTABLE_DISAPPEARING_WALL3,
+	INTERACTABLE_DISAPPEARING_WALL4,
 	INTERACTABLE_APPEARING_DOOR
 } InteractableType;
 
@@ -101,7 +102,7 @@ typedef struct Props {
 
 } Props;
 
-extern int rotatingBlockIDs[6];
+extern int rotatingBlockIDs[9];
 
 int code[3];
 

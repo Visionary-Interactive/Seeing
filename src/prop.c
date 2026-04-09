@@ -4,7 +4,7 @@ static Props* props;
 static ParticlePool* pool;
 static ParticleTemplate* template;
 
-int rotatingBlockIDs[6] = { 0 };
+int rotatingBlockIDs[9] = { 0 };
 
 void CreatePropStructure(void)
 {
@@ -324,18 +324,19 @@ void RenderProps(Props* obj) {
             {
                 if ((int)obj->rotation[i].y % 90 != 0)
                 {
-                    obj->rotation[i].y += 0.75f;
-                    obj->components[i] &= ~PROP_INTERACTABLE; // disable interaction while rotating
+                    obj->rotation[i].y += 90 * GetFrameTime();
+                    obj->components[i] &= ~PROP_INTERACTABLE;
                 }
-                else 
+                else
                 {
-                    obj->components[i] |= PROP_INTERACTABLE; // re-enable interaction when done rotating
+                    obj->components[i] |= PROP_INTERACTABLE;
                     obj->text[i][2] = 'd';
-					//printf("%s\n", obj->text[i]);
-				}
-                // Rotating Cubes have their own rendering.
-                DrawModelEx( *obj->model[i],obj->position[i],
-                    (Vector3){0, 1, 0},obj->rotation[i].y,obj->size[i],obj->color[i]);
+                }
+
+                DrawModelEx(*obj->model[i], obj->position[i],
+                    (Vector3) {
+                    0, 1, 0
+                }, obj->rotation[i].y, obj->size[i], obj->color[i]);
                 continue;
             }
 
@@ -397,7 +398,34 @@ void RenderProps(Props* obj) {
                     allBlocksAligned = true;
                 }
 			}
-            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3 ||
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+            {
+                // 3rd Puzzle -----------------------------------------------
+                // Left to Right - RED, BLUE, GREEN
+                if (!obj->text[rotatingBlockIDs[6]] ||
+                    obj->text[rotatingBlockIDs[6]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[6]][0] != '3')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[7]] ||
+                    obj->text[rotatingBlockIDs[7]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[7]][0] != '0')
+                {
+                    allBlocksAligned = false;
+                }
+                else if (!obj->text[rotatingBlockIDs[8]] ||
+                    obj->text[rotatingBlockIDs[8]][2] != 'd' ||
+                    obj->text[rotatingBlockIDs[8]][0] != '2')
+                {
+                    allBlocksAligned = false;
+                }
+                else
+                {
+                    allBlocksAligned = true;
+                }
+			}
+            else if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL4 ||
                 obj->interactType[i] == INTERACTABLE_APPEARING_DOOR)
             {
 
@@ -437,7 +465,7 @@ void RenderProps(Props* obj) {
 
             if (allBlocksAligned2)
             {
-                if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL3)
+                if (obj->interactType[i] == INTERACTABLE_DISAPPEARING_WALL4)
                 {
                     obj->components[i] &= ~PROP_COLLIDER; // Disable collider
                     obj->components[i] &= ~PROP_VISIBILE; // Make invisible
