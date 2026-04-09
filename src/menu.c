@@ -541,13 +541,14 @@ void DrawButton(Button button, Color color)
         button.bounds.y + button.bounds.height / 2               // vertically centered
     };
     //if it is a level
-    int val;
+    int Levelval;
     Color level1Complete = WHITE;
     Color level2Complete = WHITE;
     Color level3Complete = WHITE;
     if (strcmp(button.text, "Level 1") == 0)
     {
-        if (PrefsGet("level1", &val) == 1)
+        PrefsGet("level1", &Levelval);
+        if (Levelval == 1)
         {
             level1Complete = YELLOW;
         }
@@ -556,7 +557,8 @@ void DrawButton(Button button, Color color)
 
     if (strcmp(button.text, "Level 2") == 0)
     {
-        if (PrefsGet("level2", &val) == 1)
+        PrefsGet("level2", &Levelval);
+        if (Levelval == 1)
         {
             level2Complete = YELLOW;
         }
@@ -566,7 +568,8 @@ void DrawButton(Button button, Color color)
 
     if (strcmp(button.text, "Level 3") == 0)
     {
-        if (PrefsGet("level3", &val) == 1)
+        PrefsGet("level3", &Levelval);
+        if (Levelval == 1)
         {
             level3Complete = YELLOW;
         }

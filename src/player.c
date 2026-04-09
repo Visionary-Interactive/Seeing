@@ -847,6 +847,7 @@ void CompleteLevel()
 	{
 		PrefsSet("level3", 1);
 	}
+	PrefsSave("pref/pref.bin");
 	printf("Level %d complete!\n", currentLevel);
 	SetCurrentScreen(menu_level_complete);
 }
