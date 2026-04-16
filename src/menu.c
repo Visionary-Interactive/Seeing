@@ -345,7 +345,7 @@ void DrawMenu()
            menuHeight
         };
         // Draw main panel
-        DrawRectangleRec(menuPanel, BLACK);
+        DrawRectangleRec(menuPanel, BROWN);
 
 		DrawLine(menuPanel.x, menuPanel.y + 200, menuPanel.x + menuPanel.width, menuPanel.y + 200, WHITE);
         DrawLine(menuPanel.x, menuPanel.y + 400, menuPanel.x + menuPanel.width, menuPanel.y + 400, WHITE);

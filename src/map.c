@@ -605,7 +605,7 @@ void LoadLevel2()
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[riddleBookID] = INTERACTABLE_TEXT;
     props->textType[riddleBookID] = TEXTBOX_BOOK;
-    props->text[riddleBookID] = strdup("To leave this level, solve the block puzzle by searching for symbols and colours around the map.\n 1. Look to the skies in the Observatory\n 2. Find the book on top of the Library.\n 3. Finally to the Horizon between two pillars.\n Match them on the rotating blocks to pass!\n if there's any eye issues, please look in the library for answers.");
+    props->text[riddleBookID] = strdup("To leave this floor, solve the block puzzle by searching for\nsymbols and colours around the map.\n\n1. Look to the skies in the Observatory.\n2. Find the book on top of the Library.\n3. Look to the Horizon between two pillars.\n\nMatch them on the rotating blocks to pass!\nIf there's any eye issues, please look in the library for answers.");
 
     /*
     int zoneID = AddZone(props, (Vector3) { 0.5f, 0.0f, 22.0f }, (Vector3) { 8.0f, 4.0f, 1.0f }, TRIGGER_IMPAIRMENT);
@@ -782,7 +782,7 @@ void LoadLevel4()
             WHITE, PROP_VISIBILE | PROP_INTERACTABLE | PROP_PICKUP);
     props->interactType[book] = INTERACTABLE_TEXT;
     props->textType[book] = TEXTBOX_BOOK;
-    props->text[book] = strdup("There seems to be some trickery at play here... There has to be more shapes to find.\n Perhaps hidden in the grass somewhere...");
+    props->text[book] = strdup("There seems to be some trickery at play here... There have to be more shapes to find.\nMaybe hidden in the grass somewhere...");
     // Pillar
     CreatePropFromPath(props, "resources/global/models/pillar/scene.gltf", "resources/global/models/pillar/textures/Material_baseColor.png",
         (Vector3) {
